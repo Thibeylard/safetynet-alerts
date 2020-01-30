@@ -1,9 +1,11 @@
 package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.dtos.*;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface AlertsService {
 
     /**

@@ -1,7 +1,10 @@
 package com.safetynet.safetynetAlerts.services;
 
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 public interface MedicalRecordService {
 
     /**

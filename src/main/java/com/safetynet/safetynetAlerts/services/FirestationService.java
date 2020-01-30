@@ -1,5 +1,8 @@
 package com.safetynet.safetynetAlerts.services;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public interface FirestationService {
 
     /**

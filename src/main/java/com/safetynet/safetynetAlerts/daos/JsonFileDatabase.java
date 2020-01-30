@@ -18,12 +18,11 @@ import java.util.List;
 public class JsonFileDatabase {
 
     private final ObjectMapper mapper;
-    private SafetynetAlertsData safetynetAlertsData;
+    private SafetynetAlertsData safetynetAlertsData = null;
 
     /* ---------------- SafetynetAlerts Datafile Model ---------------- */
-
     @JsonPropertyOrder({"persons", "firestations", "medicalrecords"})
-    private class SafetynetAlertsData {
+    private static class SafetynetAlertsData {
         private List<Person> persons;
         private List<Firestation> firestations;
         private List<MedicalRecord> medicalRecords;
@@ -36,7 +35,6 @@ public class JsonFileDatabase {
             this.medicalRecords = pMedicalRecords;
         }
     }
-
 
     /**
      * @param pMapper Autoriwed ObjectMapper Singleton
@@ -118,7 +116,5 @@ public class JsonFileDatabase {
     public List<Person> getFromAddress(final String pAddress) {
         return null;
     }
-
-
 
 }
