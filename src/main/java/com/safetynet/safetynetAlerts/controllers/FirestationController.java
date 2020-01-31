@@ -17,14 +17,14 @@ public class FirestationController {
     }
 
     @PostMapping("/firestation")
-    public ResponseEntity<HttpStatus> add(@RequestParam(name = "stationNumber") final int pNumber,
-                          @RequestParam(name = "address") final String pAddress) {
+    public ResponseEntity<HttpStatus> add( @RequestParam(name = "address") final String pAddress,
+                                           @RequestParam(name = "stationNumber") final int pNumber) {
         return null;
     }
 
     @PutMapping("/firestation")
     public ResponseEntity<HttpStatus> update(@RequestParam(name = "address") final String pAddress,
-                          @RequestParam(name = "stationNumber") final int pNumber) {
+                                             @RequestParam(name = "stationNumber") final int pNumber) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

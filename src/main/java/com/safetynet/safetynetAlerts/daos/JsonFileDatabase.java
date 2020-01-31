@@ -48,72 +48,96 @@ public class JsonFileDatabase {
         });
     }
 
-    public List<Person> getPersons() {
-        return this.safetynetAlertsData.persons;
+    //    ---------------------------------------------------------------------------------------- Firestation
+
+    public boolean addFirestation(Firestation firestation) throws IOException {
+        return false;
     }
 
-    public List<Firestation> getFirestations() {
+    public boolean updateFirestation(Firestation firestation) throws IOException {
+        return false;
+    }
+
+    public List<Firestation> getFirestations() throws IOException {
         return this.safetynetAlertsData.firestations;
     }
 
-    public List<MedicalRecord> getMedicalRecords() {
+    public Firestation getFirestation(String address) throws IOException {
+
+        return null;
+    }
+
+    public List<String> getFirestationAddresses(int number) throws IOException {
+        return null;
+    }
+
+    //    ---------------------------------------------------------------------------------------- MedicalRecord
+
+    public boolean addMedicalRecord(MedicalRecord medicalRecord) throws IOException {
+        return false;
+    }
+
+    public boolean updateMedicalRecord(MedicalRecord medicalRecord) throws IOException {
+        return false;
+    }
+
+    public List<MedicalRecord> getMedicalRecords() throws IOException {
         return this.safetynetAlertsData.medicalRecords;
     }
 
-    public boolean addFirestation(Firestation firestation) {
+    public MedicalRecord getMedicalRecord(String firstName, String lastName) throws IOException {
+        return null;
+    }
+
+    public MedicalRecord getPersonMedicalRecord(String firstName, String lastName) throws IOException {
+        return null;
+    }
+
+    public String getPersonAge(String firstName, String lastName) throws IOException {
+        return null;
+    }
+
+    public List<MedicalRecord> getAdultMedicalRecords() throws IOException {
+        return null;
+    }
+
+    public List<MedicalRecord> getChildrenMedicalRecords() throws IOException {
+        return null;
+    }
+
+
+
+    //    ---------------------------------------------------------------------------------------- Person
+
+    public boolean addPerson(Person person) throws IOException {
         return false;
     }
 
-    public boolean addMedicalRecord(MedicalRecord medicalRecord) {
+    public boolean updatePerson(Person person) throws IOException {
         return false;
     }
 
-    public boolean addPerson(Person person) {
-        return false;
+    public List<Person> getPersons() throws IOException {
+        return this.safetynetAlertsData.persons;
     }
 
-    public boolean updateFirestation(Firestation firestation) {
-        return false;
-    }
-
-    public boolean updateMedicalRecord(MedicalRecord medicalRecord) {
-        return false;
-    }
-
-    public boolean updatePerson(Person person) {
-        return false;
-    }
-
-    public Firestation getFirestation(String address) {
-
+    public Person getPerson(String firstName, String lastName) throws IOException {
         return null;
     }
 
-    public List<String> getFirestationAddresses(int pNumber) {
+    public Person getFromName(final String firstName, final String lastName) throws IOException {
         return null;
     }
 
-    public MedicalRecord getMedicalRecord(String firstName, String lastName) {
+    public List<Person> getFromAddress(final String address) throws IOException {
         return null;
     }
 
-    public String getPersonAge(String firstName, String lastName) {
+    public List<Person> getFromName(final String lastName) throws IOException  {
         return null;
     }
 
-    public MedicalRecord getPersonMedicalRecord(String firstName, String lastName) {
-        return null;
-    }
-
-    public Person getPerson(String firstName, String lastName) {
-        return null;
-    }
-
-    public Person getFromName(final String pFirstName, final String pLastName) {
-        return null;
-    }
-
-    public List<Person> getFromAddress(final String pAddress) {
+    public List<Person> getCommunity(final String city) throws IOException {
         return null;
     }
 

@@ -20,7 +20,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @param jsonFileDatabase instance to initialize this.jsonFileDatabase
      */
     @Autowired
-    public FirestationDAOJsonFile(JsonFileDatabase jsonFileDatabase) {
+    public FirestationDAOJsonFile(JsonFileDatabase jsonFileDatabase) throws Exception {
         this.jsonFileDatabase = jsonFileDatabase;
     }
 
@@ -28,7 +28,8 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public boolean add(String address, int number) {
+    public boolean add(final String address,
+                       final int number) throws Exception {
         return false;
     }
 
@@ -36,25 +37,8 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public boolean update(String address, int number) {
-        return false;
-    }
-
-    /**
-     * @see FirestationDAO
-     * @param number
-     */
-    @Override
-    public boolean delete(int number) {
-        return false;
-    }
-
-    /**
-     * @see FirestationDAO
-     * @param address
-     */
-    @Override
-    public boolean delete(String address) {
+    public boolean update(final String address,
+                          final int number) throws Exception {
         return false;
     }
 
@@ -62,7 +46,23 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public List<String> getFirestationAddresses(int pNumber) {
+    public boolean delete(final int number) throws Exception {
+        return false;
+    }
+
+    /**
+     * @see FirestationDAO
+     */
+    @Override
+    public boolean delete(final String address) throws Exception {
+        return false;
+    }
+
+    /**
+     * @see FirestationDAO
+     */
+    @Override
+    public List<String> getFirestationAddresses(final int number) throws Exception {
         return null;
     }
 
@@ -70,7 +70,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public Firestation getFirestation(String address) {
+    public Firestation getFirestation(final String address) throws Exception {
         return null;
     }
 }

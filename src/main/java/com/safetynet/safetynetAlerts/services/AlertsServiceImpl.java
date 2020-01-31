@@ -27,7 +27,7 @@ public class AlertsServiceImpl implements AlertsService {
      * @see AlertsService getURLFirestationDTO()
      */
     @Override
-    public URLFirestationDTO getURLFirestationDTO(int stationNumber) {
+    public URLFirestationDTO getURLFirestationDTO(int stationNumber) throws Exception {
         return null;
     }
 
@@ -35,7 +35,7 @@ public class AlertsServiceImpl implements AlertsService {
      * @see AlertsService getURLChildAlertDTO()
      */
     @Override
-    public URLChildAlertDTO getURLChildAlertDTO(String address) {
+    public URLChildAlertDTO getURLChildAlertDTO(String address) throws Exception {
         return null;
     }
 
@@ -43,7 +43,7 @@ public class AlertsServiceImpl implements AlertsService {
      * @see AlertsService getPhoneAlertDTO()
      */
     @Override
-    public URLPhoneAlertDTO getPhoneAlertDTO(int stationNumber) {
+    public URLPhoneAlertDTO getPhoneAlertDTO(int stationNumber) throws Exception {
         return null;
     }
 
@@ -51,7 +51,7 @@ public class AlertsServiceImpl implements AlertsService {
      * @see AlertsService getURLFireDTO()
      */
     @Override
-    public URLFireDTO getURLFireDTO(String address) {
+    public URLFireDTO getURLFireDTO(String address) throws Exception {
         return null;
     }
 
@@ -59,7 +59,7 @@ public class AlertsServiceImpl implements AlertsService {
      * @see AlertsService getURLFloodDTO()
      */
     @Override
-    public URLFloodDTO getURLFloodDTO(List<Integer> stationNumberList) {
+    public URLFloodDTO getURLFloodDTO(List<Integer> stationNumberList) throws Exception {
         return null;
     }
 
@@ -67,7 +67,7 @@ public class AlertsServiceImpl implements AlertsService {
      * @see AlertsService getURLPersonInfoDTO()
      */
     @Override
-    public URLPersonInfoDTO getURLPersonInfoDTO(String firstName, String lastName) {
+    public URLPersonInfoDTO getURLPersonInfoDTO(String firstName, String lastName) throws Exception {
         return null;
     }
 
@@ -75,7 +75,7 @@ public class AlertsServiceImpl implements AlertsService {
      * @see AlertsService getURLCommunityEmailDTO()
      */
     @Override
-    public URLCommunityEmailDTO getURLCommunityEmailDTO(String city) {
+    public URLCommunityEmailDTO getURLCommunityEmailDTO(String city) throws Exception {
         return null;
     }
 }
