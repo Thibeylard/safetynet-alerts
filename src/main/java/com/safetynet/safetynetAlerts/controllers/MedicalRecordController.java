@@ -19,27 +19,47 @@ public class MedicalRecordController {
     }
 
     @PostMapping("/medicalRecord")
-    public ResponseEntity<HttpStatus> add(@RequestParam(name = "firstName") String pFirstName,
-                                          @RequestParam(name = "lastName") String pLastName,
-                                          @RequestParam(name = "birthDate") final String pBirthDate,
-                                          @RequestParam(name = "medications") final List<String> pMedications,
-                                          @RequestParam(name = "allergies") final List<String> pAllergies) {
-        return null;
+    public ResponseEntity<HttpStatus> add(@RequestParam(name = "firstName") final String firstName,
+                                          @RequestParam(name = "lastName") final String lastName,
+                                          @RequestParam(name = "birthDate") final String birthDate,
+                                          @RequestParam(name = "medications") final List<String> medications,
+                                          @RequestParam(name = "allergies") final List<String> allergies) {
+        if (this.medicalRecordService.add(firstName,lastName,birthDate,medications,allergies)) {
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/medicalRecord")
-    public ResponseEntity<HttpStatus> update(@RequestParam(name = "firstName") String pFirstName,
-                          @RequestParam(name = "lastName") String pLastName,
-                          @RequestParam(name = "birthDate", required = false) final String pBirthDate,
-                          @RequestParam(name = "medications", required = false) final List<String> pMedications,
-                          @RequestParam(name = "allergies", required = false) final List<String> pAllergies) {
-        return null;
+    public ResponseEntity<HttpStatus> update(@RequestParam(name = "firstName") final String firstName,
+                          @RequestParam(name = "lastName") final String lastName,
+                          @RequestParam(name = "birthDate", required = false) final String birthDate,
+                          @RequestParam(name = "medications", required = false) final List<String> medications,
+                          @RequestParam(name = "allergies", required = false) final List<String> allergies) {
+
+
+        if (birthDate == null && medications == null && allergies == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (this.medicalRecordService.update(firstName,lastName,birthDate,medications,allergies)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/medicalRecord")
-    public ResponseEntity<HttpStatus> delete(@RequestParam(name = "firstName") String pFirstName,
-                          @RequestParam(name = "lastName") String pLastName) {
-        return null;
+    public ResponseEntity<HttpStatus> delete(@RequestParam(name = "firstName") final String firstName,
+                          @RequestParam(name = "lastName") final String lastName) {
+        if (this.medicalRecordService.delete(firstName,lastName)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

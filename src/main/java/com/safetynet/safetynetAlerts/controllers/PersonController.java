@@ -18,30 +18,46 @@ public class PersonController {
     }
 
     @PostMapping("/person")
-    public ResponseEntity<HttpStatus> add(@RequestParam(name = "firstName") String pFirstName,
-                       @RequestParam(name = "lastName") String pLastName,
-                       @RequestParam(name = "address") String pAddress,
-                       @RequestParam(name = "city") String pCity,
-                       @RequestParam(name = "zip") String pZip,
-                       @RequestParam(name = "phone") String pPhone,
-                       @RequestParam(name = "email") String pEmail) {
-        return null;
+    public ResponseEntity<HttpStatus> add(@RequestParam(name = "firstName") final String firstName,
+                                          @RequestParam(name = "lastName") final String lastName,
+                                          @RequestParam(name = "address") final String address,
+                                          @RequestParam(name = "city") final String city,
+                                          @RequestParam(name = "zip") final String zip,
+                                          @RequestParam(name = "phone") final String phone,
+                                          @RequestParam(name = "email") final String email) {
+        if (this.personService.add(firstName, lastName, address, city, zip, phone, email)) {
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/person")
-    public ResponseEntity<HttpStatus> update(@RequestParam(name = "firstName") String pFirstName,
-                                             @RequestParam(name = "lastName") String pLastName,
-                                             @RequestParam(name = "address", required = false) String pAddress,
-                                             @RequestParam(name = "city", required = false) String pCity,
-                                             @RequestParam(name = "zip", required = false) String pZip,
-                                             @RequestParam(name = "phone", required = false) String pPhone,
-                                             @RequestParam(name = "email", required = false) String pEmail) {
-        return null;
+    public ResponseEntity<HttpStatus> update(@RequestParam(name = "firstName") final String firstName,
+                                             @RequestParam(name = "lastName") final String lastName,
+                                             @RequestParam(name = "address", required = false) String address,
+                                             @RequestParam(name = "city", required = false) String city,
+                                             @RequestParam(name = "zip", required = false) String zip,
+                                             @RequestParam(name = "phone", required = false) String phone,
+                                             @RequestParam(name = "email", required = false) String email) {
+        if (address == null && city == null && zip == null && phone == null && email == null) { // There has to be one mutable parameter to update
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // if (this.personService.update(firstName, lastName, address, city, zip, phone, email)) {
+        if (this.personService.update(firstName, lastName, address, city, zip, phone, email)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/person")
-    public ResponseEntity<HttpStatus> delete(@RequestParam(name = "firstName") String pFirstName,
-                          @RequestParam(name = "lastName") String pLastName) {
-        return null;
+    public ResponseEntity<HttpStatus> delete(@RequestParam(name = "firstName") final String firstName,
+                                             @RequestParam(name = "lastName") final String lastName) {
+        if (this.personService.delete(firstName, lastName)) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
