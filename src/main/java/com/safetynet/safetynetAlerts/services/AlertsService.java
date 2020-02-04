@@ -30,7 +30,7 @@ public interface AlertsService {
      * @param stationNumber Firestation number of inhabitants from whom phone numbers are requested.
      * @return URLPhoneAlertDTO instance
      */
-    public URLPhoneAlertDTO getPhoneAlertDTO(final int stationNumber) throws Exception;
+    public URLPhoneAlertDTO getURLPhoneAlertDTO(final int stationNumber) throws Exception;
 
     /**
      * Create a new URLFireDTO instance based on received parameters and database.

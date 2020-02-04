@@ -43,7 +43,7 @@ public class AlertsServiceImpl implements AlertsService {
      * @see AlertsService getPhoneAlertDTO()
      */
     @Override
-    public URLPhoneAlertDTO getPhoneAlertDTO(int stationNumber) throws Exception {
+    public URLPhoneAlertDTO getURLPhoneAlertDTO(int stationNumber) throws Exception {
         return null;
     }
 
