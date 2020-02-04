@@ -92,25 +92,6 @@ class MedicalRecordControllerTest {
             }
         }
 
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("add_MismatchParameter_BadRequest")
-        void Given_mismatchParameter_When_add_Then_statusIsBadRequest() {
-            params.add("firstName", "someFirstName");
-            params.add("lastName", "someLastName");
-            params.add("birthDate", "someBirthDate");
-            params.add("medications", "someMedic:somePosology"); // medications is only string not list of string
-            params.addAll("allergies", Collections.singletonList("someAllergy"));
-            try {
-                mvcMock.perform(post("/medicalRecord")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
         //    ------------------------------------------------------------------------------ server error
         @Test
         @Tag("ServerErrorStatus")
@@ -208,23 +189,6 @@ class MedicalRecordControllerTest {
             }
         }
 
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("update_MismatchParameter_BadRequest")
-        void Given_mismatchParameter_When_update_Then_statusIsBadRequest() {
-            params.add("firstName", "someFirstName");
-            params.add("lastName", "2"); // Int value instead of String
-            params.add("birthDate", "someBirthDate");
-            try {
-                mvcMock.perform(put("/medicalRecord")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
         //    ------------------------------------------------------------------------------ server error
         @Test
         @Tag("ServerErrorStatus")
@@ -284,22 +248,6 @@ class MedicalRecordControllerTest {
         void Given_missingParameter_When_delete_Then_statusIsBadRequest() {
             // Required parameter firstName is missing
             params.add("lastName", "someLastName");
-            try {
-                mvcMock.perform(delete("/medicalRecord")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("delete_MismatchParameter_BadRequest")
-        void Given_mismatchParameter_When_delete_Then_statusIsBadRequest() {
-            params.add("firstName", "someFirstName");
-            params.add("lastName", "2"); // Int value instead of String
             try {
                 mvcMock.perform(delete("/medicalRecord")
                         .params(params)

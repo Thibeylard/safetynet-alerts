@@ -97,27 +97,6 @@ class PersonControllerTest {
             }
         }
 
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("add_MismatchParameter_BadRequest")
-        void Given_mismatchParameter_When_add_Then_statusIsBadRequest() {
-            params.add("firstName","someFirstName");
-            params.add("lastName","2"); // Int value instead of String
-            params.add("address","someAddress");
-            params.add("city","someCity");
-            params.add("zip","someZip");
-            params.add("phone","somePhone");
-            params.add("email","someMail");
-            try {
-                mvcMock.perform(post("/person")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
         //    ------------------------------------------------------------------------------ server error
         @Test
         @Tag("ServerErrorStatus")
@@ -220,23 +199,6 @@ class PersonControllerTest {
             }
         }
 
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("update_MismatchParameter_BadRequest")
-        void Given_mismatchParameter_When_update_Then_statusIsBadRequest() {
-            params.add("firstName","someFirstName");
-            params.add("lastName","2"); // Int value instead of String
-            try {
-                mvcMock.perform(put("/person")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-
         //    ------------------------------------------------------------------------------ server error
         @Test
         @Tag("ServerErrorStatus")
@@ -298,22 +260,6 @@ class PersonControllerTest {
         void Given_missingParameter_When_delete_Then_statusIsBadRequest() {
             // Required parameter firstName is missing
             params.add("lastName","someLastName");
-            try {
-                mvcMock.perform(delete("/person")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("delete_MismatchParameter_BadRequest")
-        void Given_mismatchParameter_When_delete_Then_statusIsBadRequest() {
-            params.add("firstName","someFirstName");
-            params.add("lastName","2"); // Int value instead of String
             try {
                 mvcMock.perform(delete("/person")
                         .params(params)
