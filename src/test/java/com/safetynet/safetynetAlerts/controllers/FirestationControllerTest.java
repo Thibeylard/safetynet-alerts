@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -46,8 +48,12 @@ class FirestationControllerTest {
         @Tag("SuccessStatus")
         @DisplayName("add_Success")
         void Given_validRequest_When_add_Then_statusIsCreated() {
-            params.add("stationNumber", "2");
             params.add("address", "someAddress");
+            params.add("stationNumber", "2");
+            when(mockFirestationService.add(
+                    anyString(),
+                    anyInt()))
+            .thenReturn(true);
             try {
                 mvcMock.perform(post("/firestation")
                         .params(params)
@@ -98,7 +104,10 @@ class FirestationControllerTest {
         void Given_validRequestButServiceNotWorking_When_add_Then_statusIsInternalServerError() {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
-            when(mockFirestationService.add(anyString(), anyInt())).thenReturn(false);
+            when(mockFirestationService.add(
+                    anyString(),
+                    anyInt()))
+                    .thenReturn(false);
             try {
                 mvcMock.perform(post("/firestation")
                         .params(params)
@@ -122,6 +131,10 @@ class FirestationControllerTest {
         void Given_validRequest_When_update_Then_statusIsNoContent() {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
+            when(mockFirestationService.update(
+                    anyString(),
+                    anyInt()))
+                    .thenReturn(true);
             try {
                 mvcMock.perform(put("/firestation")
                         .params(params)
@@ -171,7 +184,10 @@ class FirestationControllerTest {
         void Given_validRequestButServiceNotWorking_When_update_Then_statusIsInternalServerError() {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
-            when(mockFirestationService.update(anyString(), anyInt())).thenReturn(false);
+            when(mockFirestationService.update(
+                    anyString(),
+                    anyInt()))
+                    .thenReturn(false);
             try {
                 mvcMock.perform(put("/firestation")
                         .params(params)
@@ -194,6 +210,9 @@ class FirestationControllerTest {
         @DisplayName("deleteByName_Success")
         void Given_validRequest_When_deleteByNumber_Then_statusIsNoContent() {
             params.add("stationNumber", "2");
+            when(mockFirestationService.delete(
+                    anyInt()))
+                    .thenReturn(true);
             try {
                 mvcMock.perform(delete("/firestation")
                         .params(params)
@@ -209,6 +228,9 @@ class FirestationControllerTest {
         @DisplayName("deleteByAddress_Success")
         void Given_validRequest_When_deleteByAddress_Then_statusIsNoContent() {
             params.add("address", "someAddress");
+            when(mockFirestationService.delete(
+                    anyString()))
+                    .thenReturn(true);
             try {
                 mvcMock.perform(delete("/firestation")
                         .params(params)
@@ -273,7 +295,9 @@ class FirestationControllerTest {
         @DisplayName("deleteByAddress_ServerError")
         void Given_validRequestButServiceNotWorking_When_deleteByAddress_Then_statusIsInternalServerError() {
             params.add("address", "someAddress");
-            when(mockFirestationService.delete("someAddress")).thenReturn(false);
+            when(mockFirestationService.delete(
+                    anyString()))
+                    .thenReturn(false);
             try {
                 mvcMock.perform(delete("/firestation")
                         .params(params)

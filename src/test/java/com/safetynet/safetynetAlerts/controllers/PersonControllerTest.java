@@ -16,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -55,6 +56,15 @@ class PersonControllerTest {
             params.add("zip","someZip");
             params.add("phone","somePhone");
             params.add("email","someMail");
+            when(mockPersonService.add(
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString()))
+                    .thenReturn(true);
             try {
                 mvcMock.perform(post("/person")
                         .params(params)
@@ -121,13 +131,13 @@ class PersonControllerTest {
             params.add("phone","somePhone");
             params.add("email","someMail");
             when(mockPersonService.add(
-                    params.getFirst("firstName"),
-                    params.getFirst("lastName"),
-                    params.getFirst("address"),
-                    params.getFirst("city"),
-                    params.getFirst("zip"),
-                    params.getFirst("phone"),
-                    params.getFirst("email")))
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString()))
                     .thenReturn(false);
             try {
                 mvcMock.perform(post("/person")
@@ -154,6 +164,15 @@ class PersonControllerTest {
             params.add("lastName","someLastName");
             params.add("phone","somePhone");
             // Works even with not all parameters
+            when(mockPersonService.update(
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString()))
+                    .thenReturn(true);
             try {
                 mvcMock.perform(put("/person")
                         .params(params)
@@ -226,14 +245,14 @@ class PersonControllerTest {
             params.add("firstName","someFirstName");
             params.add("lastName","someLastName");
             params.add("phone","somePhone");
-            when(mockPersonService.add(
-                    params.getFirst("firstName"),
-                    params.getFirst("lastName"),
-                    null,
-                    null,
-                    null,
-                    params.getFirst("phone"),
-                    null))
+            when(mockPersonService.update(
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString(),
+                    anyString()))
                     .thenReturn(false);
             try {
                 mvcMock.perform(put("/person")
@@ -258,6 +277,10 @@ class PersonControllerTest {
         void Given_validRequest_When_delete_Then_statusIsNoContent() {
             params.add("firstName","someFirstName");
             params.add("lastName","someLastName");
+            when(mockPersonService.delete(
+                    anyString(),
+                    anyString()))
+                    .thenReturn(true);
             try {
                 mvcMock.perform(delete("/person")
                         .params(params)
@@ -309,8 +332,8 @@ class PersonControllerTest {
             params.add("firstName","someFirstName");
             params.add("lastName","someLastName");
             when(mockPersonService.delete(
-                    params.getFirst("firstName"),
-                    params.getFirst("lastName")))
+                    anyString(),
+                    anyString()))
                     .thenReturn(false);
             try {
                 mvcMock.perform(delete("/person")
