@@ -28,7 +28,11 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
      * @see MedicalRecordDAO
      */
     @Override
-    public boolean add(String firstName, String lastName, String birthDate, List<String> medications, List<String> allergies) {
+    public boolean add(final String firstName,
+                       final String lastName,
+                       final String birthDate,
+                       final List<String> medications,
+                       final List<String> allergies) throws Exception {
         return false;
     }
 
@@ -36,7 +40,11 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
      * @see MedicalRecordDAO
      */
     @Override
-    public boolean update(final String firstName, final String lastName, String birthDate, List<String> medications, List<String> allergies) {
+    public boolean update(final String firstName,
+                          final String lastName,
+                          final String birthDate,
+                          final List<String> medications,
+                          final List<String> allergies) throws Exception {
         return false;
     }
 
@@ -44,7 +52,8 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
      * @see MedicalRecordDAO
      */
     @Override
-    public boolean delete(final String firstName, final String lastName) {
+    public boolean delete(final String firstName,
+                          final String lastName) throws Exception {
         return false;
     }
 
@@ -52,7 +61,28 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
      * @see MedicalRecordDAO
      */
     @Override
-    public String getPersonAge(String firstName, String lastName) {
+    public MedicalRecord getPersonMedicalRecord(final String firstName,
+                                                final String lastName) throws Exception {
+        return null;
+    }
+
+    /**
+     * Get adults MedicalRecords from database.
+     *
+     * @return MedicalRecord instance
+     */
+    @Override
+    public List<MedicalRecord> getAdultMedicalRecords() throws Exception {
+        return null;
+    }
+
+    /**
+     * Get children MedicalRecords from database.
+     *
+     * @return MedicalRecord instance
+     */
+    @Override
+    public List<MedicalRecord> getChildrenMedicalRecords() throws Exception {
         return null;
     }
 
@@ -60,7 +90,8 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
      * @see MedicalRecordDAO
      */
     @Override
-    public MedicalRecord getPersonMedicalRecord(String firstName, String lastName) {
+    public String getPersonAge(final String firstName,
+                               final String lastName) throws Exception {
         return null;
     }
 }

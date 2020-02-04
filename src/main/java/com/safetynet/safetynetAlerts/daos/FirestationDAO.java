@@ -11,48 +11,56 @@ public interface FirestationDAO {
      *
      * @param address value to set for address attribute
      * @param number  value to set for number attribute
+     * @throws Exception for data access failure
      * @return operation success
      */
-    public boolean add(final String address, final int number);
+    public boolean add(final String address,
+                       final int number) throws Exception;
 
     /**
      * Update specific Firestation number instance from database.
      *
      * @param address value to set for address attribute
      * @param number  value to set for number attribute
+     * @throws Exception for data access failure
      * @return operation success
      */
-    public boolean update(final String address, final int number);
+    public boolean update(final String address,
+                          final int number) throws Exception;
 
     /**
      * Delete Firestation mapping(s) by number from database.
      *
      * @param number Firestation(s) to delete number attribute value
+     * @throws Exception for data access failure
      * @return operation success
      */
-    public boolean delete(final int number);
+    public boolean delete(final int number) throws Exception;
 
     /**
      * Delete specified address Firestation mapping from database.
      *
      * @param address Firestation to delete address attribute value
+     * @throws Exception for data access failure
      * @return operation success
      */
-    public boolean delete(final String address);
+    public boolean delete(final String address) throws Exception;
 
     /**
      * Get Firestation address list with specified number as number.
      *
-     * @param pNumber number value to search
+     * @param number number value to search
+     * @throws Exception for data access failure
      * @return List of addresses
      */
-    public List<String> getFirestationAddresses(final int pNumber);
+    public List<String> getFirestationAddresses(final int number) throws Exception;
 
     /**
      * Get Firestation instance with specified address.
      *
      * @param address address value to search
+     * @throws Exception for data access failure
      * @return Firestation instance
      */
-    public Firestation getFirestation(final String address);
+    public Firestation getFirestation(final String address) throws Exception;
 }

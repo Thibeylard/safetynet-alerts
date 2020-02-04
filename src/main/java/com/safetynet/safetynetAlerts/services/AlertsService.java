@@ -14,7 +14,7 @@ public interface AlertsService {
      * @param stationNumber Firestation number from which requested inhabitants depend.
      * @return URLFirestationDTO instance
      */
-    public URLFirestationDTO getURLFirestationDTO(final int stationNumber);
+    public URLFirestationDTO getURLFirestationDTO(final int stationNumber) throws Exception;
 
     /**
      * Create a new URLChildAlertDTO instance based on received parameters and database.
@@ -22,7 +22,7 @@ public interface AlertsService {
      * @param address Address where children infos are requested.
      * @return URLChildAlertDTO instance
      */
-    public URLChildAlertDTO getURLChildAlertDTO(final String address);
+    public URLChildAlertDTO getURLChildAlertDTO(final String address) throws Exception;
 
     /**
      * Create a new URLPhoneAlertDTO instance based on received parameters and database.
@@ -30,7 +30,7 @@ public interface AlertsService {
      * @param stationNumber Firestation number of inhabitants from whom phone numbers are requested.
      * @return URLPhoneAlertDTO instance
      */
-    public URLPhoneAlertDTO getPhoneAlertDTO(final int stationNumber);
+    public URLPhoneAlertDTO getPhoneAlertDTO(final int stationNumber) throws Exception;
 
     /**
      * Create a new URLFireDTO instance based on received parameters and database.
@@ -38,7 +38,7 @@ public interface AlertsService {
      * @param address Address where endangered inhabitants medical infos are requested in fire accident.
      * @return URLFireDTO instance
      */
-    public URLFireDTO getURLFireDTO(final String address);
+    public URLFireDTO getURLFireDTO(final String address) throws Exception;
 
     /**
      * Create a new URLFloodDTO instance based on received parameters and database.
@@ -46,7 +46,7 @@ public interface AlertsService {
      * @param stationNumberList All stations number responsible of endangered inhabitants in a flood accident.
      * @return URLFireDTO instance
      */
-    public URLFloodDTO getURLFloodDTO(List<Integer> stationNumberList);
+    public URLFloodDTO getURLFloodDTO(List<Integer> stationNumberList) throws Exception;
 
     /**
      * Create a new URLPersonInfoDTO instance based on received parameters and database.
@@ -55,7 +55,7 @@ public interface AlertsService {
      * @param lastName lastName of the person about which to get infos
      * @return URLPersonInfoDTO instance
      */
-    public URLPersonInfoDTO getURLPersonInfoDTO(final String firstName, final String lastName);
+    public URLPersonInfoDTO getURLPersonInfoDTO(final String firstName, final String lastName) throws Exception;
 
     /**
      * Create a new URLCommunityEmailDTO instance based on received parameters and database.
@@ -63,5 +63,5 @@ public interface AlertsService {
      * @param city Name of the city from which to look for inhabitants emails
      * @return URLCommunityEmailDTO instance
      */
-    public URLCommunityEmailDTO getURLCommunityEmailDTO(final String city);
+    public URLCommunityEmailDTO getURLCommunityEmailDTO(final String city) throws Exception;
 }

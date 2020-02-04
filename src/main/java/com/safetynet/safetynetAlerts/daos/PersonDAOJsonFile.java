@@ -28,7 +28,13 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @see PersonDAO
      */
     @Override
-    public boolean add(String firstName, String lastName, String address, String city, String zip, String phone, String email) {
+    public boolean add(final String firstName,
+                       final String lastName,
+                       final String address,
+                       final String city,
+                       final String zip,
+                       final String phone,
+                       final String email) throws Exception {
         return false;
     }
 
@@ -36,7 +42,13 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @see PersonDAO
      */
     @Override
-    public boolean update(final String firstName, final String lastName, String address, String city, String zip, String phone, String email) {
+    public boolean update(final String firstName,
+                          final String lastName,
+                          final String address,
+                          final String city,
+                          final String zip,
+                          final String phone,
+                          final String email) throws Exception {
         return false;
     }
 
@@ -46,7 +58,8 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @param lastName
      */
     @Override
-    public boolean delete(final String firstName, final String lastName) {
+    public boolean delete(final String firstName,
+                          final String lastName) throws Exception {
         return false;
     }
 
@@ -56,7 +69,19 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @param lastName
      */
     @Override
-    public Person getFromName(final String firstName, final String lastName) {
+    public Person getFromName(final String firstName,
+                              final String lastName) throws Exception {
+        return null;
+    }
+
+    /**
+     * Get specific Person instances by lastName from database.
+     *
+     * @param lastName lastName value to search
+     * @return Person instance
+     */
+    @Override
+    public List<Person> getFromName(final String lastName) throws Exception {
         return null;
     }
 
@@ -65,7 +90,18 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @param address
      */
     @Override
-    public List<Person> getFromAddress(final String address) {
+    public List<Person> getFromAddress(final String address) throws Exception {
+        return null;
+    }
+
+    /**
+     * Get list of Persons by city from database.
+     *
+     * @param city address value to search
+     * @return List of Person instances
+     */
+    @Override
+    public List<Person> getCommunity(final String city) throws Exception {
         return null;
     }
 }
