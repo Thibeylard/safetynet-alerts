@@ -56,11 +56,11 @@ class MedicalRecordControllerTest {
             params.addAll("medications", Collections.singletonList("someMedic:somePosology"));
             params.addAll("allergies", Collections.singletonList("someAllergy"));
             when(mockMedicalRecordService.add(
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyList(),
-                    anyList()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    params.getFirst("birthDate"),
+                    params.get("medications"),
+                    params.get("allergies")))
                     .thenReturn(true);
             try {
                 mvcMock.perform(post("/medicalRecord")
@@ -103,11 +103,11 @@ class MedicalRecordControllerTest {
             params.addAll("medications", Collections.singletonList("someMedic:somePosology"));
             params.addAll("allergies", Collections.singletonList("someAllergy"));
             when(mockMedicalRecordService.add(
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyList(),
-                    anyList()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    params.getFirst("birthDate"),
+                    params.get("medications"),
+                    params.get("allergies")))
                     .thenReturn(false);
             try {
                 mvcMock.perform(post("/medicalRecord")
@@ -135,12 +135,14 @@ class MedicalRecordControllerTest {
             params.add("lastName", "someLastName");
             params.add("birthDate", "someBirthDate");
             // Works even with not all parameters
+
+            MultiValueMap<String,String> optParams = new LinkedMultiValueMap<String,String>();
+            optParams.add("birthDate",params.getFirst("birthDate"));
+
             when(mockMedicalRecordService.update(
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyList(),
-                    anyList()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    optParams))
                     .thenReturn(true);
             try {
                 mvcMock.perform(put("/medicalRecord")
@@ -197,12 +199,14 @@ class MedicalRecordControllerTest {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("birthDate", "someBirthDate");
+
+            MultiValueMap<String,String> optParams = new LinkedMultiValueMap<String,String>();
+            optParams.add("birthDate",params.getFirst("birthDate"));
+
             when(mockMedicalRecordService.update(
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyList(),
-                    anyList()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    optParams))
                     .thenReturn(false);
             try {
                 mvcMock.perform(put("/medicalRecord")
@@ -228,8 +232,8 @@ class MedicalRecordControllerTest {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             when(mockMedicalRecordService.delete(
-                    anyString(),
-                    anyString()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName")))
                     .thenReturn(true);
             try {
                 mvcMock.perform(delete("/medicalRecord")
@@ -266,8 +270,8 @@ class MedicalRecordControllerTest {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             when(mockMedicalRecordService.delete(
-                    anyString(),
-                    anyString()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName")))
                     .thenReturn(false);
             try {
                 mvcMock.perform(delete("/medicalRecord")

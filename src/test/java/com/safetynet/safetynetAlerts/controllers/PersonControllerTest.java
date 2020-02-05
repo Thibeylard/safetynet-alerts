@@ -1,5 +1,6 @@
 package com.safetynet.safetynetAlerts.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.safetynet.safetynetAlerts.services.MedicalRecordService;
 import com.safetynet.safetynetAlerts.services.PersonService;
 import org.junit.jupiter.api.*;
@@ -15,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.Collections;
 
+import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -57,13 +59,13 @@ class PersonControllerTest {
             params.add("phone","somePhone");
             params.add("email","someMail");
             when(mockPersonService.add(
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    params.getFirst("address"),
+                    params.getFirst("city"),
+                    params.getFirst("zip"),
+                    params.getFirst("phone"),
+                    params.getFirst("email")))
                     .thenReturn(true);
             try {
                 mvcMock.perform(post("/person")
@@ -110,13 +112,13 @@ class PersonControllerTest {
             params.add("phone","somePhone");
             params.add("email","someMail");
             when(mockPersonService.add(
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    params.getFirst("address"),
+                    params.getFirst("city"),
+                    params.getFirst("zip"),
+                    params.getFirst("phone"),
+                    params.getFirst("email")))
                     .thenReturn(false);
             try {
                 mvcMock.perform(post("/person")
@@ -143,14 +145,14 @@ class PersonControllerTest {
             params.add("lastName","someLastName");
             params.add("phone","somePhone");
             // Works even with not all parameters
+
+            MultiValueMap<String,String> optParams = new LinkedMultiValueMap<String,String>();
+            optParams.add("phone",params.getFirst("phone"));
+
             when(mockPersonService.update(
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    optParams))
                     .thenReturn(true);
             try {
                 mvcMock.perform(put("/person")
@@ -207,14 +209,14 @@ class PersonControllerTest {
             params.add("firstName","someFirstName");
             params.add("lastName","someLastName");
             params.add("phone","somePhone");
+
+            MultiValueMap<String,String> optParams = new LinkedMultiValueMap<String,String>();
+            optParams.add("phone",params.getFirst("phone"));
+
             when(mockPersonService.update(
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString(),
-                    anyString()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    optParams))
                     .thenReturn(false);
             try {
                 mvcMock.perform(put("/person")
@@ -240,8 +242,8 @@ class PersonControllerTest {
             params.add("firstName","someFirstName");
             params.add("lastName","someLastName");
             when(mockPersonService.delete(
-                    anyString(),
-                    anyString()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName")))
                     .thenReturn(true);
             try {
                 mvcMock.perform(delete("/person")
@@ -278,8 +280,8 @@ class PersonControllerTest {
             params.add("firstName","someFirstName");
             params.add("lastName","someLastName");
             when(mockPersonService.delete(
-                    anyString(),
-                    anyString()))
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName")))
                     .thenReturn(false);
             try {
                 mvcMock.perform(delete("/person")
