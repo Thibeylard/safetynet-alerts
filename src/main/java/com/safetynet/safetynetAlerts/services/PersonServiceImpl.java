@@ -2,6 +2,7 @@ package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.daos.PersonDAO;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 @Service
 public class PersonServiceImpl implements PersonService {
@@ -25,7 +26,7 @@ public class PersonServiceImpl implements PersonService {
      * @see PersonService update()
      */
     @Override
-    public boolean update(String firstName, String lastName, String address, String city, String zip, String phone, String email) {
+    public boolean update(String firstName, String lastName, MultiValueMap<String, String> optionalParams) {
         return false;
     }
 
@@ -33,7 +34,7 @@ public class PersonServiceImpl implements PersonService {
      * @see PersonService delete()
      */
     @Override
-    public boolean delete(String pFirstName, String pLastName) {
+    public boolean delete(String firstName, String lastName) {
         return false;
     }
 }
