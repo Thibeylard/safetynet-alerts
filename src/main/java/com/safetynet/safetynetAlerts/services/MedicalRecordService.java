@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.services;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -17,19 +18,17 @@ public interface MedicalRecordService {
      * @param allergies   value to set for allergies attribute
      * @return operation success
      */
-    public boolean add(String firstName, String lastName, String birthDate, List<String> medications, List<String> allergies);
+    boolean add(String firstName, String lastName, String birthDate, List<String> medications, List<String> allergies);
 
     /**
-     * Pass parameters from controllers to DAO to update specific MedicalRecord from database.
+     * Pass parameters from controllers to DAO to update specific Person from database.
      *
-     * @param firstName   value to set for firstName attribute
-     * @param lastName    value to set for lastName attribute
-     * @param birthDate   value to set for birthDate attribute
-     * @param medications value to set for medications attribute
-     * @param allergies   value to set for allergies attribute
+     * @param firstName value to set for firstName attribute
+     * @param lastName  value to set for lastName attribute
+     * @param optionalParams values to set for Person (must contains at least one key)
      * @return operation success
      */
-    public boolean update(final String firstName, final String lastName, String birthDate, List<String> medications, List<String> allergies);
+    boolean update(final String firstName, final String lastName, final MultiValueMap<String,String> optionalParams);
 
     /**
      * Pass parameters from controllers to DAO to delete specific MedicalRecord from database.
@@ -38,5 +37,5 @@ public interface MedicalRecordService {
      * @param lastName  MedicalRecord to delete lastName attribute value
      * @return operation success
      */
-    public boolean delete(final String firstName, final String lastName);
+    boolean delete(final String firstName, final String lastName);
 }

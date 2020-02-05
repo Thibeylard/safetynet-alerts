@@ -2,6 +2,7 @@ package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.daos.MedicalRecordDAO;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
      * @see MedicalRecordService update()
      */
     @Override
-    public boolean update(String firstName, String lastName, String birthDate, List<String> medications, List<String> allergies) {
+    public boolean update(String firstName, String lastName, MultiValueMap<String, String> optionalParams) {
         return false;
     }
 
