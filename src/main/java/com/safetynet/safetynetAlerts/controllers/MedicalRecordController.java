@@ -4,6 +4,8 @@ import com.safetynet.safetynetAlerts.services.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,14 +41,26 @@ public class MedicalRecordController {
                           @RequestParam(name = "medications", required = false) final List<String> medications,
                           @RequestParam(name = "allergies", required = false) final List<String> allergies) {
 
+        MultiValueMap<String, String> optionalParameters = new LinkedMultiValueMap<String, String>();
 
-        if (birthDate == null && medications == null && allergies == null) {
+        if(birthDate != null) {
+            optionalParameters.add("birthDate", birthDate);
+        }
+
+        if(medications != null) {
+            optionalParameters.addAll("medications", medications);
+        }
+
+        if(allergies != null) {
+            optionalParameters.addAll("allergies", medications);
+        }
+
+        if(optionalParameters.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (this.medicalRecordService.update(firstName,lastName,birthDate,medications,allergies)) {
+        if (this.medicalRecordService.update(firstName, lastName, optionalParameters)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

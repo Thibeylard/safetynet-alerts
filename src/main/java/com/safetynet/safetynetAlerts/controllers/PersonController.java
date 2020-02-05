@@ -5,6 +5,8 @@ import com.safetynet.safetynetAlerts.services.PersonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,11 +42,32 @@ public class PersonController {
                                              @RequestParam(name = "zip", required = false) String zip,
                                              @RequestParam(name = "phone", required = false) String phone,
                                              @RequestParam(name = "email", required = false) String email) {
-        if (address == null && city == null && zip == null && phone == null && email == null) { // There has to be one mutable parameter to update
+        MultiValueMap<String, String> optionalParameters = new LinkedMultiValueMap<String, String>();
+
+        if(address != null) {
+            optionalParameters.add("address", address);
+        }
+
+        if(city != null) {
+            optionalParameters.add("city", city);
+        }
+
+        if(zip != null) {
+            optionalParameters.add("zip", zip);
+        }
+
+        if(phone != null) {
+            optionalParameters.add("phone", phone);
+        }
+
+        if(email != null) {
+            optionalParameters.add("email", email);
+        }
+
+        if(optionalParameters.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        // if (this.personService.update(firstName, lastName, address, city, zip, phone, email)) {
-        if (this.personService.update(firstName, lastName, address, city, zip, phone, email)) {
+        if (this.personService.update(firstName, lastName, optionalParameters)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
