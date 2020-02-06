@@ -10,8 +10,8 @@ import java.util.Map;
 public class URLFloodDTO {
     private Map<String, List<EndangeredPersonDTO>> addressResidentsMap;
 
-    public URLFloodDTO() {
-        this.addressResidentsMap = new HashMap<String, List<EndangeredPersonDTO>>();
+    public URLFloodDTO(HashMap<String, List<EndangeredPersonDTO>> addressResidentsMap) {
+        this.addressResidentsMap = addressResidentsMap;
     }
 
     public Map<String, List<EndangeredPersonDTO>> getAddressResidentsMap() {
