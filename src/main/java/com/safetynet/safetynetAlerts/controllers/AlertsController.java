@@ -26,8 +26,16 @@ public class AlertsController {
     @GetMapping("/firestation")
     public ResponseEntity<URLFirestationDTO> firestation(@RequestParam(name = "stationNumber") int number) {
         try {
+            HttpStatus responseHTTP = null;
             URLFirestationDTO responseDTO = alertsService.getURLFirestationDTO(number);
-            return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+
+            if(responseDTO == null){
+                responseHTTP = HttpStatus.NO_CONTENT;
+            } else {
+                responseHTTP = HttpStatus.OK;
+            }
+
+            return new ResponseEntity<>(responseDTO,responseHTTP);
         } catch (Exception e) {
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -36,8 +44,16 @@ public class AlertsController {
     @GetMapping("/childAlert")
     public ResponseEntity<URLChildAlertDTO> childAlert(@RequestParam(name = "address") String address) {
         try {
+            HttpStatus responseHTTP = null;
             URLChildAlertDTO responseDTO = alertsService.getURLChildAlertDTO(address);
-            return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+
+            if(responseDTO == null){
+                responseHTTP = HttpStatus.NO_CONTENT;
+            } else {
+                responseHTTP = HttpStatus.OK;
+            }
+
+            return new ResponseEntity<>(responseDTO,responseHTTP);
         } catch (Exception e) {
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -46,8 +62,16 @@ public class AlertsController {
     @GetMapping("/phoneAlert")
     public ResponseEntity<URLPhoneAlertDTO> phoneAlert(@RequestParam(name = "firestation") int number) {
         try {
+            HttpStatus responseHTTP = null;
             URLPhoneAlertDTO responseDTO = alertsService.getURLPhoneAlertDTO(number);
-            return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+
+            if(responseDTO == null){
+                responseHTTP = HttpStatus.NO_CONTENT;
+            } else {
+                responseHTTP = HttpStatus.OK;
+            }
+
+            return new ResponseEntity<>(responseDTO,responseHTTP);
         } catch (Exception e) {
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -56,8 +80,16 @@ public class AlertsController {
     @GetMapping("/fire")
     public ResponseEntity<URLFireDTO> fire(@RequestParam(name = "address") String address) {
         try {
+            HttpStatus responseHTTP = null;
             URLFireDTO responseDTO = alertsService.getURLFireDTO(address);
-            return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+
+            if(responseDTO == null){
+                responseHTTP = HttpStatus.NO_CONTENT;
+            } else {
+                responseHTTP = HttpStatus.OK;
+            }
+
+            return new ResponseEntity<>(responseDTO,responseHTTP);
         } catch (Exception e) {
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -66,8 +98,16 @@ public class AlertsController {
     @GetMapping("/flood/stations")
     public ResponseEntity<URLFloodDTO> flood(@RequestParam(name = "stations") List<Integer> stationNumbers) {
         try {
+            HttpStatus responseHTTP = null;
             URLFloodDTO responseDTO = alertsService.getURLFloodDTO(stationNumbers);
-            return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+
+            if(responseDTO == null){
+                responseHTTP = HttpStatus.NO_CONTENT;
+            } else {
+                responseHTTP = HttpStatus.OK;
+            }
+
+            return new ResponseEntity<>(responseDTO,responseHTTP);
         } catch (Exception e) {
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -77,8 +117,16 @@ public class AlertsController {
     public ResponseEntity<URLPersonInfoDTO> personInfo(@RequestParam(name = "firstName") String firstName,
                                        @RequestParam(name = "lastName") String lastName) {
         try {
+            HttpStatus responseHTTP = null;
             URLPersonInfoDTO responseDTO = alertsService.getURLPersonInfoDTO(firstName, lastName);
-            return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+
+            if(responseDTO == null){
+                responseHTTP = HttpStatus.NO_CONTENT;
+            } else {
+                responseHTTP = HttpStatus.OK;
+            }
+
+            return new ResponseEntity<>(responseDTO,responseHTTP);
         } catch (Exception e) {
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -87,8 +135,16 @@ public class AlertsController {
     @GetMapping("/communityEmail")
     public ResponseEntity<URLCommunityEmailDTO> communityEmail(@RequestParam(name = "city") String city) {
         try {
+            HttpStatus responseHTTP = null;
             URLCommunityEmailDTO responseDTO = alertsService.getURLCommunityEmailDTO(city);
-            return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+
+            if(responseDTO == null){
+                responseHTTP = HttpStatus.NO_CONTENT;
+            } else {
+                responseHTTP = HttpStatus.OK;
+            }
+
+            return new ResponseEntity<>(responseDTO,responseHTTP);
         } catch (Exception e) {
             return new ResponseEntity<>(null,HttpStatus.INTERNAL_SERVER_ERROR);
         }
