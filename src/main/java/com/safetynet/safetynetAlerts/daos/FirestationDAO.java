@@ -11,31 +11,28 @@ public interface FirestationDAO {
      *
      * @param address value to set for address attribute
      * @param number  value to set for number attribute
-     * @throws Exception for data access failure
      * @return operation success
      */
     public boolean add(final String address,
-                       final int number) throws Exception;
+                       final int number);
 
     /**
      * Update specific Firestation number instance from database.
      *
      * @param address value to set for address attribute
      * @param number  value to set for number attribute
-     * @throws Exception for data access failure
      * @return operation success
      */
     public boolean update(final String address,
-                          final int number) throws Exception;
+                          final int number);
 
     /**
      * Delete Firestation mapping(s) by number from database.
      *
      * @param number Firestation(s) to delete number attribute value
-     * @throws Exception for data access failure
      * @return operation success
      */
-    public boolean delete(final int number) throws Exception;
+    public boolean delete(final int number);
 
     /**
      * Delete specified address Firestation mapping from database.

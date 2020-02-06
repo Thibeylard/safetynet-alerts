@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.daos.PersonDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
@@ -9,6 +10,7 @@ public class PersonServiceImpl implements PersonService {
 
     private PersonDAO personDAO;
 
+    @Autowired
     public PersonServiceImpl(PersonDAO personDAO) {
         this.personDAO = personDAO;
     }
@@ -19,7 +21,7 @@ public class PersonServiceImpl implements PersonService {
      */
     @Override
     public boolean add(String firstName, String lastName, String address, String city, String zip, String phone, String email) {
-        return false;
+        return this.personDAO.add(firstName, lastName, address, city, zip, phone, email);
     }
 
     /**
@@ -27,7 +29,7 @@ public class PersonServiceImpl implements PersonService {
      */
     @Override
     public boolean update(String firstName, String lastName, MultiValueMap<String, String> optionalParams) {
-        return false;
+        return this.personDAO.update(firstName, lastName,optionalParams);
     }
 
     /**
@@ -35,6 +37,6 @@ public class PersonServiceImpl implements PersonService {
      */
     @Override
     public boolean delete(String firstName, String lastName) {
-        return false;
+        return this.personDAO.delete(firstName, lastName);
     }
 }

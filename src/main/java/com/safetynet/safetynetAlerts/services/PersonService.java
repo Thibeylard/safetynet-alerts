@@ -25,7 +25,7 @@ public interface PersonService {
      *
      * @param firstName value to set for firstName attribute
      * @param lastName  value to set for lastName attribute
-     * @param optionalParams values to set for Person (must contains at least one key)
+     * @param optionalParams optionalParams values to set for "keys" Person attributes (must contains at least one key)
      * @return operation success
      */
     boolean update(final String firstName, final String lastName, final MultiValueMap<String,String> optionalParams);

@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.daos.MedicalRecordDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
@@ -11,6 +12,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     private MedicalRecordDAO medicalRecordDAO;
 
+    @Autowired
     public MedicalRecordServiceImpl(MedicalRecordDAO medicalRecordDAO) {
         this.medicalRecordDAO = medicalRecordDAO;
     }

@@ -3,6 +3,7 @@ package com.safetynet.safetynetAlerts.daos;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class PersonDAOJsonFile implements PersonDAO {
                        final String city,
                        final String zip,
                        final String phone,
-                       final String email) throws Exception {
+                       final String email) {
         return false;
     }
 
@@ -44,11 +45,7 @@ public class PersonDAOJsonFile implements PersonDAO {
     @Override
     public boolean update(final String firstName,
                           final String lastName,
-                          final String address,
-                          final String city,
-                          final String zip,
-                          final String phone,
-                          final String email) throws Exception {
+                          final MultiValueMap<String, String> optionalParams) {
         return false;
     }
 
@@ -59,7 +56,7 @@ public class PersonDAOJsonFile implements PersonDAO {
      */
     @Override
     public boolean delete(final String firstName,
-                          final String lastName) throws Exception {
+                          final String lastName) {
         return false;
     }
 

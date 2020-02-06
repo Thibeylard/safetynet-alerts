@@ -52,7 +52,7 @@ public class MedicalRecordController {
         }
 
         if(allergies != null) {
-            optionalParameters.addAll("allergies", medications);
+            optionalParameters.addAll("allergies", allergies);
         }
 
         if(optionalParameters.isEmpty()){

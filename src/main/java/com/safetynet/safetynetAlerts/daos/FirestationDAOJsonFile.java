@@ -29,7 +29,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      */
     @Override
     public boolean add(final String address,
-                       final int number) throws Exception {
+                       final int number) {
         return false;
     }
 
@@ -38,7 +38,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      */
     @Override
     public boolean update(final String address,
-                          final int number) throws Exception {
+                          final int number) {
         return false;
     }
 
@@ -46,7 +46,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public boolean delete(final int number) throws Exception {
+    public boolean delete(final int number) {
         return false;
     }
 

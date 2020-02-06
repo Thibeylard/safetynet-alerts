@@ -3,6 +3,7 @@ package com.safetynet.safetynetAlerts.daos;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
                        final String lastName,
                        final String birthDate,
                        final List<String> medications,
-                       final List<String> allergies) throws Exception {
+                       final List<String> allergies) {
         return false;
     }
 
@@ -42,9 +43,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
     @Override
     public boolean update(final String firstName,
                           final String lastName,
-                          final String birthDate,
-                          final List<String> medications,
-                          final List<String> allergies) throws Exception {
+                          final MultiValueMap<String, String> optionalParams) {
         return false;
     }
 
@@ -53,7 +52,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
      */
     @Override
     public boolean delete(final String firstName,
-                          final String lastName) throws Exception {
+                          final String lastName) {
         return false;
     }
 
