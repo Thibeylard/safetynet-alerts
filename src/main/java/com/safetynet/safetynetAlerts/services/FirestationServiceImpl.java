@@ -19,7 +19,7 @@ public class FirestationServiceImpl implements FirestationService {
      */
     @Override
     public boolean add(String address, int number) {
-        return false;
+        return this.firestationDAO.add(address,number);
     }
 
     /**
@@ -27,7 +27,7 @@ public class FirestationServiceImpl implements FirestationService {
      */
     @Override
     public boolean update(String address, int number) {
-        return false;
+        return this.firestationDAO.update(address,number);
     }
 
     /**
@@ -35,7 +35,7 @@ public class FirestationServiceImpl implements FirestationService {
      */
     @Override
     public boolean delete(int number) {
-        return false;
+        return this.firestationDAO.delete(number);
     }
 
     /**
@@ -43,6 +43,6 @@ public class FirestationServiceImpl implements FirestationService {
      */
     @Override
     public boolean delete(String address) {
-        return false;
+        return this.firestationDAO.delete(address);
     }
 }

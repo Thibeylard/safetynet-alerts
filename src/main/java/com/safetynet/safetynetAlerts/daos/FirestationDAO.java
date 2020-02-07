@@ -38,10 +38,9 @@ public interface FirestationDAO {
      * Delete specified address Firestation mapping from database.
      *
      * @param address Firestation to delete address attribute value
-     * @throws Exception for data access failure
      * @return operation success
      */
-    public boolean delete(final String address) throws Exception;
+    public boolean delete(final String address);
 
     /**
      * Get Firestation address list with specified number as number.

@@ -28,7 +28,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                        final String birthDate,
                        final List<String> medications,
                        final List<String> allergies) {
-        return false;
+        return this.medicalRecordDAO.add(firstName, lastName, birthDate, medications, allergies);
     }
 
     /**
@@ -40,7 +40,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                           final Optional<String> birthDate,
                           final Optional<List<String>> medications,
                           final Optional<List<String>> allergies) {
-        return false;
+        return this.medicalRecordDAO.update(firstName, lastName, birthDate, medications, allergies);
     }
 
     /**
@@ -49,6 +49,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     @Override
     public boolean delete(final String firstName,
                           final String lastName) {
-        return false;
+        return this.medicalRecordDAO.delete(firstName, lastName);
     }
 }

@@ -54,7 +54,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public boolean delete(final String address) throws Exception {
+    public boolean delete(final String address) {
         return false;
     }
 

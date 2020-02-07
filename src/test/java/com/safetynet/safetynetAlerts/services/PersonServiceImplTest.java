@@ -1,22 +1,19 @@
 package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.daos.PersonDAO;
-import com.safetynet.safetynetAlerts.daos.PersonDAOJsonFile;
 import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -31,16 +28,6 @@ class PersonServiceImplTest {
 
     @Autowired
     private PersonService personService;
-
-    private MultiValueMap<String, String> optionalParams = new LinkedMultiValueMap<String, String>();
-
-
-    @Before
-    public void setUp() {
-        optionalParams.add("address", "address");
-        optionalParams.add("city", "city");
-        optionalParams.add("zip", "zip");
-    }
 
     //    ------------------------------------------------------------------------------ ADD
     //    -------------------------------------------------------------------------------------
@@ -89,30 +76,45 @@ class PersonServiceImplTest {
     @Nested
     @DisplayName("update()")
     class updateTestMethods {
-/*        @Test
+        @Test
         void Given_validParameters_When_updatePerson_Then_returnTrue() {
-
             when(mockPersonDAO.update("firstName",
                     "lastName",
-                    optionalParams))
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.ofNullable("phone"),
+                    Optional.empty()))
                     .thenReturn(true);
             assertTrue(personService.update(
                     "firstName",
                     "lastName",
-                    optionalParams));
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.ofNullable("phone"),
+                    Optional.empty()));
         }
 
         @Test
         void Given_validParametersButDAOErrorOccurs_When_updatePerson_Then_returnFalse() {
             when(mockPersonDAO.update("firstName",
                     "lastName",
-                    optionalParams))
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.ofNullable("phone"),
+                    Optional.empty()))
                     .thenReturn(false);
             assertFalse(personService.update(
                     "firstName",
                     "lastName",
-                    optionalParams));
-        }*/
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.ofNullable("phone"),
+                    Optional.empty()));
+        }
     }
 
     //    ------------------------------------------------------------------------------ DELETE
