@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class PersonDAOJsonFile implements PersonDAO {
@@ -45,14 +46,18 @@ public class PersonDAOJsonFile implements PersonDAO {
     @Override
     public boolean update(final String firstName,
                           final String lastName,
-                          final MultiValueMap<String, String> optionalParams) {
+                          final Optional<String> address,
+                          final Optional<String> city,
+                          final Optional<String> zip,
+                          final Optional<String> phone,
+                          final Optional<String> email) {
         return false;
     }
 
     /**
-     * @see PersonDAO
      * @param firstName
      * @param lastName
+     * @see PersonDAO
      */
     @Override
     public boolean delete(final String firstName,
@@ -61,9 +66,9 @@ public class PersonDAOJsonFile implements PersonDAO {
     }
 
     /**
-     * @see PersonDAO
      * @param firstName
      * @param lastName
+     * @see PersonDAO
      */
     @Override
     public Person getFromName(final String firstName,
@@ -83,8 +88,8 @@ public class PersonDAOJsonFile implements PersonDAO {
     }
 
     /**
-     * @see PersonDAO
      * @param address
+     * @see PersonDAO
      */
     @Override
     public List<Person> getFromAddress(final String address) throws Exception {

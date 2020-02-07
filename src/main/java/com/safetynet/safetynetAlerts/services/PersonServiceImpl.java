@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Optional;
+
 @Service
 public class PersonServiceImpl implements PersonService {
 
@@ -28,8 +30,14 @@ public class PersonServiceImpl implements PersonService {
      * @see PersonService update()
      */
     @Override
-    public boolean update(String firstName, String lastName, MultiValueMap<String, String> optionalParams) {
-        return this.personDAO.update(firstName, lastName,optionalParams);
+    public boolean update(final String firstName,
+                          final String lastName,
+                          final Optional<String> address,
+                          final Optional<String> city,
+                          final Optional<String> zip,
+                          final Optional<String> phone,
+                          final Optional<String> email) {
+        return this.personDAO.update(firstName, lastName, address, city, zip, phone, email);
     }
 
     /**

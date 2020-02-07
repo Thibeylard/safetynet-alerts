@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MedicalRecordServiceImpl implements MedicalRecordService {
@@ -22,7 +23,11 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
      * @see MedicalRecordService add()
      */
     @Override
-    public boolean add(String firstName, String lastName, String birthDate, List<String> medications, List<String> allergies) {
+    public boolean add(final String firstName,
+                       final String lastName,
+                       final String birthDate,
+                       final List<String> medications,
+                       final List<String> allergies) {
         return false;
     }
 
@@ -30,7 +35,11 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
      * @see MedicalRecordService update()
      */
     @Override
-    public boolean update(String firstName, String lastName, MultiValueMap<String, String> optionalParams) {
+    public boolean update(final String firstName,
+                          final String lastName,
+                          final Optional<String> birthDate,
+                          final Optional<List<String>> medications,
+                          final Optional<List<String>> allergies) {
         return false;
     }
 
@@ -38,7 +47,8 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
      * @see MedicalRecordService delete()
      */
     @Override
-    public boolean delete(String firstName, String lastName) {
+    public boolean delete(final String firstName,
+                          final String lastName) {
         return false;
     }
 }

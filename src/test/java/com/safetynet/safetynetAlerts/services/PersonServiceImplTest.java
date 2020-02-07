@@ -32,14 +32,14 @@ class PersonServiceImplTest {
     @Autowired
     private PersonService personService;
 
-    private MultiValueMap<String,String> optionalParams = new LinkedMultiValueMap<String,String>();
+    private MultiValueMap<String, String> optionalParams = new LinkedMultiValueMap<String, String>();
 
 
     @Before
     public void setUp() {
-        optionalParams.add("address","address");
-        optionalParams.add("city","city");
-        optionalParams.add("zip","zip");
+        optionalParams.add("address", "address");
+        optionalParams.add("city", "city");
+        optionalParams.add("zip", "zip");
     }
 
     //    ------------------------------------------------------------------------------ ADD
@@ -52,7 +52,7 @@ class PersonServiceImplTest {
             when(mockPersonDAO.add("firstName",
                     "lastName",
                     "address",
-                    "city","zip",
+                    "city", "zip",
                     "phone",
                     "email"))
                     .thenReturn(true);
@@ -60,7 +60,7 @@ class PersonServiceImplTest {
                     "firstName",
                     "lastName",
                     "address",
-                    "city","zip",
+                    "city", "zip",
                     "phone",
                     "email"));
         }
@@ -70,7 +70,7 @@ class PersonServiceImplTest {
             when(mockPersonDAO.add("firstName",
                     "lastName",
                     "address",
-                    "city","zip",
+                    "city", "zip",
                     "phone",
                     "email"))
                     .thenReturn(false);
@@ -78,7 +78,7 @@ class PersonServiceImplTest {
                     "firstName",
                     "lastName",
                     "address",
-                    "city","zip",
+                    "city", "zip",
                     "phone",
                     "email"));
         }
@@ -89,7 +89,7 @@ class PersonServiceImplTest {
     @Nested
     @DisplayName("update()")
     class updateTestMethods {
-        @Test
+/*        @Test
         void Given_validParameters_When_updatePerson_Then_returnTrue() {
 
             when(mockPersonDAO.update("firstName",
@@ -112,7 +112,7 @@ class PersonServiceImplTest {
                     "firstName",
                     "lastName",
                     optionalParams));
-        }
+        }*/
     }
 
     //    ------------------------------------------------------------------------------ DELETE

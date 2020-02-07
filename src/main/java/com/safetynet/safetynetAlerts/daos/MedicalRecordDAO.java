@@ -4,6 +4,7 @@ import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MedicalRecordDAO {
 
@@ -26,14 +27,18 @@ public interface MedicalRecordDAO {
     /**
      * Update specific MedicalRecord from database.
      *
-     * @param firstName      value to set for firstName attribute
-     * @param lastName       value to set for lastName attribute
-     * @param optionalParams values to set for "keys" Person attributes (must contains at least one key)
+     * @param firstName   value to set for firstName attribute
+     * @param lastName    value to set for lastName attribute
+     * @param birthDate   optional value to set for birthDate attribute
+     * @param medications optional value to set for birthDate attribute
+     * @param allergies   optional value to set for birthDate attribute
      * @return operation success
      */
     public boolean update(final String firstName,
                           final String lastName,
-                          final MultiValueMap<String, String> optionalParams);
+                          final Optional<String> birthDate,
+                          final Optional<List<String>> medications,
+                          final Optional<List<String>> allergies);
 
     /**
      * Delete specific MedicalRecord from database.

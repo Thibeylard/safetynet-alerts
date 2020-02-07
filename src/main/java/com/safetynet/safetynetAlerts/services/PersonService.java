@@ -3,6 +3,8 @@ package com.safetynet.safetynetAlerts.services;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Optional;
+
 @Service
 public interface PersonService {
 
@@ -25,10 +27,20 @@ public interface PersonService {
      *
      * @param firstName value to set for firstName attribute
      * @param lastName  value to set for lastName attribute
-     * @param optionalParams optionalParams values to set for "keys" Person attributes (must contains at least one key)
+     * @param address   optional value to set for address attribute
+     * @param city      optional value to set for city attribute
+     * @param zip       optional value to set for zip attribute
+     * @param phone     optional value to set for phone attribute
+     * @param email     optional value to set for email attribute
      * @return operation success
      */
-    boolean update(final String firstName, final String lastName, final MultiValueMap<String,String> optionalParams);
+    boolean update(final String firstName,
+                   final String lastName,
+                   final Optional<String> address,
+                   final Optional<String> city,
+                   final Optional<String> zip,
+                   final Optional<String> phone,
+                   final Optional<String> email);
 
     /**
      * Pass parameters from controllers to DAO to delete specific Person from database.

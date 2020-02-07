@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
@@ -43,7 +44,9 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
     @Override
     public boolean update(final String firstName,
                           final String lastName,
-                          final MultiValueMap<String, String> optionalParams) {
+                          final Optional<String> birthDate,
+                          final Optional<List<String>> medications,
+                          final Optional<List<String>> allergies) {
         return false;
     }
 

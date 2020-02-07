@@ -4,6 +4,7 @@ import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PersonDAO {
 
@@ -30,14 +31,22 @@ public interface PersonDAO {
     /**
      * Update specific Person from database.
      *
-     * @param firstName      value to set for firstName attribute
-     * @param lastName       value to set for lastName attribute
-     * @param optionalParams values to set for "keys" Person attributes (must contains at least one key)
+     * @param firstName value to set for firstName attribute
+     * @param lastName  value to set for lastName attribute
+     * @param address   optional value to set for address attribute
+     * @param city      optional value to set for city attribute
+     * @param zip       optional value to set for zip attribute
+     * @param phone     optional value to set for phone attribute
+     * @param email     optional value to set for email attribute
      * @return operation success
      */
     public boolean update(final String firstName,
                           final String lastName,
-                          final MultiValueMap<String, String> optionalParams);
+                          final Optional<String> address,
+                          final Optional<String> city,
+                          final Optional<String> zip,
+                          final Optional<String> phone,
+                          final Optional<String> email);
 
     /**
      * Delete specific Person from database.

@@ -9,6 +9,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 public class PersonController {
 
@@ -37,37 +39,16 @@ public class PersonController {
     @PutMapping("/person")
     public ResponseEntity<HttpStatus> update(@RequestParam(name = "firstName") final String firstName,
                                              @RequestParam(name = "lastName") final String lastName,
-                                             @RequestParam(name = "address", required = false) String address,
-                                             @RequestParam(name = "city", required = false) String city,
-                                             @RequestParam(name = "zip", required = false) String zip,
-                                             @RequestParam(name = "phone", required = false) String phone,
-                                             @RequestParam(name = "email", required = false) String email) {
-        MultiValueMap<String, String> optionalParameters = new LinkedMultiValueMap<String, String>();
+                                             @RequestParam(name = "address", required = false) final Optional<String> address,
+                                             @RequestParam(name = "city", required = false) final Optional<String> city,
+                                             @RequestParam(name = "zip", required = false) final Optional<String> zip,
+                                             @RequestParam(name = "phone", required = false) final Optional<String> phone,
+                                             @RequestParam(name = "email", required = false) final Optional<String> email) {
 
-        if(address != null) {
-            optionalParameters.add("address", address);
-        }
-
-        if(city != null) {
-            optionalParameters.add("city", city);
-        }
-
-        if(zip != null) {
-            optionalParameters.add("zip", zip);
-        }
-
-        if(phone != null) {
-            optionalParameters.add("phone", phone);
-        }
-
-        if(email != null) {
-            optionalParameters.add("email", email);
-        }
-
-        if(optionalParameters.isEmpty()){
+        if (address.isEmpty() && city.isEmpty() && zip.isEmpty() & phone.isEmpty() && email.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (this.personService.update(firstName, lastName, optionalParameters)) {
+        if (this.personService.update(firstName, lastName, address, city, zip, phone, email)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

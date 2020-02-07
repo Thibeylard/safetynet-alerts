@@ -16,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -136,13 +137,15 @@ class MedicalRecordControllerTest {
             params.add("birthDate", "someBirthDate");
             // Works even with not all parameters
 
-            MultiValueMap<String,String> optParams = new LinkedMultiValueMap<String,String>();
-            optParams.add("birthDate",params.getFirst("birthDate"));
+            MultiValueMap<String, String> optParams = new LinkedMultiValueMap<String, String>();
+            optParams.add("birthDate", params.getFirst("birthDate"));
 
             when(mockMedicalRecordService.update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
-                    optParams))
+                    Optional.ofNullable(params.getFirst("birthDate")),
+                    Optional.empty(),
+                    Optional.empty()))
                     .thenReturn(true);
             try {
                 mvcMock.perform(put("/medicalRecord")
@@ -200,13 +203,15 @@ class MedicalRecordControllerTest {
             params.add("lastName", "someLastName");
             params.add("birthDate", "someBirthDate");
 
-            MultiValueMap<String,String> optParams = new LinkedMultiValueMap<String,String>();
-            optParams.add("birthDate",params.getFirst("birthDate"));
+            MultiValueMap<String, String> optParams = new LinkedMultiValueMap<String, String>();
+            optParams.add("birthDate", params.getFirst("birthDate"));
 
             when(mockMedicalRecordService.update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
-                    optParams))
+                    Optional.ofNullable(params.getFirst("birthDate")),
+                    Optional.empty(),
+                    Optional.empty()))
                     .thenReturn(false);
             try {
                 mvcMock.perform(put("/medicalRecord")
