@@ -37,7 +37,7 @@ public class PersonDAOJsonFile implements PersonDAO {
                        final String zip,
                        final String phone,
                        final String email) {
-        return false;
+        return jsonFileDatabase.addPerson(firstName, lastName, address, city, zip, phone, email);
     }
 
     /**
@@ -51,7 +51,7 @@ public class PersonDAOJsonFile implements PersonDAO {
                           final Optional<String> zip,
                           final Optional<String> phone,
                           final Optional<String> email) {
-        return false;
+        return jsonFileDatabase.updatePerson(firstName, lastName, address, city, zip, phone, email);
     }
 
     /**
@@ -60,7 +60,7 @@ public class PersonDAOJsonFile implements PersonDAO {
     @Override
     public boolean delete(final String firstName,
                           final String lastName) {
-        return false;
+        return jsonFileDatabase.deletePerson(firstName, lastName);
     }
 
     /**

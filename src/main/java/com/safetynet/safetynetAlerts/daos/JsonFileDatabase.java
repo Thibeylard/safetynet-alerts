@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class JsonFileDatabase {
@@ -48,97 +50,73 @@ public class JsonFileDatabase {
         });
     }
 
-    //    ---------------------------------------------------------------------------------------- Firestation
 
-    public boolean addFirestation(Firestation firestation) throws IOException {
+    //    ---------------------------------------------------------------------------------------- FIRESTATION
+
+    public boolean addFirestation(final String address, final int number) {
         return false;
     }
 
-    public boolean updateFirestation(Firestation firestation) throws IOException {
+    public boolean updateFirestation(final String address, final int number) {
         return false;
     }
 
-    public List<Firestation> getFirestations() throws IOException {
-        return this.safetynetAlertsData.firestations;
-    }
-
-    public Firestation getFirestation(String address) throws IOException {
-
-        return null;
-    }
-
-    public List<String> getFirestationAddresses(int number) throws IOException {
-        return null;
-    }
-
-    //    ---------------------------------------------------------------------------------------- MedicalRecord
-
-    public boolean addMedicalRecord(MedicalRecord medicalRecord) throws IOException {
+    public boolean deleteFirestation(final int number) {
         return false;
     }
 
-    public boolean updateMedicalRecord(MedicalRecord medicalRecord) throws IOException {
+    public boolean deleteFirestation(final String address) {
         return false;
     }
 
-    public List<MedicalRecord> getMedicalRecords() throws IOException {
-        return this.safetynetAlertsData.medicalRecords;
-    }
+    //    ---------------------------------------------------------------------------------------- MEDICALRECORD
 
-    public MedicalRecord getMedicalRecord(String firstName, String lastName) throws IOException {
-        return null;
-    }
-
-    public MedicalRecord getPersonMedicalRecord(String firstName, String lastName) throws IOException {
-        return null;
-    }
-
-    public String getPersonAge(String firstName, String lastName) throws IOException {
-        return null;
-    }
-
-    public List<MedicalRecord> getAdultMedicalRecords() throws IOException {
-        return null;
-    }
-
-    public List<MedicalRecord> getChildrenMedicalRecords() throws IOException {
-        return null;
-    }
-
-
-
-    //    ---------------------------------------------------------------------------------------- Person
-
-    public boolean addPerson(Person person) throws IOException {
+    public boolean addMedicalRecord(final String firstName,
+                                    final String lastName,
+                                    final String birthDate,
+                                    final List<String> medications,
+                                    final List<String> allergies) {
         return false;
     }
 
-    public boolean updatePerson(Person person) throws IOException {
+    public boolean updateMedicalRecord(final String firstName,
+                                       final String lastName,
+                                       final Optional<String> birthDate,
+                                       final Optional<List<String>> medications,
+                                       final Optional<List<String>> allergies) {
         return false;
     }
 
-    public List<Person> getPersons() throws IOException {
-        return this.safetynetAlertsData.persons;
+    public boolean deleteMedicalRecord(final String firstName,
+                                       final String lastName) {
+        return false;
     }
 
-    public Person getPerson(String firstName, String lastName) throws IOException {
-        return null;
+    //    ---------------------------------------------------------------------------------------- PERSON
+
+    public boolean addPerson(final String firstName,
+                             final String lastName,
+                             final String address,
+                             final String city,
+                             final String zip,
+                             final String phone,
+                             final String email) {
+        return false;
     }
 
-    public Person getFromName(final String firstName, final String lastName) throws IOException {
-        return null;
+    public boolean updatePerson(final String firstName,
+                                final String lastName,
+                                final Optional<String> address,
+                                final Optional<String> city,
+                                final Optional<String> zip,
+                                final Optional<String> phone,
+                                final Optional<String> email) {
+        return false;
     }
 
-    public List<Person> getFromAddress(final String address) throws IOException {
-        return null;
-    }
-
-    public List<Person> getFromName(final String lastName) throws IOException  {
-        return null;
-    }
-
-    public List<Person> getCommunity(final String city) throws IOException {
-        return null;
+    public boolean deletePerson(final String firstName,
+                                final String lastName) {
+        return false;
     }
 
 }

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@DisplayName("MedicalRecord Tests on :")
+@DisplayName("MedicalRecordService Tests on :")
 class MedicalRecordServiceImplTest {
 
     @MockBean

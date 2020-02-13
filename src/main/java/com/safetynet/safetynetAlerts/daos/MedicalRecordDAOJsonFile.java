@@ -36,7 +36,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
                        final String birthDate,
                        final List<String> medications,
                        final List<String> allergies) {
-        return false;
+        return jsonFileDatabase.addMedicalRecord(firstName, lastName, birthDate, medications, allergies);
     }
 
     /**
@@ -48,7 +48,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
                           final Optional<String> birthDate,
                           final Optional<List<String>> medications,
                           final Optional<List<String>> allergies) {
-        return false;
+        return jsonFileDatabase.updateMedicalRecord(firstName, lastName, birthDate, medications, allergies);
     }
 
     /**
@@ -57,7 +57,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
     @Override
     public boolean delete(final String firstName,
                           final String lastName) {
-        return false;
+        return jsonFileDatabase.deleteMedicalRecord(firstName, lastName);
     }
 
     /**

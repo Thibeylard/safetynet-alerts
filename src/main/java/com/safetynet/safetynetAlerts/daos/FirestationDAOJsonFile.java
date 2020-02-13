@@ -30,7 +30,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
     @Override
     public boolean add(final String address,
                        final int number) {
-        return false;
+        return this.jsonFileDatabase.addFirestation(address, number);
     }
 
     /**
@@ -39,7 +39,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
     @Override
     public boolean update(final String address,
                           final int number) {
-        return false;
+        return this.jsonFileDatabase.updateFirestation(address, number);
     }
 
     /**
@@ -47,7 +47,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      */
     @Override
     public boolean delete(final int number) {
-        return false;
+        return this.jsonFileDatabase.deleteFirestation(number);
     }
 
     /**
@@ -55,7 +55,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      */
     @Override
     public boolean delete(final String address) {
-        return false;
+        return this.jsonFileDatabase.deleteFirestation(address);
     }
 
     /**
