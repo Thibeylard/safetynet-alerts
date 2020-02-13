@@ -1,14 +1,12 @@
 package com.safetynet.safetynetAlerts.daos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.safetynet.safetynetAlerts.dtos.JsonFileDatabaseDTO;
 import com.safetynet.safetynetAlerts.models.Firestation;
-import com.safetynet.safetynetAlerts.models.MedicalRecord;
-import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,53 +18,67 @@ import java.util.stream.Collectors;
 public class JsonFileDatabase {
 
     private final ObjectMapper mapper;
-    private SafetynetAlertsData safetynetAlertsData = null;
+    private JsonFileDatabaseDTO jsonFileDTO;
+    private File dataFile;
 
-    /* ---------------- SafetynetAlerts Datafile Model ---------------- */
-    @JsonPropertyOrder({"persons", "firestations", "medicalrecords"})
-    private static class SafetynetAlertsData {
-        private List<Person> persons;
-        private List<Firestation> firestations;
-        private List<MedicalRecord> medicalRecords;
-
-        public SafetynetAlertsData(@JsonProperty("persons") List<Person> pPersons,
-                                   @JsonProperty("firestations") List<Firestation> pFirestations,
-                                   @JsonProperty("medicalrecords") List<MedicalRecord> pMedicalRecords) {
-            this.persons = pPersons;
-            this.firestations = pFirestations;
-            this.medicalRecords = pMedicalRecords;
-        }
-    }
 
     /**
+     * Constructor.
+     *
      * @param pMapper Autoriwed ObjectMapper Singleton
      * @throws IOException Handles dataSrc file related errors
      */
     @Autowired
     public JsonFileDatabase(final ObjectMapper pMapper) throws IOException {
         this.mapper = pMapper;
-        String dataSrc = "src/main/resources/static/data.json";
-        this.safetynetAlertsData = mapper.convertValue(mapper.readTree(new File(dataSrc)), new TypeReference<SafetynetAlertsData>() {
+        this.dataFile = new File("src/main/resources/static/data.json");
+        this.jsonFileDTO = mapper.convertValue(mapper.readTree(dataFile), new TypeReference<JsonFileDatabaseDTO>() {
         });
     }
 
+    /**
+     * Setter for dataFile attribute
+     *
+     * @param dataFile new File to set.
+     */
+    public void setDataFile(File dataFile) {
+        this.dataFile = dataFile;
+    }
 
-    //    ---------------------------------------------------------------------------------------- FIRESTATION
+    private boolean writeDataToJsonFile() {
+        try {
+            mapper.writeValue(dataFile, this.jsonFileDTO);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+//    ---------------------------------------------------------------------------------------- FIRESTATION
 
     public boolean addFirestation(final String address, final int number) {
-        return false;
+        this.jsonFileDTO.getFirestations().add(new Firestation(address, number));
+
+        return writeDataToJsonFile();
     }
 
     public boolean updateFirestation(final String address, final int number) {
-        return false;
+        this.jsonFileDTO.getFirestations().stream()
+                .filter(firestation -> firestation.getAddress().equals(address))
+                .forEach(firestation -> firestation.setStation(number));
+
+        return writeDataToJsonFile();
     }
 
     public boolean deleteFirestation(final int number) {
-        return false;
+        jsonFileDTO.getFirestations().removeIf(firestation -> firestation.getStation() == number);
+
+        return writeDataToJsonFile();
     }
 
     public boolean deleteFirestation(final String address) {
-        return false;
+        jsonFileDTO.getFirestations().removeIf(firestation -> firestation.getAddress().equals(address));
+
+        return writeDataToJsonFile();
     }
 
     //    ---------------------------------------------------------------------------------------- MEDICALRECORD
