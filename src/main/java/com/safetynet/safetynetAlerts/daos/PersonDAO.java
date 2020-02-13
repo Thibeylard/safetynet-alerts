@@ -1,5 +1,6 @@
 package com.safetynet.safetynetAlerts.daos;
 
+import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.util.MultiValueMap;
 
@@ -86,6 +87,15 @@ public interface PersonDAO {
      * @throws Exception for data access failure
      */
     public List<Person> getFromAddress(final String address) throws Exception;
+
+    /**
+     * Get Persons leaving in all addresses in the list from database.
+     *
+     * @param addresses List of addresses of which to get Persons
+     * @return List of Person instance
+     * @throws Exception for data access failure
+     */
+    public List<Person> getFromAddress(final List<String> addresses) throws Exception;
 
     /**
      * Get list of Persons by city from database.

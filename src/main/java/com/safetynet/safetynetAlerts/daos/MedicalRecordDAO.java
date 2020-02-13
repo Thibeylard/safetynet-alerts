@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.daos;
 
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
+import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
@@ -62,6 +63,15 @@ public interface MedicalRecordDAO {
                                                 final String lastName) throws Exception;
 
     /**
+     * Get MedicalRecords of all Persons in the list from database.
+     *
+     * @param persons List of Persons of which to get MedicalRecords
+     * @return List of MedicalRecord instance
+     * @throws Exception for data access failure
+     */
+    public List<MedicalRecord> getPersonsMedicalRecord(final List<Person> persons) throws Exception;
+
+    /**
      * Get adults MedicalRecords from database.
      *
      * @return MedicalRecord instance
@@ -76,16 +86,5 @@ public interface MedicalRecordDAO {
      * @throws Exception for data access failure
      */
     public List<MedicalRecord> getChildrenMedicalRecords() throws Exception;
-
-    /**
-     * Get specific MedicalRecord.dateBirth (converted as age) by name from database.
-     *
-     * @param firstName firstName value to search
-     * @param lastName  lastName value to search
-     * @return age value as String instance
-     * @throws Exception for data access failure
-     */
-    public String getPersonAge(final String firstName,
-                               final String lastName) throws Exception;
 
 }

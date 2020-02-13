@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.daos;
 
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
+import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
@@ -69,6 +70,14 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
     }
 
     /**
+     * @see MedicalRecordDAO
+     */
+    @Override
+    public List<MedicalRecord> getPersonsMedicalRecord(List<Person> persons) throws Exception {
+        return null;
+    }
+
+    /**
      * Get adults MedicalRecords from database.
      *
      * @return MedicalRecord instance
@@ -88,12 +97,4 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
         return null;
     }
 
-    /**
-     * @see MedicalRecordDAO
-     */
-    @Override
-    public String getPersonAge(final String firstName,
-                               final String lastName) throws Exception {
-        return null;
-    }
 }

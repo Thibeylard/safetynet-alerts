@@ -10,18 +10,18 @@ public class Firestation {
      * address used as identifier. Final attribute.
      */
     private final String address;
-    private int number;
+    private int station;
 
     /**
      * Constructor used for JSON serialization and deserialization.
      *
      * @param address value to initialize address attribute
-     * @param number value to initialize number attribute
+     * @param station value to initialize number attribute
      */
     public Firestation(@JsonProperty("address") final String address,
-                       @JsonProperty("number") final int number) {
+                       @JsonProperty("station") final int station) {
         this.address = address;
-        this.number = number;
+        this.station = station;
     }
 
     //    -------------------------------------------------------------------- SETTERS
@@ -29,10 +29,10 @@ public class Firestation {
     /**
      * number attributer setter.
      *
-     * @param number new value for this.number
+     * @param station new value for this.number
      */
-    public void setNumber(int number) {
-        this.number = number;
+    public void setStation(int station) {
+        this.station = station;
     }
 
     //    -------------------------------------------------------------------- GETTERS
@@ -51,7 +51,7 @@ public class Firestation {
      *
      * @return this.number
      */
-    public int getNumber() {
-        return this.number;
+    public int getStation() {
+        return this.station;
     }
 }

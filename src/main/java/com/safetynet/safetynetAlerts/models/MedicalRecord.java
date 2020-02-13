@@ -3,6 +3,8 @@ package com.safetynet.safetynetAlerts.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @JsonPropertyOrder({"firstName", "lastName", "birthDate", "medications", "allergies"})
@@ -31,7 +33,7 @@ public class MedicalRecord {
      */
     public MedicalRecord(@JsonProperty("firstName") final String firstName,
                          @JsonProperty("lastName") final String lastName,
-                         @JsonProperty("birthDate") final String birthDate,
+                         @JsonProperty("birthdate") final String birthDate,
                          @JsonProperty("medications") final List<String> medications,
                          @JsonProperty("allergies") final List<String> allergies) {
         this.firstName = firstName;
@@ -97,6 +99,29 @@ public class MedicalRecord {
      */
     public String getBirthDate() {
         return this.birthDate;
+    }
+
+    /**
+     * Age value calculated using current date and birth date.
+     *
+     * @return age result
+     */
+    public int getAge() {
+        String[] currentDateParts = Instant.now().toString().split("T")[0].split("-");
+        // Instant.now date format is yyyy-mm-ddT...Z
+        int currentYear = Integer.parseInt(currentDateParts[0]);
+        int currentMonth = Integer.parseInt(currentDateParts[1]);
+        int currentDay = Integer.parseInt(currentDateParts[2]);
+
+        String[] dateBirthParts = this.birthDate.split("/");
+        // datebirth format is dd/mm/yyyy
+        int birthYear = Integer.parseInt(dateBirthParts[2]);
+        int birthMonth = Integer.parseInt(dateBirthParts[1]);
+        int birthDay = Integer.parseInt(dateBirthParts[0]);
+
+        boolean yearsBirthdayPassed = (currentMonth > birthMonth) || (currentMonth == birthMonth && currentDay > birthDay);
+
+        return yearsBirthdayPassed ? currentYear - birthYear : currentYear - birthYear - 1;
     }
 
     /**
