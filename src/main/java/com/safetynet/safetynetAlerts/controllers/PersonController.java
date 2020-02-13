@@ -1,13 +1,11 @@
 package com.safetynet.safetynetAlerts.controllers;
 
 import com.safetynet.safetynetAlerts.services.PersonService;
-import com.safetynet.safetynetAlerts.services.PersonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.tinylog.Logger;
 
 import java.util.Optional;
 
@@ -29,6 +27,16 @@ public class PersonController {
                                           @RequestParam(name = "zip") final String zip,
                                           @RequestParam(name = "phone") final String phone,
                                           @RequestParam(name = "email") final String email) {
+
+        Logger.debug("Person POST Request with parameters : "
+                + firstName + ", "
+                + lastName + ", "
+                + address + ", "
+                + city + ", "
+                + zip + ", "
+                + phone + ", "
+                + email);
+
         if (this.personService.add(firstName, lastName, address, city, zip, phone, email)) {
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
@@ -46,8 +54,20 @@ public class PersonController {
                                              @RequestParam(name = "email", required = false) final Optional<String> email) {
 
         if (address.isEmpty() && city.isEmpty() && zip.isEmpty() & phone.isEmpty() && email.isEmpty()) {
+            Logger.error("Person PUT request error : No parameters to update.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        Logger.debug("Person PUT Request on "
+                + firstName + ", "
+                + lastName
+                + "with parameters : "
+                + (address.isPresent() ? address  + ", " : "no address, ")
+                + (city.isPresent() ? city + ", " : "no city, ")
+                + (zip.isPresent() ? zip + ", " : "no zip, ")
+                + (phone.isPresent() ? phone + ", " : "no phone, ")
+                + (email.isPresent() ? email : "no email"));
+
         if (this.personService.update(firstName, lastName, address, city, zip, phone, email)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
@@ -58,6 +78,7 @@ public class PersonController {
     @DeleteMapping("/person")
     public ResponseEntity<HttpStatus> delete(@RequestParam(name = "firstName") final String firstName,
                                              @RequestParam(name = "lastName") final String lastName) {
+        Logger.debug("Person DELETE Request on : " + firstName + " " + lastName);
         if (this.personService.delete(firstName, lastName)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {

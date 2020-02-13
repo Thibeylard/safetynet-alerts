@@ -4,6 +4,7 @@ import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
+import org.tinylog.Logger;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,7 @@ public class PersonDAOJsonFile implements PersonDAO {
                        final String zip,
                        final String phone,
                        final String email) {
+        Logger.debug("Person DAO pass add request to JsonFileDatabase");
         return jsonFileDatabase.addPerson(firstName, lastName, address, city, zip, phone, email);
     }
 
@@ -51,6 +53,7 @@ public class PersonDAOJsonFile implements PersonDAO {
                           final Optional<String> zip,
                           final Optional<String> phone,
                           final Optional<String> email) {
+        Logger.debug("Person DAO pass update request to JsonFileDatabase");
         return jsonFileDatabase.updatePerson(firstName, lastName, address, city, zip, phone, email);
     }
 
@@ -60,6 +63,7 @@ public class PersonDAOJsonFile implements PersonDAO {
     @Override
     public boolean delete(final String firstName,
                           final String lastName) {
+        Logger.debug("Person DAO pass delete request to JsonFileDatabase");
         return jsonFileDatabase.deletePerson(firstName, lastName);
     }
 

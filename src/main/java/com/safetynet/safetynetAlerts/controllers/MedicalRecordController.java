@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.tinylog.Logger;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,12 @@ public class MedicalRecordController {
                                           @RequestParam(name = "birthDate") final String birthDate,
                                           @RequestParam(name = "medications") final List<String> medications,
                                           @RequestParam(name = "allergies") final List<String> allergies) {
+        Logger.debug("MedicalRecord POST Request with parameters : "
+                + firstName + ", "
+                + lastName + ", "
+                + birthDate + ", "
+                + medications + ", "
+                + allergies);
         if (this.medicalRecordService.add(firstName, lastName, birthDate, medications, allergies)) {
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
@@ -42,8 +49,18 @@ public class MedicalRecordController {
                                              @RequestParam(name = "allergies", required = false) final Optional<List<String>> allergies) {
 
         if (birthDate.isEmpty() && medications.isEmpty() && allergies.isEmpty()) {
+            Logger.error("MedicalRecord PUT request error : No parameters to update.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        Logger.debug("MedicalRecord PUT Request on "
+                + firstName + ", "
+                + lastName
+                + "with parameters : "
+                + (birthDate.isPresent() ? birthDate  + ", " : "no birthdate, ")
+                + (medications.isPresent() ? medications + ", " : "no medications, ")
+                + (allergies.isPresent() ? allergies : "no allergies"));
+
         if (this.medicalRecordService.update(firstName, lastName, birthDate, medications, allergies)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
@@ -54,6 +71,7 @@ public class MedicalRecordController {
     @DeleteMapping("/medicalRecord")
     public ResponseEntity<HttpStatus> delete(@RequestParam(name = "firstName") final String firstName,
                                              @RequestParam(name = "lastName") final String lastName) {
+        Logger.debug("MedicalRecord DELETE Request on : " + firstName + " " + lastName);
         if (this.medicalRecordService.delete(firstName, lastName)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {

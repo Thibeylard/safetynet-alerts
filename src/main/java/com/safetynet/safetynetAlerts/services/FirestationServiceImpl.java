@@ -3,6 +3,7 @@ package com.safetynet.safetynetAlerts.services;
 import com.safetynet.safetynetAlerts.daos.FirestationDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tinylog.Logger;
 
 @Service
 public class FirestationServiceImpl implements FirestationService {
@@ -19,6 +20,7 @@ public class FirestationServiceImpl implements FirestationService {
      */
     @Override
     public boolean add(String address, int number) {
+        Logger.debug("Firestation Service pass add request to DAO");
         return this.firestationDAO.add(address,number);
     }
 
@@ -27,6 +29,7 @@ public class FirestationServiceImpl implements FirestationService {
      */
     @Override
     public boolean update(String address, int number) {
+        Logger.debug("Firestation Service pass update request to DAO");
         return this.firestationDAO.update(address,number);
     }
 
@@ -35,6 +38,7 @@ public class FirestationServiceImpl implements FirestationService {
      */
     @Override
     public boolean delete(int number) {
+        Logger.debug("Firestation Service pass delete request to DAO");
         return this.firestationDAO.delete(number);
     }
 
@@ -43,6 +47,7 @@ public class FirestationServiceImpl implements FirestationService {
      */
     @Override
     public boolean delete(String address) {
+        Logger.debug("Firestation Service pass delete request to DAO");
         return this.firestationDAO.delete(address);
     }
 }

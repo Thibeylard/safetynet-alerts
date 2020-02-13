@@ -5,6 +5,7 @@ import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
+import org.tinylog.Logger;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
                        final String birthDate,
                        final List<String> medications,
                        final List<String> allergies) {
+        Logger.debug("MedicalRecord DAO pass add request to JsonFileDatabase");
         return jsonFileDatabase.addMedicalRecord(firstName, lastName, birthDate, medications, allergies);
     }
 
@@ -48,6 +50,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
                           final Optional<String> birthDate,
                           final Optional<List<String>> medications,
                           final Optional<List<String>> allergies) {
+        Logger.debug("MedicalRecord DAO pass update request to JsonFileDatabase");
         return jsonFileDatabase.updateMedicalRecord(firstName, lastName, birthDate, medications, allergies);
     }
 
@@ -57,6 +60,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
     @Override
     public boolean delete(final String firstName,
                           final String lastName) {
+        Logger.debug("MedicalRecord DAO pass delete request to JsonFileDatabase");
         return jsonFileDatabase.deleteMedicalRecord(firstName, lastName);
     }
 

@@ -3,6 +3,7 @@ package com.safetynet.safetynetAlerts.daos;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.tinylog.Logger;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
     @Override
     public boolean add(final String address,
                        final int number) {
+        Logger.debug("Firestation DAO pass add request to JsonFileDatabase");
         return this.jsonFileDatabase.addFirestation(address, number);
     }
 
@@ -39,6 +41,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
     @Override
     public boolean update(final String address,
                           final int number) {
+        Logger.debug("Firestation DAO pass update request to JsonFileDatabase");
         return this.jsonFileDatabase.updateFirestation(address, number);
     }
 
@@ -47,6 +50,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      */
     @Override
     public boolean delete(final int number) {
+        Logger.debug("Firestation DAO pass delete request to JsonFileDatabase");
         return this.jsonFileDatabase.deleteFirestation(number);
     }
 
@@ -55,6 +59,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      */
     @Override
     public boolean delete(final String address) {
+        Logger.debug("Firestation DAO pass delete request to JsonFileDatabase");
         return this.jsonFileDatabase.deleteFirestation(address);
     }
 
