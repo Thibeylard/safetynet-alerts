@@ -1,25 +1,31 @@
 package com.safetynet.safetynetAlerts.daos;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.safetynet.safetynetAlerts.dtos.JsonFileDatabaseDTO;
 import com.safetynet.safetynetAlerts.models.Firestation;
+import com.safetynet.safetynetAlerts.models.MedicalRecord;
+import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public class JsonFileDatabase {
 
-    private final ObjectMapper mapper;
+    private final ObjectMapper MAPPER;
+    private final File DATA;
+
     private JsonFileDatabaseDTO jsonFileDTO;
-    private File dataFile;
 
 
     /**
@@ -30,29 +36,22 @@ public class JsonFileDatabase {
      */
     @Autowired
     public JsonFileDatabase(final ObjectMapper pMapper) throws IOException {
-        this.mapper = pMapper;
-        this.dataFile = new File("src/main/resources/static/data.json");
-        this.jsonFileDTO = mapper.convertValue(mapper.readTree(dataFile), new TypeReference<JsonFileDatabaseDTO>() {
+        this.DATA = new File("src/main/resources/static/data.json");
+        this.MAPPER = pMapper;
+        this.jsonFileDTO = MAPPER.convertValue(MAPPER.readTree(DATA), new TypeReference<JsonFileDatabaseDTO>() {
         });
     }
 
-    /**
-     * Setter for dataFile attribute
-     *
-     * @param dataFile new File to set.
-     */
-    public void setDataFile(File dataFile) {
-        this.dataFile = dataFile;
-    }
 
     private boolean writeDataToJsonFile() {
         try {
-            mapper.writeValue(dataFile, this.jsonFileDTO);
+            MAPPER.writeValue(DATA, this.jsonFileDTO);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
+
 //    ---------------------------------------------------------------------------------------- FIRESTATION
 
     public boolean addFirestation(final String address, final int number) {
@@ -88,7 +87,15 @@ public class JsonFileDatabase {
                                     final String birthDate,
                                     final List<String> medications,
                                     final List<String> allergies) {
-        return false;
+        this.jsonFileDTO.getMedicalRecords().add(new MedicalRecord(
+                firstName,
+                lastName,
+                birthDate,
+                medications,
+                allergies
+        ));
+
+        return writeDataToJsonFile();
     }
 
     public boolean updateMedicalRecord(final String firstName,
@@ -96,12 +103,23 @@ public class JsonFileDatabase {
                                        final Optional<String> birthDate,
                                        final Optional<List<String>> medications,
                                        final Optional<List<String>> allergies) {
-        return false;
+        this.jsonFileDTO.getMedicalRecords().stream()
+                .filter(medicalRecord -> medicalRecord.getLastName().equals(lastName))
+                .filter(medicalRecord -> medicalRecord.getFirstName().equals(firstName))
+                .forEach(medicalRecord -> {
+                    birthDate.ifPresent(medicalRecord::setBirthDate);
+                    medications.ifPresent(medicalRecord::setMedications);
+                    allergies.ifPresent(medicalRecord::setAllergies);
+                });
+
+        return writeDataToJsonFile();
     }
 
     public boolean deleteMedicalRecord(final String firstName,
                                        final String lastName) {
-        return false;
+        jsonFileDTO.getMedicalRecords().removeIf(medicalRecord ->
+                medicalRecord.getFirstName().equals(firstName) && medicalRecord.getLastName().equals(lastName));
+        return writeDataToJsonFile();
     }
 
     //    ---------------------------------------------------------------------------------------- PERSON
@@ -113,7 +131,18 @@ public class JsonFileDatabase {
                              final String zip,
                              final String phone,
                              final String email) {
-        return false;
+        this.jsonFileDTO.getPersons().add(new Person(
+                firstName,
+                lastName,
+                address,
+                city,
+                zip,
+                phone,
+                email,
+                Optional.empty()
+        ));
+
+        return writeDataToJsonFile();
     }
 
     public boolean updatePerson(final String firstName,
@@ -123,12 +152,25 @@ public class JsonFileDatabase {
                                 final Optional<String> zip,
                                 final Optional<String> phone,
                                 final Optional<String> email) {
-        return false;
+        this.jsonFileDTO.getPersons().stream()
+                .filter(person -> person.getLastName().equals(lastName))
+                .filter(person -> person.getFirstName().equals(firstName))
+                .forEach(person -> {
+                    address.ifPresent(person::setAddress);
+                    city.ifPresent(person::setCity);
+                    zip.ifPresent(person::setZip);
+                    phone.ifPresent(person::setPhone);
+                    email.ifPresent(person::setEmail);
+                });
+
+        return writeDataToJsonFile();
     }
 
     public boolean deletePerson(final String firstName,
                                 final String lastName) {
-        return false;
+        jsonFileDTO.getPersons().removeIf(person ->
+                person.getFirstName().equals(firstName) && person.getLastName().equals(lastName));
+        return writeDataToJsonFile();
     }
 
 }

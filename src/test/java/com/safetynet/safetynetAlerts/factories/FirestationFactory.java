@@ -17,7 +17,7 @@ public class FirestationFactory {
      * @param station Firestation attribute value (Optional)
      * @return new Firestation
      */
-    public Firestation getFirestation(Optional<String> address,
+    public static Firestation getFirestation(Optional<String> address,
                                       Optional<Integer> station) {
         if (address.isEmpty()) {
             address = Optional.of(assignAddress().getName());
@@ -37,7 +37,7 @@ public class FirestationFactory {
      * @param station Firestation attribute value for all Firestations (Optional)
      * @return new Firestation List
      */
-    public List<Firestation> getFirestations(int count, Optional<Integer> station) {
+    public static List<Firestation> getFirestations(int count, Optional<Integer> station) {
         List<Firestation> firestations = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {

@@ -109,10 +109,7 @@ public class PersonFactory {
                     Optional.of(MedicalRecordFactory.getMedicalRecord(
                             false,
                             Optional.of(firstName),
-                            lastName,
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty()))));
+                            lastName))));
         }
         return persons;
     }
@@ -139,10 +136,7 @@ public class PersonFactory {
                     Optional.of(MedicalRecordFactory.getMedicalRecord(
                             true,
                             Optional.of(firstName),
-                            lastName,
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty()))));
+                            lastName))));
         }
         return persons;
     }

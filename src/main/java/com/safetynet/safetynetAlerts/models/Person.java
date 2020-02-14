@@ -168,6 +168,15 @@ public class Person {
     }
 
     /**
+     * medicalRecord attribute getter.
+     *
+     * @return this.medicalRecord
+     */
+    public Optional<MedicalRecord> getMedicalRecord() {
+        return medicalRecord;
+    }
+
+    /**
      * Age value calculated using current date and birth date.
      *
      * @return age result

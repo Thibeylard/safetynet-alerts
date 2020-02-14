@@ -68,17 +68,11 @@ public class MedicalRecordFactory {
      * @param isChild     birthDate will correspond to a less than 18 year old
      * @param firstName   MedicalRecord attribute value (Optional)
      * @param lastName    MedicalRecord attribute value (Optional)
-     * @param birthDate   MedicalRecord attribute value (Optional)
-     * @param medications MedicalRecord attribute value (Optional)
-     * @param allergies   MedicalRecord attribute value (Optional)
      * @return new MedicalRecord
      */
     public static MedicalRecord getMedicalRecord(boolean isChild,
                                                  Optional<String> firstName,
-                                                 Optional<String> lastName,
-                                                 Optional<String> birthDate,
-                                                 Optional<List<String>> medications,
-                                                 Optional<List<String>> allergies) {
+                                                 Optional<String> lastName) {
         if (firstName.isEmpty()) {
             firstName = Optional.of(generateName());
         }
@@ -87,18 +81,10 @@ public class MedicalRecordFactory {
             lastName = Optional.of(generateName());
         }
 
-        if (birthDate.isEmpty()) {
-            birthDate = Optional.of(generateBirthDate(isChild));
-        }
+        String birthDate = generateBirthDate(isChild);
+        List<String> medications = generateMedications();
+        List<String> allergies = generateAllergies();
 
-        if (medications.isEmpty()) {
-            medications = Optional.of(generateMedications());
-        }
-
-        if (allergies.isEmpty()) {
-            allergies = Optional.of(generateAllergies());
-        }
-
-        return new MedicalRecord(firstName.get(), lastName.get(), birthDate.get(), medications.get(), allergies.get());
+        return new MedicalRecord(firstName.get(), lastName.get(), birthDate, medications, allergies);
     }
 }
