@@ -67,6 +67,8 @@ public class PersonDAOJsonFile implements PersonDAO {
         return jsonFileDatabase.deletePerson(firstName, lastName);
     }
 
+    //TODO Enable asking for person related medical record  when ask for person.
+
     /**
      * @see PersonDAO
      */

@@ -222,17 +222,24 @@ class JsonFileDatabaseTest {
     @Nested
     @DisplayName("MedicalRecordDAO :")
     class MedicalRecordDAOMethods {
-        //    ------------------------------------------------------------------------------ ADD
+        //    --------------------------------------------------------------------------------- ADD
         //    -------------------------------------------------------------------------------------
         @Nested
         @DisplayName("add()")
         class addTestMethods {
             @Test
-            void Given_validParameters_When_addMedicalRecord_Then_returnTrue() {
+            void Given_medicalRecordsParameters_When_addMedicalRecord_Then_returnTrue() throws IOException {
+
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_addMedicalRecord_Then_returnFalse() {
+            void Given_firestationParameters_When_addFirestation_Then_createNewFirestation() throws IOException {
+
+            }
+
+            @Test
+            void Given_validParametersButIOExceptionOccurs_When_addFirestation_Then_returnFalse() throws IOException {
+
             }
         }
 
@@ -242,11 +249,18 @@ class JsonFileDatabaseTest {
         @DisplayName("update()")
         class updateTestMethods {
             @Test
-            void Given_validParameters_When_updateMedicalRecord_Then_returnTrue() {
+            void Given_firestationParameters_When_updateFirestation_Then_returnTrue() throws IOException {
+
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_updateMedicalRecord_Then_returnFalse() {
+            void Given_firestationParameters_When_updateFirestation_Then_firestationUpdated() throws IOException {
+
+            }
+
+            @Test
+            void Given_validParametersButIOExceptionOccurs_When_updateFirestation_Then_returnFalse() throws IOException {
+
             }
         }
 
@@ -255,12 +269,25 @@ class JsonFileDatabaseTest {
         @Nested
         @DisplayName("delete()")
         class deleteTestMethods {
+
             @Test
-            void Given_validParameters_When_deleteMedicalRecord_Then_returnTrue() {
+            void Given_firestationParameters_When_deleteFirestation_Then_returnTrue() throws IOException {
+
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_deleteMedicalRecord_Then_returnFalse() {
+            void Given_firestationParameters_When_deleteFirestationByAddress_Then_firestationDeleted() throws IOException {
+
+            }
+
+            @Test
+            void Given_firestationParameters_When_deleteFirestationByNumber_Then_noMoreFirestationWithNumber() throws IOException {
+
+            }
+
+            @Test
+            void Given_validParametersButIOExceptionOccurs_When_deleteFirestation_Then_returnFalse() throws IOException {
+
             }
         }
     }

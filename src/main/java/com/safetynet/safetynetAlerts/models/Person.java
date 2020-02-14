@@ -3,6 +3,9 @@ package com.safetynet.safetynetAlerts.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.time.Instant;
+import java.util.Optional;
+
 @JsonPropertyOrder({"firstName", "lastName", "address", "city", "zip", "phone", "email"})
 public class Person {
 
@@ -20,6 +23,7 @@ public class Person {
     private String zip;
     private String phone;
     private String email;
+    private Optional<MedicalRecord> medicalRecord;
 
     /**
      * Constructor used for JSON serialization and deserialization.
@@ -38,7 +42,8 @@ public class Person {
                   @JsonProperty("city") final String city,
                   @JsonProperty("zip") final String zip,
                   @JsonProperty("phone") final String phone,
-                  @JsonProperty("email") final String email) {
+                  @JsonProperty("email") final String email,
+                  final Optional<MedicalRecord> medicalRecord) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -46,6 +51,7 @@ public class Person {
         this.zip = zip;
         this.phone = phone;
         this.email = email;
+        this.medicalRecord = medicalRecord;
     }
 
     //    -------------------------------------------------------------------- SETTERS
@@ -159,5 +165,33 @@ public class Person {
      */
     public String getEmail() {
         return this.email;
+    }
+
+    /**
+     * Age value calculated using current date and birth date.
+     *
+     * @return age result
+     */
+    public int getAge() {
+        //TODO Refactored method with date parsing, date as parameter...
+        if (medicalRecord.isPresent()) {
+            String[] currentDateParts = Instant.now().toString().split("T")[0].split("-");
+            // Instant.now date format is yyyy-mm-ddT...Z
+            int currentYear = Integer.parseInt(currentDateParts[0]);
+            int currentMonth = Integer.parseInt(currentDateParts[1]);
+            int currentDay = Integer.parseInt(currentDateParts[2]);
+
+            String[] dateBirthParts = this.medicalRecord.get().getBirthDate().split("/");
+            // datebirth format is dd/mm/yyyy
+            int birthYear = Integer.parseInt(dateBirthParts[2]);
+            int birthMonth = Integer.parseInt(dateBirthParts[1]);
+            int birthDay = Integer.parseInt(dateBirthParts[0]);
+
+            boolean yearsBirthdayPassed = (currentMonth > birthMonth) || (currentMonth == birthMonth && currentDay > birthDay);
+
+            return yearsBirthdayPassed ? currentYear - birthYear : currentYear - birthYear - 1;
+        } else {
+            throw new NullPointerException("Person has no assigned medical record to determine his age.");
+        }
     }
 }
