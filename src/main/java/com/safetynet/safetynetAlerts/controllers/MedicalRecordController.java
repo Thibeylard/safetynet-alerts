@@ -35,8 +35,10 @@ public class MedicalRecordController {
                 + medications + ", "
                 + allergies);
         if (this.medicalRecordService.add(firstName, lastName, birthDate, medications, allergies)) {
+            Logger.info("MedicalRecord addition succeed.");
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
+            Logger.error("MedicalRecord addition failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -62,8 +64,10 @@ public class MedicalRecordController {
                 + (allergies.isPresent() ? allergies : "no allergies"));
 
         if (this.medicalRecordService.update(firstName, lastName, birthDate, medications, allergies)) {
+            Logger.info("MedicalRecord update succeed.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
+            Logger.error("MedicalRecord update failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -73,8 +77,10 @@ public class MedicalRecordController {
                                              @RequestParam(name = "lastName") final String lastName) {
         Logger.debug("MedicalRecord DELETE Request on : " + firstName + " " + lastName);
         if (this.medicalRecordService.delete(firstName, lastName)) {
+            Logger.info("MedicalRecord deletion succeed.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
+            Logger.error("MedicalRecord deletion failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

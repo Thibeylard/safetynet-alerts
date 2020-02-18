@@ -13,6 +13,7 @@ import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +47,10 @@ public class JsonFileDatabase {
     private boolean writeDataToJsonFile() {
         try {
             MAPPER.writeValue(DATA, this.jsonFileDTO);
+            Logger.debug("data.json successfully saved.");
             return true;
         } catch (IOException e) {
+            Logger.error("An IOException occurred : data.json save failed.");
             return false;
         }
     }

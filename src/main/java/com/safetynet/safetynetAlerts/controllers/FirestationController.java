@@ -21,9 +21,11 @@ public class FirestationController {
                                            @RequestParam(name = "stationNumber") final int number) {
         Logger.debug("Firestation POST Request with address :" + address + "and station number : " + number);
         if (this.firestationService.add(address, number)) {
+            Logger.info("Firestation addition succeed.");
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
         else {
+            Logger.error("Firestation addition failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -33,9 +35,11 @@ public class FirestationController {
                                              @RequestParam(name = "stationNumber") final int number) {
         Logger.debug("Firestation PUT Request for address :" + address + "with station number : " + number);
         if (this.firestationService.update(address, number)) {
+            Logger.info("Firestation update succeed.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         else {
+            Logger.error("Firestation update failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -44,9 +48,11 @@ public class FirestationController {
     public ResponseEntity<HttpStatus> delete(@RequestParam(name = "stationNumber") final int number) {
         Logger.debug("Firestation DELETE Request by station number : " + number);
         if (this.firestationService.delete(number)) {
+            Logger.info("Firestation deletion succeed.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         else {
+            Logger.error("Firestation deletion failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -55,9 +61,11 @@ public class FirestationController {
     public ResponseEntity<HttpStatus> delete(@RequestParam(name = "address") final String address) {
         Logger.debug("Firestation DELETE Request by address : " + address);
         if (this.firestationService.delete(address)) {
+            Logger.info("Firestation deletion succeed.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         else {
+            Logger.error("Firestation deletion failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

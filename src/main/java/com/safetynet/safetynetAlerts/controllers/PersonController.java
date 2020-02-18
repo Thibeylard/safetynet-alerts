@@ -38,8 +38,10 @@ public class PersonController {
                 + email);
 
         if (this.personService.add(firstName, lastName, address, city, zip, phone, email)) {
+            Logger.info("Person addition succeed.");
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
+            Logger.debug("Person addition failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -69,8 +71,10 @@ public class PersonController {
                 + (email.isPresent() ? email : "no email"));
 
         if (this.personService.update(firstName, lastName, address, city, zip, phone, email)) {
+            Logger.info("Person update succeed.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
+            Logger.debug("Person update failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -80,8 +84,10 @@ public class PersonController {
                                              @RequestParam(name = "lastName") final String lastName) {
         Logger.debug("Person DELETE Request on : " + firstName + " " + lastName);
         if (this.personService.delete(firstName, lastName)) {
+            Logger.info("Person deletion succeed.");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
+            Logger.debug("Person deletion failed.");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
