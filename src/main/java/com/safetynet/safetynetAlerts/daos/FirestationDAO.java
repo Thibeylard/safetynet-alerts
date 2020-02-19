@@ -49,7 +49,7 @@ public interface FirestationDAO {
      * @throws Exception for data access failure
      * @return List of addresses
      */
-    public List<String> getFirestationAddresses(final int number) throws Exception;
+    public List<String> getFirestations(final int number) throws Exception;
 
     /**
      * Get Firestation instance with specified address.

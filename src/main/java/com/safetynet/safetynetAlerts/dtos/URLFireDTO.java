@@ -7,11 +7,13 @@ import java.util.List;
 
 @JsonPropertyOrder({"stationNumber","residents"})
 public class URLFireDTO {
+    @JsonProperty("stationNumber")
     private int stationNumber;
+    @JsonProperty("endangeredPersonDTOList")
     private List<EndangeredPersonDTO> endangeredPersonDTOList;
 
-    public URLFireDTO(@JsonProperty("stationNumber") int stationNumber,
-                      @JsonProperty("residents") List<EndangeredPersonDTO> endangeredPersonDTOList) {
+    public URLFireDTO(int stationNumber,
+                      List<EndangeredPersonDTO> endangeredPersonDTOList) {
         this.stationNumber = stationNumber;
         this.endangeredPersonDTOList = endangeredPersonDTOList;
     }

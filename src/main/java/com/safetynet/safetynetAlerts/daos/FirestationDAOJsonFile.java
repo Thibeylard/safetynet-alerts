@@ -67,7 +67,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public List<String> getFirestationAddresses(final int number) throws Exception {
+    public List<String> getFirestations(final int number) throws Exception {
         return null;
     }
 

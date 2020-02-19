@@ -1,5 +1,6 @@
 package com.safetynet.safetynetAlerts.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -13,16 +14,24 @@ public class Person {
     /**
      * firstName used with lastName as identifier. Final attribute.
      */
+    @JsonProperty("firstName")
     private final String firstName;
     /**
      * lastName used with firstName as identifier. Final attribute.
      */
+    @JsonProperty("lastName")
     private final String lastName;
+    @JsonProperty("address")
     private String address;
+    @JsonProperty("city")
     private String city;
+    @JsonProperty("zip")
     private String zip;
+    @JsonProperty("phone")
     private String phone;
+    @JsonProperty("email")
     private String email;
+    @JsonIgnore
     private Optional<MedicalRecord> medicalRecord;
 
     /**
@@ -36,13 +45,13 @@ public class Person {
      * @param phone     value to initialize phone number attribute
      * @param email     value to initialize email attribute
      */
-    public Person(@JsonProperty("firstName") final String firstName,
-                  @JsonProperty("lastName") final String lastName,
-                  @JsonProperty("address") final String address,
-                  @JsonProperty("city") final String city,
-                  @JsonProperty("zip") final String zip,
-                  @JsonProperty("phone") final String phone,
-                  @JsonProperty("email") final String email,
+    public Person(final String firstName,
+                  final String lastName,
+                  final String address,
+                  final String city,
+                  final String zip,
+                  final String phone,
+                  final String email,
                   final Optional<MedicalRecord> medicalRecord) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -181,6 +190,7 @@ public class Person {
      *
      * @return age result
      */
+    @JsonIgnore
     public int getAge() {
         //TODO Refactored method with date parsing, date as parameter...
         if (medicalRecord.isPresent()) {

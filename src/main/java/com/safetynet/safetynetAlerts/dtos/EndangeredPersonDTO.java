@@ -8,24 +8,30 @@ import java.util.List;
 @JsonPropertyOrder({"firstName", "lastName", "phone", "age", "medications", "allergies"})
 public class EndangeredPersonDTO {
 
+    @JsonProperty("firstName")
     private final String firstName;
+    @JsonProperty("lastName")
     private final String lastName;
-    private final String pPhone;
-    private final String pAge;
-    private final List<String> pMedications;
-    private final List<String> pAllergies;
+    @JsonProperty("pPhone")
+    private final String phone;
+    @JsonProperty("age")
+    private final String age;
+    @JsonProperty("medications")
+    private final List<String> medications;
+    @JsonProperty("allergies")
+    private final List<String> allergies;
 
-    public EndangeredPersonDTO(@JsonProperty("firstName") final String pFirstName,
-                               @JsonProperty("lastName") final String pLastName,
-                               @JsonProperty("phone") final String pPhone,
-                               @JsonProperty("age") final String pAge,
-                               @JsonProperty("medications") final List<String> pMedications,
-                               @JsonProperty("allergies") final List<String> pAllergies) {
+    public EndangeredPersonDTO(final String pFirstName,
+                               final String pLastName,
+                               final String phone,
+                               final String age,
+                               final List<String> medications,
+                               final List<String> allergies) {
         this.firstName = pFirstName;
         this.lastName = pLastName;
-        this.pPhone = pPhone;
-        this.pAge = pAge;
-        this.pMedications = pMedications;
-        this.pAllergies = pAllergies;
+        this.phone = phone;
+        this.age = age;
+        this.medications = medications;
+        this.allergies = allergies;
     }
 }

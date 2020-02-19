@@ -8,28 +8,35 @@ import java.util.List;
 @JsonPropertyOrder({"firstName","lastName","address","age","email","medications","allergies"})
 public class URLPersonInfoDTO {
 
+    @JsonProperty("firstName")
     private final String firstName;
+    @JsonProperty("lastName")
     private final String lastName;
-    private final String pAddress;
-    private final String pAge;
-    private final String pEmail;
-    private final List<String> pMedications;
-    private final List<String> pAllergies;
+    @JsonProperty("address")
+    private final String address;
+    @JsonProperty("age")
+    private final String age;
+    @JsonProperty("email")
+    private final String email;
+    @JsonProperty("medications")
+    private final List<String> medications;
+    @JsonProperty("allergies")
+    private final List<String> allergies;
 
-    public URLPersonInfoDTO(@JsonProperty("firstName") String pFirstName,
-                            @JsonProperty("lastName") String pLastName,
-                            @JsonProperty("address") String pAddress,
-                            @JsonProperty("age") String pAge,
-                            @JsonProperty("email") String pEmail,
-                            @JsonProperty("medications") List<String> pMedications,
-                            @JsonProperty("allergies") List<String> pAllergies) {
-        this.firstName = pFirstName;
-        this.lastName = pLastName;
-        this.pAddress = pAddress;
-        this.pAge = pAge;
-        this.pEmail = pEmail;
-        this.pMedications = pMedications;
-        this.pAllergies = pAllergies;
+    public URLPersonInfoDTO(final String firstName,
+                            final String lastName,
+                            final String address,
+                            final String age,
+                            final String email,
+                            final List<String> medications,
+                            final List<String> allergies) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.age = age;
+        this.email = email;
+        this.medications = medications;
+        this.allergies = allergies;
     }
 }
 

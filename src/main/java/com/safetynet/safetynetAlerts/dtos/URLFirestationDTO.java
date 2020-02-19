@@ -8,15 +8,18 @@ import java.util.List;
 @JsonPropertyOrder({"adults","children","inhabitants"})
 public class URLFirestationDTO {
 
+    @JsonProperty("adults")
     private int adults;
+    @JsonProperty("children")
     private int children;
+    @JsonProperty("inhabitants")
     private List<PersonAddressPhoneDTO> inhabitants;
 
-    public URLFirestationDTO(@JsonProperty("adults") int pAdults,
-                             @JsonProperty("children") int pChildren,
-                             @JsonProperty("inhabitants") List<PersonAddressPhoneDTO> pInhabitants) {
-        this.adults = pAdults;
-        this.children = pChildren;
-        this.inhabitants = pInhabitants;
+    public URLFirestationDTO(int adults,
+                             int children,
+                             List<PersonAddressPhoneDTO> inhabitants) {
+        this.adults = adults;
+        this.children = children;
+        this.inhabitants = inhabitants;
     }
 }

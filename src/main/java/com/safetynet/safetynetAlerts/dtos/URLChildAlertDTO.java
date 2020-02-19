@@ -7,11 +7,13 @@ import java.util.List;
 
 @JsonPropertyOrder({"children","familyMembers"})
 public class URLChildAlertDTO {
+    @JsonProperty("children")
     private List<ChildDTO> childDTOList;
+    @JsonProperty("familyMembers")
     private List<ChildFamilyMemberDTO> childFamilyMemberDTOS;
 
-    public URLChildAlertDTO(@JsonProperty("children") List<ChildDTO> pChildDTOList,
-                            @JsonProperty("familyMembers") List<ChildFamilyMemberDTO> pChildFamilyMemberDTOS) {
+    public URLChildAlertDTO(List<ChildDTO> pChildDTOList,
+                            List<ChildFamilyMemberDTO> pChildFamilyMemberDTOS) {
         this.childDTOList = pChildDTOList;
         this.childFamilyMemberDTOS = pChildFamilyMemberDTOS;
     }

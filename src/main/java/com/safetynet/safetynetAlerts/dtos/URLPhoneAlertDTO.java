@@ -7,9 +7,10 @@ import java.util.List;
 
 @JsonPropertyOrder("phoneNumbers")
 public class URLPhoneAlertDTO {
+    @JsonProperty("phoneNumbers")
     private List<String> phoneNumberList;
 
-    public URLPhoneAlertDTO(@JsonProperty("phoneNumbers") List<String> pPhoneNumberList) {
+    public URLPhoneAlertDTO(List<String> pPhoneNumberList) {
         this.phoneNumberList = pPhoneNumberList;
     }
 }

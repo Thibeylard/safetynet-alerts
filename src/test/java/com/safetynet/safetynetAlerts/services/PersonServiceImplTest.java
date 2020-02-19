@@ -4,6 +4,7 @@ import com.safetynet.safetynetAlerts.daos.PersonDAO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DisplayName("PersonService Tests on :")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PersonServiceImplTest {
 
     @MockBean

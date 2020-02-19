@@ -9,7 +9,9 @@ public class Firestation {
     /**
      * address used as identifier. Final attribute.
      */
+    @JsonProperty("address")
     private final String address;
+    @JsonProperty("station")
     private int station;
 
     /**
@@ -18,8 +20,8 @@ public class Firestation {
      * @param address value to initialize address attribute
      * @param station value to initialize number attribute
      */
-    public Firestation(@JsonProperty("address") final String address,
-                       @JsonProperty("station") final int station) {
+    public Firestation(final String address,
+                       final int station) {
         this.address = address;
         this.station = station;
     }
