@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.safetynet.safetynetAlerts.dtos.JsonFileDatabaseDTO;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
@@ -24,38 +22,55 @@ import java.util.Optional;
 public class JsonFileDatabase {
 
     private final ObjectMapper MAPPER;
-    private final File DATA;
+    private File data;
 
     private JsonFileDatabaseDTO jsonFileDTO;
+    private JsonFactory factory;
 
 
     /**
      * Constructor.
      *
-     * @param pMapper Autoriwed ObjectMapper Singleton
+     * @param pMapper Autowired ObjectMapper Singleton
      * @throws IOException Handles dataSrc file related errors
      */
+
     @Autowired
     public JsonFileDatabase(final ObjectMapper pMapper) throws IOException {
-        this.DATA = new File("src/main/resources/static/data.json");
+        this.data = new File("src/main/resources/static/data.json");
         this.MAPPER = pMapper;
-        this.jsonFileDTO = MAPPER.convertValue(MAPPER.readTree(DATA), new TypeReference<JsonFileDatabaseDTO>() {
+        this.jsonFileDTO = MAPPER.convertValue(MAPPER.readTree(data), new TypeReference<JsonFileDatabaseDTO>() {
         });
+        this.factory = new JsonFactory().setCodec(this.MAPPER);
     }
-
 
     private boolean writeDataToJsonFile() {
         try {
-            MAPPER.writeValue(DATA, this.jsonFileDTO);
+            JsonGenerator generator = factory.createGenerator(this.data, JsonEncoding.UTF8);
+            generator.writeStartObject();
+            generator.writeObjectField("persons", this.jsonFileDTO.getPersons());
+            generator.writeObjectField("firestations", this.jsonFileDTO.getFirestations());
+            generator.writeObjectField("medicalrecords", this.jsonFileDTO.getMedicalRecords());
+            generator.writeEndObject();
+            generator.close();
             Logger.debug("data.json successfully saved.");
             return true;
         } catch (IOException e) {
             Logger.error("An IOException occurred : data.json save failed.");
+            e.printStackTrace();
             return false;
         }
     }
 
 //    ---------------------------------------------------------------------------------------- FIRESTATION
+
+    public Firestation getFirestation(final String address) {
+        return null;
+    }
+
+    public List<Firestation> getFirestations(final int number) {
+        return null;
+    }
 
     public boolean addFirestation(final String address, final int number) {
         this.jsonFileDTO.getFirestations().add(new Firestation(address, number));
@@ -84,6 +99,14 @@ public class JsonFileDatabase {
     }
 
     //    ---------------------------------------------------------------------------------------- MEDICALRECORD
+
+    public MedicalRecord getMedicalRecord(final Person person) {
+        return null;
+    }
+
+    public List<MedicalRecord> getMedicalRecords(final List<Person> person) {
+        return null;
+    }
 
     public boolean addMedicalRecord(final String firstName,
                                     final String lastName,
@@ -127,6 +150,28 @@ public class JsonFileDatabase {
 
     //    ---------------------------------------------------------------------------------------- PERSON
 
+    public Person getPerson(final String firstName,
+                            final String lastName) {
+        return null;
+    }
+
+    public Person getPersonFromLastName(final String firstName,
+                                        final String lastName) {
+        return null;
+    }
+
+    public Person getPersonFromAddress(final String address) {
+        return null;
+    }
+
+    public Person getPersonFromAddress(final List<String> address) {
+        return null;
+    }
+
+    public Person getPersonFromCity(final String city) {
+        return null;
+    }
+
     public boolean addPerson(final String firstName,
                              final String lastName,
                              final String address,
@@ -141,9 +186,7 @@ public class JsonFileDatabase {
                 city,
                 zip,
                 phone,
-                email,
-                Optional.empty()
-        ));
+                email));
 
         return writeDataToJsonFile();
     }

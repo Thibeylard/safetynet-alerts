@@ -20,7 +20,7 @@ public class PersonController {
     }
 
     @PostMapping("/person")
-    public ResponseEntity<HttpStatus> add(@RequestParam(name = "firstName") final String firstName,
+    public ResponseEntity<Boolean> add(@RequestParam(name = "firstName") final String firstName,
                                           @RequestParam(name = "lastName") final String lastName,
                                           @RequestParam(name = "address") final String address,
                                           @RequestParam(name = "city") final String city,
@@ -47,7 +47,7 @@ public class PersonController {
     }
 
     @PutMapping("/person")
-    public ResponseEntity<HttpStatus> update(@RequestParam(name = "firstName") final String firstName,
+    public ResponseEntity<String> update(@RequestParam(name = "firstName") final String firstName,
                                              @RequestParam(name = "lastName") final String lastName,
                                              @RequestParam(name = "address", required = false) final Optional<String> address,
                                              @RequestParam(name = "city", required = false) final Optional<String> city,
@@ -80,7 +80,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/person")
-    public ResponseEntity<HttpStatus> delete(@RequestParam(name = "firstName") final String firstName,
+    public ResponseEntity<String> delete(@RequestParam(name = "firstName") final String firstName,
                                              @RequestParam(name = "lastName") final String lastName) {
         Logger.debug("Person DELETE Request on : " + firstName + " " + lastName);
         if (this.personService.delete(firstName, lastName)) {

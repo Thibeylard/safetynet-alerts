@@ -45,14 +45,13 @@ public class Person {
      * @param phone     value to initialize phone number attribute
      * @param email     value to initialize email attribute
      */
-    public Person(final String firstName,
-                  final String lastName,
-                  final String address,
-                  final String city,
-                  final String zip,
-                  final String phone,
-                  final String email,
-                  final Optional<MedicalRecord> medicalRecord) {
+    public Person(@JsonProperty("firstName") final String firstName,
+                  @JsonProperty("lastName") final String lastName,
+                  @JsonProperty("address") final String address,
+                  @JsonProperty("city") final String city,
+                  @JsonProperty("zip") final String zip,
+                  @JsonProperty("phone") final String phone,
+                  @JsonProperty("email") final String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -60,7 +59,6 @@ public class Person {
         this.zip = zip;
         this.phone = phone;
         this.email = email;
-        this.medicalRecord = medicalRecord;
     }
 
     //    -------------------------------------------------------------------- SETTERS
@@ -110,6 +108,15 @@ public class Person {
         this.email = email;
     }
 
+    /**
+     * medicalRecord attribute setter.
+     *
+     * @param medicalRecord new value for this.medicalRecord
+     */
+    public Person setMedicalRecord(Optional<MedicalRecord> medicalRecord) {
+        this.medicalRecord = medicalRecord;
+        return this;
+    }
 
     //    -------------------------------------------------------------------- GETTERS
 

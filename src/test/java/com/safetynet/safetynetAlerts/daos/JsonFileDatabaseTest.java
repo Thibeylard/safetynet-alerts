@@ -1,5 +1,6 @@
 package com.safetynet.safetynetAlerts.daos;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,9 +64,32 @@ class JsonFileDatabaseTest {
         persons.clear();
     }
 
+    // ==================================================================================================== FirestationDAO TESTS
+    // =========================================================================================================================
     @Nested
     @DisplayName("FirestationDAO :")
     class FirestationDAOMethods {
+        //    --------------------------------------------------------------------------------- GET
+        //    -------------------------------------------------------------------------------------
+        @Nested
+        @DisplayName("get()")
+        class getTestMethods {
+            //            @Test
+            void Given_firestationParameters_When_getFirestation_Then_returnFirestation() {
+
+            }
+
+            //            @Test
+            void Given_wrongFirestationParameters_When_getFirestation_Then_returnNull() {
+
+            }
+
+            //            @Test
+            void Given_validParametersButIOExceptionOccurs_When_addFirestation_Then_returnFalse() throws IOException {
+
+            }
+        }
+
         //    --------------------------------------------------------------------------------- ADD
         //    -------------------------------------------------------------------------------------
         @Nested
@@ -206,6 +230,8 @@ class JsonFileDatabaseTest {
         }
     }
 
+    // ================================================================================================== MedicalRecordDAO TESTS
+    // =========================================================================================================================
     @Nested
     @DisplayName("MedicalRecordDAO :")
     class MedicalRecordDAOMethods {
@@ -402,6 +428,8 @@ class JsonFileDatabaseTest {
         }
     }
 
+    // ========================================================================================================= PersonDAO TESTS
+    // =========================================================================================================================
     @Nested
     @DisplayName("PersonDAO :")
     class PersonDAOMethods {

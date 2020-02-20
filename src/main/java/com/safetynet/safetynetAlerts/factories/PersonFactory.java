@@ -61,8 +61,8 @@ public class PersonFactory {
                 completeAddress.get().getCity().getName(),
                 completeAddress.get().getCity().getZip(),
                 phone,
-                email,
-                medicalRecord);
+                email)
+                .setMedicalRecord(medicalRecord);
     }
 
     /**

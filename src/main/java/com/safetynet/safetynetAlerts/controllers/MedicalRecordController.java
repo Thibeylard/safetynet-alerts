@@ -23,7 +23,7 @@ public class MedicalRecordController {
     }
 
     @PostMapping("/medicalRecord")
-    public ResponseEntity<HttpStatus> add(@RequestParam(name = "firstName") final String firstName,
+    public ResponseEntity<String> add(@RequestParam(name = "firstName") final String firstName,
                                           @RequestParam(name = "lastName") final String lastName,
                                           @RequestParam(name = "birthDate") final String birthDate,
                                           @RequestParam(name = "medications") final List<String> medications,
@@ -44,7 +44,7 @@ public class MedicalRecordController {
     }
 
     @PutMapping("/medicalRecord")
-    public ResponseEntity<HttpStatus> update(@RequestParam(name = "firstName") final String firstName,
+    public ResponseEntity<String> update(@RequestParam(name = "firstName") final String firstName,
                                              @RequestParam(name = "lastName") final String lastName,
                                              @RequestParam(name = "birthDate", required = false) final Optional<String> birthDate,
                                              @RequestParam(name = "medications", required = false) final Optional<List<String>> medications,
@@ -73,7 +73,7 @@ public class MedicalRecordController {
     }
 
     @DeleteMapping("/medicalRecord")
-    public ResponseEntity<HttpStatus> delete(@RequestParam(name = "firstName") final String firstName,
+    public ResponseEntity<String> delete(@RequestParam(name = "firstName") final String firstName,
                                              @RequestParam(name = "lastName") final String lastName) {
         Logger.debug("MedicalRecord DELETE Request on : " + firstName + " " + lastName);
         if (this.medicalRecordService.delete(firstName, lastName)) {
