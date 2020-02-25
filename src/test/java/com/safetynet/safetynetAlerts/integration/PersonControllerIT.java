@@ -1,27 +1,21 @@
 package com.safetynet.safetynetAlerts.integration;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.safetynetAlerts.dtos.JsonFileDatabaseDTO;
+import com.safetynet.safetynetAlerts.daos.JsonFileDatabase;
 import com.safetynet.safetynetAlerts.factories.PersonFactory;
-import com.safetynet.safetynetAlerts.models.Firestation;
-import com.safetynet.safetynetAlerts.models.MedicalRecord;
+import com.safetynet.safetynetAlerts.factories.enums.Addresses;
 import com.safetynet.safetynetAlerts.models.Person;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,16 +30,9 @@ public class PersonControllerIT {
 
     private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
-    private Person personData = PersonFactory.getPerson(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
-
-    private static ObjectMapper mapper;
-    private final static File TEST_DATA = new File("src/test/resources/testData.json");
-
-    private static JsonFileDatabaseDTO fileOriginalContent;
-
-    private List<Firestation> firestations = new ArrayList<Firestation>();
-    private List<MedicalRecord> medicalRecords = new ArrayList<MedicalRecord>();
-    private List<Person> persons = new ArrayList<Person>();
+    private final static String getURL = "/person?firstName={firstName}&lastName={lastName}";
+    @Autowired
+    private JsonFileDatabase jsonFileDatabase;
 
 
     @BeforeEach
@@ -53,186 +40,198 @@ public class PersonControllerIT {
         params.clear();
     }
 
-    //    ------------------------------------------------------------------------------ ADD
-    //    -------------------------------------------------------------------------------------
-    @Nested
-    @DisplayName("add()")
-    class PersonAddMethodTests {
-        //    ------------------------------------------------------------------------------ success
-        @Test
-        @Tag("AddSuccess")
-        @DisplayName("add_SuccessStatus")
-        void Given_validRequest_When_add_Then_statusIsCreatedAndDataSaved() throws IOException {
-            params.add("firstName", personData.getFirstName());
-            params.add("lastName", personData.getLastName());
-            params.add("address", personData.getAddress());
-            params.add("city", personData.getCity());
-            params.add("zip", personData.getZip());
-            params.add("phone", personData.getPhone());
-            params.add("email", personData.getEmail());
+    @Test
+    @DisplayName("POST successful")
+    void Given_dataAddedToDatabase_When_POSTPerson_Then_correspondingDataCanBeRetrieved() throws Exception {
+        Person person = PersonFactory.getPerson();
 
-            ResponseEntity<String> responseEntity = restTemplate
-                    .postForEntity("/person",params, String.class);
+        // Checking that this specific person doesn't already exist in database.
+        ResponseEntity<Person> response = restTemplate.getForEntity(getURL, Person.class, person.getFirstName(), person.getLastName());
+        assertThat(response.getBody())
+                .isNull();
 
-            assertThat(responseEntity.getStatusCode())
-                    .isEqualByComparingTo(HttpStatus.CREATED);
+        params.add("firstName", person.getFirstName());
+        params.add("lastName", person.getLastName());
+        params.add("address", person.getAddress());
+        params.add("city", person.getCity());
+        params.add("zip", person.getZip());
+        params.add("phone", person.getPhone());
+        params.add("email", person.getEmail());
 
-            persons = mapper.convertValue(mapper.readTree(TEST_DATA).at("/persons"), new TypeReference<List<Person>>() {
-            });
+        // Actual request
+        restTemplate.postForEntity("/person", params, String.class);
 
-            assertThat(persons)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .usingRecursiveFieldByFieldElementComparator()
-                    .contains(personData);
-
-        }
-
-        //    ------------------------------------------------------------------------------ bad request
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("add_MissingParameter_BadRequest")
-        void Given_missingParameter_When_add_Then_statusIsBadRequestAndDataNotSaved() {
-            params.add("firstName", personData.getFirstName());
-            params.add("lastName", personData.getLastName());
-            params.add("address", personData.getAddress());
-            params.add("city", personData.getCity());
-            params.add("zip", personData.getZip());
-            params.add("phone", personData.getPhone());
-            // email parameter missing
-
-
-        }
-
-        //    ------------------------------------------------------------------------------ server error
-    /*@Test
-    @Tag("ServerErrorStatus")
-    @DisplayName("addServerError")
-    void Given_validRequestButServiceNotWorking_When_add_Then_statusIsInternalServerError() {
-        params.add("firstName", personData.getFirstName());
-        params.add("lastName", personData.getLastName());
-        params.add("address", personData.getAddress());
-        params.add("city", personData.getCity());
-        params.add("zip", personData.getZip());
-        params.add("phone", personData.getPhone());
-        params.add("email", personData.getEmail());
-
-        try {
-            mvcMock.perform(post("/person")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isInternalServerError());
-        } catch (Exception e) {
-            fail("An exception was thrown");
-        }
-    }*/
+        response = restTemplate.getForEntity(getURL, Person.class, person.getFirstName(), person.getLastName());
+        assertThat(response.getBody())
+                .isNotNull()
+                .isEqualToComparingFieldByField(person);
     }
 
-    //    ------------------------------------------------------------------------------ UPDATE
-//    -------------------------------------------------------------------------------------
-    @Nested
-    @DisplayName("update()")
-    class PersonUpdateMethodTests {
-        //    ------------------------------------------------------------------------------ success
-        @Test
-        @Tag("SuccessStatus")
-        @DisplayName("updateSuccess")
-        void Given_validRequest_When_update_Then_statusIsNoContent() {
-            params.add("firstName", personData.getFirstName());
-            params.add("lastName", personData.getLastName());
-            params.add("phone", "differentPhoneNumber");
-            // Works even with not all parameters
 
-        }
+    @Test
+    @DisplayName("POST missing parameter")
+    void Given_wrongParameters_When_POSTPerson_Then_noPartialDataSaved() throws Exception {
+        Person person = PersonFactory.getPerson();
 
-        //    ------------------------------------------------------------------------------ bad request
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("updateMissingRequiredBadRequest")
-        void Given_missingRequiredParameter_When_update_Then_statusIsBadRequest() {
-            params.add("firstName", personData.getFirstName());
-            // No required parameter lastName
-            params.add("address", personData.getAddress());
-            params.add("city", personData.getCity());
-            params.add("zip", personData.getZip());
+        // Checking that this specific person doesn't already exist in database.
+        ResponseEntity<Person> response = restTemplate.getForEntity(getURL, Person.class, person.getFirstName(), person.getLastName());
+        assertThat(response.getBody())
+                .isNull();
 
-        }
+        params.add("firstName", person.getFirstName());
+        params.add("lastName", person.getLastName());
+        params.add("address", person.getAddress());
+        params.add("city", person.getCity());
+        params.add("zip", person.getZip());
+        // No phone number provided
+        params.add("email", person.getEmail());
 
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("update_NoParameterToUpdate_BadRequest")
-        void Given_missingParameterToUpdate_When_update_Then_statusIsBadRequest() {
-            params.add("firstName", personData.getFirstName());
-            params.add("lastName", personData.getLastName());
-            // Only required and immutable parameters were given.
+        // Actual request
+        restTemplate.postForEntity("/person", params, String.class);
 
-        }
-
-        //    ------------------------------------------------------------------------------ server error
-/*    @Test
-    @Tag("ServerErrorStatus")
-    @DisplayName("update_ServerError")
-    void Given_validRequestButServiceNotWorking_When_update_Then_statusIsInternalServerError() {
-        params.add("firstName", "someFirstName");
-        params.add("lastName", "someLastName");
-        params.add("phone", "somePhone");
-
-        MultiValueMap<String, String> optParams = new LinkedMultiValueMap<String, String>();
-        optParams.add("phone", params.getFirst("phone"));
-
-        try {
-            mvcMock.perform(put("/person")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isInternalServerError());
-        } catch (Exception e) {
-            fail("An exception was thrown");
-        }
-    }*/
+        response = restTemplate.getForEntity(getURL, Person.class, person.getFirstName(), person.getLastName());
+        assertThat(response.getBody())
+                .isNotNull()
+                .isEqualToComparingFieldByField(person);
     }
 
-    //    ------------------------------------------------------------------------------ DELETE
-//    -------------------------------------------------------------------------------------
-    @Nested
-    @DisplayName("delete()")
-    class PersonDeleteMethodTests {
-        //    ------------------------------------------------------------------------------ success
-        @Test
-        @Tag("SuccessStatus")
-        @DisplayName("delete_Success")
-        void Given_validRequest_When_delete_Then_statusIsNoContent() {
-            params.add("firstName", personData.getFirstName());
-            params.add("lastName", personData.getLastName());
+    @Test
+    @DisplayName("POST already exists")
+    void Given_existingPerson_When_POSTPerson_Then_personNotReplaced() throws Exception {
+        // Two persons with same name but different addresses
+        Person existing = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.APPLEGATE), Optional.empty());
+        Person added = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.BAYMEADOWS), Optional.empty());
 
-        }
+        // Checking that these specific persons don't already exist in database.
+        ResponseEntity<Person> response = restTemplate.getForEntity(getURL, Person.class, existing.getFirstName(), existing.getLastName());
+        assertThat(response.getBody())
+                .isNull();
+        response = restTemplate.getForEntity(getURL, Person.class, added.getFirstName(), added.getLastName());
+        assertThat(response.getBody())
+                .isNull();
 
-        //    ------------------------------------------------------------------------------ bad request
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("delete_MissingParameter_BadRequest")
-        void Given_missingParameter_When_delete_Then_statusIsBadRequest() {
-            // Required parameter firstName is missing
-            params.add("lastName", personData.getLastName());
+        params.add("firstName", existing.getFirstName());
+        params.add("lastName", existing.getLastName());
+        params.add("address", existing.getAddress());
+        params.add("city", existing.getCity());
+        params.add("zip", existing.getZip());
+        params.add("phone", existing.getPhone());
+        params.add("email", existing.getEmail());
 
-        }
+        // Preparation request
+        restTemplate.postForEntity("/person", params, String.class);
 
-        //    ------------------------------------------------------------------------------ server error
-/*    @Test
-    @Tag("ServerErrorStatus")
-    @DisplayName("delete_ServerError")
-    void Given_validRequestButServiceNotWorking_When_delete_Then_statusIsInternalServerError() {
-        params.add("firstName", personData.getFirstName());
-        params.add("lastName", personData.getLastName());
+        params.clear();
 
-        try {
-            mvcMock.perform(delete("/person")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isInternalServerError());
-        } catch (Exception e) {
-            fail("An exception was thrown");
-        }
-    }*/
+        params.add("firstName", added.getFirstName());
+        params.add("lastName", added.getLastName());
+        params.add("address", added.getAddress());
+        params.add("city", added.getCity());
+        params.add("zip", added.getZip());
+        params.add("phone", added.getPhone());
+        params.add("email", added.getEmail());
+
+        // Actual request
+        restTemplate.postForEntity("/person", params, String.class);
+
+        // Checking that existing person is unmodified
+        response = restTemplate.getForEntity(getURL, Person.class, existing.getFirstName(), existing.getLastName());
+        assertThat(response.getBody())
+                .isNotNull()
+                .isEqualToComparingFieldByField(existing);
     }
 
+    //TODO replace jsonFileDatabase.getPerson() by get requests
+    @Test
+    @DisplayName("UPDATE successful")
+    void Given_dataAddedToDatabase_When_UPDATEPerson_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
+        // Two persons with same name but different addresses
+        Person original = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.APPLEGATE), Optional.empty());
+        Person update = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.BAYMEADOWS), Optional.empty());
+
+        // Checking that this specific persons don't already exist in database.
+        assertThat(jsonFileDatabase.getPerson(original.getFirstName(), original.getLastName()))
+                .isNull();
+        assertThat(jsonFileDatabase.getPerson(update.getFirstName(), update.getLastName()))
+                .isNull();
+
+        params.add("firstName", original.getFirstName());
+        params.add("lastName", original.getLastName());
+        params.add("address", original.getAddress());
+        params.add("city", original.getCity());
+        params.add("zip", original.getZip());
+        params.add("phone", original.getPhone());
+        params.add("email", original.getEmail());
+
+        // Preparation request
+        restTemplate.postForEntity("/person", params, String.class);
+
+        // Checking that this specific person doesn't already exist in database.
+        assertThat(jsonFileDatabase.getPerson(original.getFirstName(), original.getLastName()))
+                .isNotNull();
+
+        params.clear();
+
+        params.add("firstName", update.getFirstName());
+        params.add("lastName", update.getLastName());
+        params.add("address", update.getAddress());
+        params.add("city", update.getCity());
+        params.add("zip", update.getZip());
+        params.add("phone", update.getPhone());
+        params.add("email", update.getEmail());
+
+        // Actual request
+        restTemplate.put("/person", params);
+
+        // Checking that existing person is unmodified
+        assertThat(jsonFileDatabase.getPerson(original.getFirstName(), original.getLastName()))
+                .isNotNull()
+                .isEqualToComparingFieldByField(update);
+    }
+
+    @Test
+    @DisplayName("UPDATE no data")
+    void Given_noCorrespondingData_When_UPDATEPerson_Then_dataNotCreated() throws Exception {
+        // Two persons with same name but different addresses
+        Person update = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.BAYMEADOWS), Optional.empty());
+
+        // Checking that this specific persons don't already exist in database.
+        assertThat(jsonFileDatabase.getPerson(update.getFirstName(), update.getLastName()))
+                .isNull();
+
+        params.add("firstName", update.getFirstName());
+        params.add("lastName", update.getLastName());
+        params.add("address", update.getAddress());
+        params.add("city", update.getCity());
+        params.add("zip", update.getZip());
+        params.add("phone", update.getPhone());
+        params.add("email", update.getEmail());
+
+        // Actual request
+        restTemplate.put("/person", params);
+
+        // Checking that existing person is unmodified
+        assertThat(jsonFileDatabase.getPerson(update.getFirstName(), update.getLastName()))
+                .isNull();
+    }
+
+    @Test
+    @DisplayName("DELETE successful")
+    void Given_dataAddedToDatabase_When_DELETEPerson_Then_dataCanBeRetrievedAfterDeletion() throws Exception {
+        Person person = PersonFactory.getPerson();
+
+        params.add("firstName", person.getFirstName());
+        params.add("lastName", person.getLastName());
+        params.add("address", person.getAddress());
+        params.add("city", person.getCity());
+        params.add("zip", person.getZip());
+        params.add("phone", person.getPhone());
+        params.add("email", person.getEmail());
+
+        // Preparation request
+        restTemplate.postForEntity("/person", params, String.class);
+
+        assertThat(jsonFileDatabase.getPerson(person.getFirstName(), person.getLastName()))
+                .isEqualToComparingFieldByField(person);
+    }
 }

@@ -32,7 +32,7 @@ public class Person {
     @JsonProperty("email")
     private String email;
     @JsonIgnore
-    private Optional<MedicalRecord> medicalRecord;
+    private MedicalRecord medicalRecord;
 
     /**
      * Constructor used for JSON serialization and deserialization.
@@ -109,13 +109,12 @@ public class Person {
     }
 
     /**
-     * medicalRecord attribute setter.
+     * medicalRecord attribute getter.
      *
-     * @param medicalRecord new value for this.medicalRecord
+     * @return this.medicalRecord
      */
-    public Person setMedicalRecord(Optional<MedicalRecord> medicalRecord) {
-        this.medicalRecord = medicalRecord;
-        return this;
+    public Optional<MedicalRecord> getMedicalRecord() {
+        return Optional.ofNullable(medicalRecord);
     }
 
     //    -------------------------------------------------------------------- GETTERS
@@ -184,12 +183,13 @@ public class Person {
     }
 
     /**
-     * medicalRecord attribute getter.
+     * medicalRecord attribute setter.
      *
-     * @return this.medicalRecord
+     * @param medicalRecord new value for this.medicalRecord
      */
-    public Optional<MedicalRecord> getMedicalRecord() {
-        return medicalRecord;
+    public Person setMedicalRecord(MedicalRecord medicalRecord) {
+        this.medicalRecord = medicalRecord;
+        return this;
     }
 
     /**
@@ -200,14 +200,14 @@ public class Person {
     @JsonIgnore
     public int getAge() {
         //TODO Refactored method with date parsing, date as parameter...
-        if (medicalRecord.isPresent()) {
+        if (medicalRecord != null) {
             String[] currentDateParts = Instant.now().toString().split("T")[0].split("-");
             // Instant.now date format is yyyy-mm-ddT...Z
             int currentYear = Integer.parseInt(currentDateParts[0]);
             int currentMonth = Integer.parseInt(currentDateParts[1]);
             int currentDay = Integer.parseInt(currentDateParts[2]);
 
-            String[] dateBirthParts = this.medicalRecord.get().getBirthDate().split("/");
+            String[] dateBirthParts = this.medicalRecord.getBirthDate().split("/");
             // datebirth format is dd/mm/yyyy
             int birthYear = Integer.parseInt(dateBirthParts[2]);
             int birthMonth = Integer.parseInt(dateBirthParts[1]);

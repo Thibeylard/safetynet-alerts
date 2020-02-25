@@ -1,10 +1,13 @@
 package com.safetynet.safetynetAlerts.daos;
 
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.util.List;
 
 @Repository
@@ -21,7 +24,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @param jsonFileDatabase instance to initialize this.jsonFileDatabase
      */
     @Autowired
-    public FirestationDAOJsonFile(JsonFileDatabase jsonFileDatabase) throws Exception {
+    public FirestationDAOJsonFile(JsonFileDatabase jsonFileDatabase) throws IOException, IllegalDataOverrideException, NoSuchDataException {
         this.jsonFileDatabase = jsonFileDatabase;
     }
 
@@ -30,7 +33,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      */
     @Override
     public boolean add(final String address,
-                       final int number) {
+                       final int number) throws IOException, IllegalDataOverrideException {
         Logger.debug("Firestation DAO pass add request to JsonFileDatabase");
         return this.jsonFileDatabase.addFirestation(address, number);
     }
@@ -40,7 +43,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      */
     @Override
     public boolean update(final String address,
-                          final int number) {
+                          final int number) throws IOException, NoSuchDataException {
         Logger.debug("Firestation DAO pass update request to JsonFileDatabase");
         return this.jsonFileDatabase.updateFirestation(address, number);
     }
@@ -49,7 +52,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public boolean delete(final int number) {
+    public boolean delete(final int number) throws IOException, NoSuchDataException {
         Logger.debug("Firestation DAO pass delete request to JsonFileDatabase");
         return this.jsonFileDatabase.deleteFirestation(number);
     }
@@ -58,7 +61,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public boolean delete(final String address) {
+    public boolean delete(final String address) throws IOException, NoSuchDataException {
         Logger.debug("Firestation DAO pass delete request to JsonFileDatabase");
         return this.jsonFileDatabase.deleteFirestation(address);
     }
@@ -67,15 +70,15 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public List<String> getFirestations(final int number) throws Exception {
-        return null;
+    public Firestation getFirestation(final String address) throws IOException, NoSuchDataException {
+        return jsonFileDatabase.getFirestation(address);
     }
 
     /**
      * @see FirestationDAO
      */
     @Override
-    public Firestation getFirestation(final String address) throws Exception {
-        return null;
+    public List<Firestation> getFirestations(final int number) throws IOException, NoSuchDataException {
+        return jsonFileDatabase.getFirestations(number);
     }
 }

@@ -1,5 +1,7 @@
 package com.safetynet.safetynetAlerts.controllers;
 
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.services.FirestationService;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
@@ -12,10 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,13 +50,11 @@ class FirestationControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("add_Success")
-        void Given_validRequest_When_add_Then_statusIsCreated() {
+        void Given_validRequest_When_add_Then_statusIsCreated() throws Exception {
             params.add("address", "someAddress");
             params.add("stationNumber", "2");
-            when(mockFirestationService.add(
-                    anyString(),
-                    anyInt()))
-            .thenReturn(true);
+            doReturn(true).when(mockFirestationService)
+                    .add(anyString(), anyInt());
             try {
                 mvcMock.perform(post("/firestation")
                         .params(params)
@@ -65,7 +68,7 @@ class FirestationControllerTest {
         //    ------------------------------------------------------------------------------ bad request
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("add_MissingParameter_BadRequest")
+        @DisplayName("add_MissingParameter")
         void Given_missingParameter_When_add_Then_statusIsBadRequest() {
             params.add("stationNumber", "2");
             // No required parameter address
@@ -81,7 +84,7 @@ class FirestationControllerTest {
 
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("add_MismatchParameter_BadRequest")
+        @DisplayName("add_MismatchParameter")
         void Given_mismatchParameter_When_add_Then_statusIsBadRequest() {
             params.add("stationNumber", "someString");
             params.add("address", "someAddress");
@@ -95,17 +98,36 @@ class FirestationControllerTest {
             }
         }
 
-        //    ------------------------------------------------------------------------------ server error
+        //    ------------------------------------------------------------------------------ forbidden
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("add_ServerError")
-        void Given_validRequestButServiceNotWorking_When_add_Then_statusIsInternalServerError() {
+        @Tag("ErrorStatus")
+        @DisplayName("add_Forbidden")
+        void Given_illegalDataOverrideException_When_add_Then_statusIsForbidden() throws Exception {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
-            when(mockFirestationService.add(
-                    anyString(),
-                    anyInt()))
-                    .thenReturn(false);
+            doThrow(new IllegalDataOverrideException())
+                    .when(mockFirestationService)
+                    .add(anyString(), anyInt());
+            try {
+                mvcMock.perform(post("/firestation")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isForbidden());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ErrorStatus")
+        @DisplayName("add_ServerError")
+        void Given_IOException_When_add_Then_statusIsInternalServerError() throws Exception {
+            params.add("stationNumber", "2");
+            params.add("address", "someAddress");
+            doThrow(new IOException())
+                    .when(mockFirestationService)
+                    .add(anyString(), anyInt());
             try {
                 mvcMock.perform(post("/firestation")
                         .params(params)
@@ -126,18 +148,16 @@ class FirestationControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("update_Success")
-        void Given_validRequest_When_update_Then_statusIsNoContent() {
+        void Given_validRequest_When_update_Then_statusIsNoContent() throws Exception {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
-            when(mockFirestationService.update(
-                    anyString(),
-                    anyInt()))
-                    .thenReturn(true);
+            doReturn(true).when(mockFirestationService)
+                    .update(anyString(), anyInt());
             try {
                 mvcMock.perform(put("/firestation")
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNoContent());
+                        .andExpect(status().isOk());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -146,7 +166,7 @@ class FirestationControllerTest {
         //    ------------------------------------------------------------------------------ bad request
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("update_MissingParameter_BadRequest")
+        @DisplayName("update_MissingParameter")
         void Given_missingParameter_When_update_Then_statusIsBadRequest() {
             params.add("stationNumber", "2");
             try {
@@ -161,7 +181,7 @@ class FirestationControllerTest {
 
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("update_MismatchParameter_BadRequest")
+        @DisplayName("update_MismatchParameter")
         void Given_mismatchParameter_When_update_Then_statusIsBadRequest() {
             params.add("stationNumber", "someString");
             params.add("address", "someAddress");
@@ -175,17 +195,36 @@ class FirestationControllerTest {
             }
         }
 
-        //    ------------------------------------------------------------------------------ server error
+        //    ------------------------------------------------------------------------------ not found
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("update_ServerError")
-        void Given_validRequestButServiceNotWorking_When_update_Then_statusIsInternalServerError() {
+        @Tag("ErrorStatus")
+        @DisplayName("update_NotFound")
+        void Given_noSuchDataException_When_update_Then_statusIsNotFound() throws Exception {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
-            when(mockFirestationService.update(
-                    anyString(),
-                    anyInt()))
-                    .thenReturn(false);
+            doThrow(new NoSuchDataException())
+                    .when(mockFirestationService)
+                    .update(anyString(), anyInt());
+            try {
+                mvcMock.perform(put("/firestation")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ErrorStatus")
+        @DisplayName("update_ServerError")
+        void Given_validRequestButServiceNotWorking_When_update_Then_statusIsInternalServerError() throws Exception {
+            params.add("stationNumber", "2");
+            params.add("address", "someAddress");
+            doThrow(new IOException())
+                    .when(mockFirestationService)
+                    .update(anyString(), anyInt());
             try {
                 mvcMock.perform(put("/firestation")
                         .params(params)
@@ -206,16 +245,15 @@ class FirestationControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("deleteByName_Success")
-        void Given_validRequest_When_deleteByNumber_Then_statusIsNoContent() {
+        void Given_validRequest_When_deleteByNumber_Then_statusIsNoContent() throws Exception {
             params.add("stationNumber", "2");
-            when(mockFirestationService.delete(
-                    anyInt()))
-                    .thenReturn(true);
+            doReturn(true).when(mockFirestationService)
+                    .delete(anyInt());
             try {
                 mvcMock.perform(delete("/firestation")
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNoContent());
+                        .andExpect(status().isOk());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -224,16 +262,15 @@ class FirestationControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("deleteByAddress_Success")
-        void Given_validRequest_When_deleteByAddress_Then_statusIsNoContent() {
+        void Given_validRequest_When_deleteByAddress_Then_statusIsNoContent() throws Exception {
             params.add("address", "someAddress");
-            when(mockFirestationService.delete(
-                    anyString()))
-                    .thenReturn(true);
+            doReturn(true).when(mockFirestationService)
+                    .delete(anyString());
             try {
                 mvcMock.perform(delete("/firestation")
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNoContent());
+                        .andExpect(status().isOk());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -243,7 +280,7 @@ class FirestationControllerTest {
         //    ------------------------------------------------------------------------------ bad request
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("delete_MissingParameter_BadRequest")
+        @DisplayName("delete_MissingParameter")
         void Given_missingParameter_When_deleteByNumber_Then_statusIsBadRequest() {
             // No params
             try {
@@ -258,7 +295,7 @@ class FirestationControllerTest {
 
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("deleteByNumber_MismatchParameter_BadRequest")
+        @DisplayName("deleteByNumber_MismatchParameter")
         void Given_mismatchParameter_When_deleteByNumber_Then_statusIsBadRequest() {
             params.add("stationNumber", "someString"); // stationNumber requires int
             try {
@@ -271,13 +308,52 @@ class FirestationControllerTest {
             }
         }
 
+        //    ------------------------------------------------------------------------------ not found
+        @Test
+        @Tag("ErrorStatus")
+        @DisplayName("deleteByNumber_NotFound")
+        void Given_noSuchDataException_When_deleteByNumber_Then_statusIsNotFound() throws Exception {
+            params.add("stationNumber", "2");
+            doThrow(new NoSuchDataException())
+                    .when(mockFirestationService)
+                    .delete(anyInt());
+            try {
+                mvcMock.perform(delete("/firestation")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        @Test
+        @Tag("ErrorStatus")
+        @DisplayName("deleteByAddress_NotFound")
+        void Given_noSuchDataException_When_deleteByAddress_Then_statusIsNotFound() throws Exception {
+            params.add("address", "someAddress");
+            doThrow(new NoSuchDataException())
+                    .when(mockFirestationService)
+                    .delete(anyString());
+            try {
+                mvcMock.perform(delete("/firestation")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ServerErrorStatus")
+        @Tag("ErrorStatus")
         @DisplayName("deleteByNumber_ServerError")
-        void Given_validRequestButServiceNotWorking_When_deleteByNumber_Then_statusIsInternalServerError() {
+        void Given_IOException_When_deleteByNumber_Then_statusIsInternalServerError() throws Exception {
             params.add("stationNumber", "2");
-            when(mockFirestationService.delete(2)).thenReturn(false);
+            doThrow(new IOException())
+                    .when(mockFirestationService)
+                    .delete(anyInt());
             try {
                 mvcMock.perform(delete("/firestation")
                         .params(params)
@@ -289,13 +365,13 @@ class FirestationControllerTest {
         }
 
         @Test
-        @Tag("ServerErrorStatus")
+        @Tag("ErrorStatus")
         @DisplayName("deleteByAddress_ServerError")
-        void Given_validRequestButServiceNotWorking_When_deleteByAddress_Then_statusIsInternalServerError() {
+        void Given_IOException_When_deleteByAddress_Then_statusIsInternalServerError() throws Exception {
             params.add("address", "someAddress");
-            when(mockFirestationService.delete(
-                    anyString()))
-                    .thenReturn(false);
+            doThrow(new IOException())
+                    .when(mockFirestationService)
+                    .delete(anyString());
             try {
                 mvcMock.perform(delete("/firestation")
                         .params(params)

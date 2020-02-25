@@ -1,12 +1,14 @@
 package com.safetynet.safetynetAlerts.daos;
 
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.MultiValueMap;
 import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +38,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
                        final String lastName,
                        final String birthDate,
                        final List<String> medications,
-                       final List<String> allergies) {
+                       final List<String> allergies) throws IOException, IllegalDataOverrideException {
         Logger.debug("MedicalRecord DAO pass add request to JsonFileDatabase");
         return jsonFileDatabase.addMedicalRecord(firstName, lastName, birthDate, medications, allergies);
     }
@@ -49,7 +51,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
                           final String lastName,
                           final Optional<String> birthDate,
                           final Optional<List<String>> medications,
-                          final Optional<List<String>> allergies) {
+                          final Optional<List<String>> allergies) throws IOException, NoSuchDataException {
         Logger.debug("MedicalRecord DAO pass update request to JsonFileDatabase");
         return jsonFileDatabase.updateMedicalRecord(firstName, lastName, birthDate, medications, allergies);
     }
@@ -59,7 +61,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
      */
     @Override
     public boolean delete(final String firstName,
-                          final String lastName) {
+                          final String lastName) throws IOException, NoSuchDataException {
         Logger.debug("MedicalRecord DAO pass delete request to JsonFileDatabase");
         return jsonFileDatabase.deleteMedicalRecord(firstName, lastName);
     }
@@ -68,37 +70,24 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
      * @see MedicalRecordDAO
      */
     @Override
-    public MedicalRecord getPersonMedicalRecord(final String firstName,
-                                                final String lastName) throws Exception {
-        return null;
+    public MedicalRecord getMedicalRecord(String firstName, String lastName) throws IOException, NoSuchDataException {
+        return jsonFileDatabase.getMedicalRecord(firstName, lastName);
     }
 
     /**
      * @see MedicalRecordDAO
      */
     @Override
-    public List<MedicalRecord> getPersonsMedicalRecord(List<Person> persons) throws Exception {
-        return null;
+    public MedicalRecord getMedicalRecord(Person person) throws IOException, NoSuchDataException {
+        return jsonFileDatabase.getMedicalRecord(person.getFirstName(), person.getLastName());
     }
 
     /**
-     * Get adults MedicalRecords from database.
-     *
-     * @return MedicalRecord instance
+     * @see MedicalRecordDAO
      */
     @Override
-    public List<MedicalRecord> getAdultMedicalRecords() throws Exception {
-        return null;
-    }
-
-    /**
-     * Get children MedicalRecords from database.
-     *
-     * @return MedicalRecord instance
-     */
-    @Override
-    public List<MedicalRecord> getChildrenMedicalRecords() throws Exception {
-        return null;
+    public List<MedicalRecord> getMedicalRecords(List<Person> persons) throws IOException, NoSuchDataException {
+        return jsonFileDatabase.getMedicalRecords(persons);
     }
 
 }
