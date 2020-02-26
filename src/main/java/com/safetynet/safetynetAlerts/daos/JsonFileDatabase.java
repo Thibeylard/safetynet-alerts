@@ -12,6 +12,7 @@ import com.safetynet.safetynetAlerts.models.Firestation;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.tinylog.Logger;
 
@@ -26,8 +27,10 @@ public class JsonFileDatabase {
     private final JsonFactory factory;
     private File data;
 
-    private JsonFileDatabaseDTO jsonFileDTO;
+    @Value("${json-database.src}")
+    private String src;
 
+    private JsonFileDatabaseDTO jsonFileDTO;
 
     /**
      * Constructor.
@@ -38,7 +41,7 @@ public class JsonFileDatabase {
 
     @Autowired
     public JsonFileDatabase(final JsonFactory jsonFactory, ObjectMapper mapper) throws IOException {
-        this.data = new File("src/main/resources/static/data.json");
+        this.data = new File(this.src);
         this.factory = jsonFactory.setCodec(mapper);
         JsonParser parser = factory.createParser(this.data);
         this.jsonFileDTO = parser.readValueAs(JsonFileDatabaseDTO.class);

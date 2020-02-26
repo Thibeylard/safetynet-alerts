@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "json-database.src",
+      "type": "java.lang.String",
+      "description": "File path for json-database data."
+    }
+  ]
+}
