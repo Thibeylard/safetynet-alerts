@@ -178,8 +178,12 @@ public class JsonFileDatabase {
     //    ---------------------------------------------------------------------------------------- PERSON
 
     public Person getPerson(final String firstName,
-                            final String lastName) throws IOException, NoSuchDataException {
-        return null;
+                            final String lastName) throws NoSuchDataException {
+        return this.jsonFileDTO.getPersons().stream()
+                .filter(person -> person.getLastName().equals(lastName))
+                .filter(person -> person.getFirstName().equals(firstName))
+                .findFirst()
+                .orElseThrow(NoSuchDataException::new);
     }
 
     public List<Person> getPersonFromLastName(final String firstName,
@@ -223,9 +227,10 @@ public class JsonFileDatabase {
                     zip,
                     phone,
                     email));
+
+            return writeDataToJsonFile();
         }
 
-        return writeDataToJsonFile();
     }
 
     public boolean updatePerson(final String firstName,

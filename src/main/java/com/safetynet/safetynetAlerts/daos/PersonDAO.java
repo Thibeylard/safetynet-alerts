@@ -69,7 +69,7 @@ public interface PersonDAO {
      * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
     Person getFromName(final String firstName,
-                       final String lastName) throws IOException, NoSuchDataException;
+                       final String lastName) throws NoSuchDataException;
 
     /**
      * Get specific Person instances by lastName from database.
@@ -78,7 +78,7 @@ public interface PersonDAO {
      * @return Person instance
      * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    List<Person> getFromName(final String lastName) throws IOException, NoSuchDataException;
+    List<Person> getFromName(final String lastName) throws NoSuchDataException;
 
     /**
      * Get list of Persons by address from database.
@@ -87,7 +87,7 @@ public interface PersonDAO {
      * @return List of Person instances
      * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    List<Person> getFromAddress(final String address) throws IOException, NoSuchDataException;
+    List<Person> getFromAddress(final String address) throws NoSuchDataException;
 
     /**
      * Get Persons leaving in all addresses in the list from database.
@@ -96,7 +96,7 @@ public interface PersonDAO {
      * @return List of Person instance
      * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    List<Person> getFromAddress(final List<String> addresses) throws IOException, NoSuchDataException;
+    List<Person> getFromAddress(final List<String> addresses) throws NoSuchDataException;
 
     /**
      * Get list of Persons by city from database.
@@ -105,5 +105,5 @@ public interface PersonDAO {
      * @return List of Person instances
      * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    List<Person> getCommunity(final String city) throws IOException, NoSuchDataException;
+    List<Person> getCommunity(final String city) throws NoSuchDataException;
 }

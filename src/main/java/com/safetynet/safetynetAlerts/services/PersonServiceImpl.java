@@ -65,7 +65,7 @@ public class PersonServiceImpl implements PersonService {
      * @see PersonService
      */
     @Override
-    public Person get(String firstName, String lastName) throws IOException, NoSuchDataException {
-        return null;
+    public Person get(String firstName, String lastName) throws NoSuchDataException {
+        return this.personDAO.getFromName(firstName, lastName);
     }
 }

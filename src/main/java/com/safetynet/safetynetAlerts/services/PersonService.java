@@ -61,5 +61,5 @@ public interface PersonService {
      * @param lastName  Person to get lastName attribute value
      * @return operation success
      */
-    Person get(String firstName, String lastName) throws IOException, NoSuchDataException;
+    Person get(String firstName, String lastName) throws NoSuchDataException;
 }

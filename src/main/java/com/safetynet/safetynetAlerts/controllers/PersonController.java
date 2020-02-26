@@ -43,11 +43,14 @@ public class PersonController {
 
         try {
             this.personService.add(firstName, lastName, address, city, zip, phone, email);
-            return new ResponseEntity<String>("Person POST Request succeed", HttpStatus.CREATED);
+            Logger.info("Person POST Request succeed");
+            return new ResponseEntity<String>(HttpStatus.CREATED);
         } catch (IOException e) {
-            return new ResponseEntity<String>("Person POST Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("Person POST Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalDataOverrideException e) {
-            return new ResponseEntity<String>("Person POST Request failed : Data could not be created because identifiers already exist in database", HttpStatus.FORBIDDEN);
+            Logger.error("Person POST Request failed : Data could not be created because identifiers already exist in database");
+            return new ResponseEntity<String>(HttpStatus.FORBIDDEN);
         }
     }
 
@@ -91,11 +94,14 @@ public class PersonController {
 
         try {
             this.personService.delete(firstName, lastName);
-            return new ResponseEntity<String>("Person DELETE Request succeed", HttpStatus.OK);
+            Logger.info("Person DELETE Request succeed");
+            return new ResponseEntity<String>(HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<String>("Person DELETE Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("Person DELETE Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
-            return new ResponseEntity<String>("Person DELETE Request failed : Data could not be deleted because it doesnt exist", HttpStatus.NOT_FOUND);
+            Logger.error("Person DELETE Request failed : Data could not be deleted because it doesnt exist");
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
 
     }
@@ -107,8 +113,6 @@ public class PersonController {
 
         try {
             return new ResponseEntity<Person>(this.personService.get(firstName, lastName), HttpStatus.OK);
-        } catch (IOException e) {
-            return new ResponseEntity<Person>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
             return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
         }

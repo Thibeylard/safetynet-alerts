@@ -76,7 +76,15 @@ public class PersonDAOJsonFile implements PersonDAO {
      */
     @Override
     public Person getFromName(final String firstName,
-                              final String lastName) throws IOException, NoSuchDataException {
+                              final String lastName) throws NoSuchDataException {
+        return this.jsonFileDatabase.getPerson(firstName, lastName);
+    }
+
+    /**
+     * @see PersonDAO
+     */
+    @Override
+    public List<Person> getFromName(final String lastName) throws NoSuchDataException {
         return null;
     }
 
@@ -84,7 +92,7 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @see PersonDAO
      */
     @Override
-    public List<Person> getFromName(final String lastName) throws IOException, NoSuchDataException {
+    public List<Person> getFromAddress(final String address) throws NoSuchDataException {
         return null;
     }
 
@@ -92,7 +100,7 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @see PersonDAO
      */
     @Override
-    public List<Person> getFromAddress(final String address) throws IOException, NoSuchDataException {
+    public List<Person> getFromAddress(List<String> addresses) throws NoSuchDataException {
         return null;
     }
 
@@ -100,15 +108,7 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @see PersonDAO
      */
     @Override
-    public List<Person> getFromAddress(List<String> addresses) throws IOException, NoSuchDataException {
-        return null;
-    }
-
-    /**
-     * @see PersonDAO
-     */
-    @Override
-    public List<Person> getCommunity(final String city) throws IOException, NoSuchDataException {
+    public List<Person> getCommunity(final String city) throws NoSuchDataException {
         return null;
     }
 }

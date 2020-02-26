@@ -1,6 +1,5 @@
 package com.safetynet.safetynetAlerts.integration;
 
-import com.safetynet.safetynetAlerts.daos.JsonFileDatabase;
 import com.safetynet.safetynetAlerts.factories.PersonFactory;
 import com.safetynet.safetynetAlerts.factories.enums.Addresses;
 import com.safetynet.safetynetAlerts.models.Person;
@@ -31,9 +30,6 @@ public class PersonControllerIT {
     private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
     private final static String getURL = "/person?firstName={firstName}&lastName={lastName}";
-    @Autowired
-    private JsonFileDatabase jsonFileDatabase;
-
 
     @BeforeEach
     void resetParams() {
@@ -69,7 +65,7 @@ public class PersonControllerIT {
 
 
     @Test
-    @DisplayName("POST missing parameter")
+    @DisplayName("POST no partial data")
     void Given_wrongParameters_When_POSTPerson_Then_noPartialDataSaved() throws Exception {
         Person person = PersonFactory.getPerson();
 
@@ -91,8 +87,7 @@ public class PersonControllerIT {
 
         response = restTemplate.getForEntity(getURL, Person.class, person.getFirstName(), person.getLastName());
         assertThat(response.getBody())
-                .isNotNull()
-                .isEqualToComparingFieldByField(person);
+                .isNull();
     }
 
     @Test
@@ -102,13 +97,6 @@ public class PersonControllerIT {
         Person existing = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.APPLEGATE), Optional.empty());
         Person added = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.BAYMEADOWS), Optional.empty());
 
-        // Checking that these specific persons don't already exist in database.
-        ResponseEntity<Person> response = restTemplate.getForEntity(getURL, Person.class, existing.getFirstName(), existing.getLastName());
-        assertThat(response.getBody())
-                .isNull();
-        response = restTemplate.getForEntity(getURL, Person.class, added.getFirstName(), added.getLastName());
-        assertThat(response.getBody())
-                .isNull();
 
         params.add("firstName", existing.getFirstName());
         params.add("lastName", existing.getLastName());
@@ -120,6 +108,11 @@ public class PersonControllerIT {
 
         // Preparation request
         restTemplate.postForEntity("/person", params, String.class);
+
+        // Checking that existing Person is actually in database
+        ResponseEntity<Person> response = restTemplate.getForEntity(getURL, Person.class, existing.getFirstName(), existing.getLastName());
+        assertThat(response.getBody())
+                .isNotNull();
 
         params.clear();
 
@@ -134,41 +127,30 @@ public class PersonControllerIT {
         // Actual request
         restTemplate.postForEntity("/person", params, String.class);
 
-        // Checking that existing person is unmodified
+        // Checking that existing person is unmodified after post
         response = restTemplate.getForEntity(getURL, Person.class, existing.getFirstName(), existing.getLastName());
         assertThat(response.getBody())
                 .isNotNull()
                 .isEqualToComparingFieldByField(existing);
     }
 
-    //TODO replace jsonFileDatabase.getPerson() by get requests
     @Test
     @DisplayName("UPDATE successful")
     void Given_dataAddedToDatabase_When_UPDATEPerson_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
         // Two persons with same name but different addresses
-        Person original = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.APPLEGATE), Optional.empty());
+        Person existing = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.APPLEGATE), Optional.empty());
         Person update = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.BAYMEADOWS), Optional.empty());
 
-        // Checking that this specific persons don't already exist in database.
-        assertThat(jsonFileDatabase.getPerson(original.getFirstName(), original.getLastName()))
-                .isNull();
-        assertThat(jsonFileDatabase.getPerson(update.getFirstName(), update.getLastName()))
-                .isNull();
+        params.add("firstName", existing.getFirstName());
+        params.add("lastName", existing.getLastName());
+        params.add("address", existing.getAddress());
+        params.add("city", existing.getCity());
+        params.add("zip", existing.getZip());
+        params.add("phone", existing.getPhone());
+        params.add("email", existing.getEmail());
 
-        params.add("firstName", original.getFirstName());
-        params.add("lastName", original.getLastName());
-        params.add("address", original.getAddress());
-        params.add("city", original.getCity());
-        params.add("zip", original.getZip());
-        params.add("phone", original.getPhone());
-        params.add("email", original.getEmail());
-
-        // Preparation request
+        // Person added
         restTemplate.postForEntity("/person", params, String.class);
-
-        // Checking that this specific person doesn't already exist in database.
-        assertThat(jsonFileDatabase.getPerson(original.getFirstName(), original.getLastName()))
-                .isNotNull();
 
         params.clear();
 
@@ -180,23 +162,25 @@ public class PersonControllerIT {
         params.add("phone", update.getPhone());
         params.add("email", update.getEmail());
 
-        // Actual request
+        // Person updated
         restTemplate.put("/person", params);
 
-        // Checking that existing person is unmodified
-        assertThat(jsonFileDatabase.getPerson(original.getFirstName(), original.getLastName()))
+        // Checking that existing person has been modified
+        ResponseEntity<Person> response = restTemplate.getForEntity(getURL, Person.class, existing.getFirstName(), existing.getLastName());
+        assertThat(response.getBody())
                 .isNotNull()
                 .isEqualToComparingFieldByField(update);
     }
 
     @Test
-    @DisplayName("UPDATE no data")
-    void Given_noCorrespondingData_When_UPDATEPerson_Then_dataNotCreated() throws Exception {
+    @DisplayName("UPDATE no partial data")
+    void Given_noCorrespondingData_When_UPDATEPerson_Then_noPartialDataSaved() throws Exception {
         // Two persons with same name but different addresses
         Person update = PersonFactory.getPerson(Optional.of("Bob"), Optional.of("Hawkins"), Optional.of(Addresses.BAYMEADOWS), Optional.empty());
 
         // Checking that this specific persons don't already exist in database.
-        assertThat(jsonFileDatabase.getPerson(update.getFirstName(), update.getLastName()))
+        ResponseEntity<Person> response = restTemplate.getForEntity(getURL, Person.class, update.getFirstName(), update.getLastName());
+        assertThat(response.getBody())
                 .isNull();
 
         params.add("firstName", update.getFirstName());
@@ -210,28 +194,43 @@ public class PersonControllerIT {
         // Actual request
         restTemplate.put("/person", params);
 
-        // Checking that existing person is unmodified
-        assertThat(jsonFileDatabase.getPerson(update.getFirstName(), update.getLastName()))
+        // Checking that no data has been created
+        response = restTemplate.getForEntity(getURL, Person.class, update.getFirstName(), update.getLastName());
+        assertThat(response.getBody())
                 .isNull();
     }
 
     @Test
     @DisplayName("DELETE successful")
-    void Given_dataAddedToDatabase_When_DELETEPerson_Then_dataCanBeRetrievedAfterDeletion() throws Exception {
-        Person person = PersonFactory.getPerson();
+    void Given_dataAddedToDatabase_When_DELETEPerson_Then_dataCantBeRetrievedAfterDeletion() {
+        Person existing = PersonFactory.getPerson();
 
-        params.add("firstName", person.getFirstName());
-        params.add("lastName", person.getLastName());
-        params.add("address", person.getAddress());
-        params.add("city", person.getCity());
-        params.add("zip", person.getZip());
-        params.add("phone", person.getPhone());
-        params.add("email", person.getEmail());
+        params.add("firstName", existing.getFirstName());
+        params.add("lastName", existing.getLastName());
+        params.add("address", existing.getAddress());
+        params.add("city", existing.getCity());
+        params.add("zip", existing.getZip());
+        params.add("phone", existing.getPhone());
+        params.add("email", existing.getEmail());
 
         // Preparation request
         restTemplate.postForEntity("/person", params, String.class);
 
-        assertThat(jsonFileDatabase.getPerson(person.getFirstName(), person.getLastName()))
-                .isEqualToComparingFieldByField(person);
+        ResponseEntity<Person> response = restTemplate.getForEntity(getURL, Person.class, existing.getFirstName(), existing.getLastName());
+        assertThat(response.getBody())
+                .isNotNull();
+
+        params.clear();
+
+        params.add("firstName", existing.getFirstName());
+        params.add("lastName", existing.getLastName());
+
+        // Actual request
+        restTemplate.delete("/person?firstName={firstName}&lastName={lastName}", existing.getFirstName(), existing.getLastName());
+
+        // Check that existing Person has been deleted
+        response = restTemplate.getForEntity(getURL, Person.class, existing.getFirstName(), existing.getLastName());
+        assertThat(response.getBody())
+                .isNull();
     }
 }
