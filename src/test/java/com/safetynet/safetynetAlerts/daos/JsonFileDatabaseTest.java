@@ -17,6 +17,7 @@ import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -48,6 +49,8 @@ class JsonFileDatabaseTest {
     private JsonParser mockParser;
     @MockBean
     private JsonGenerator mockGenerator;
+    @Value("${jsondatabase.src}")
+    private String databaseSrc;
 
     JsonFileDatabaseTest() {
     }
@@ -62,7 +65,7 @@ class JsonFileDatabaseTest {
     public void initializeMocks() throws IOException {
         doReturn(mockParser).when(spyFactory).createParser(any(File.class));
         when(mockParser.readValueAs(JsonFileDatabaseDTO.class)).thenReturn(new JsonFileDatabaseDTO(persons, firestations, medicalRecords));
-        jsonFileDatabase = new JsonFileDatabase(spyFactory, mapper);
+        jsonFileDatabase = new JsonFileDatabase(spyFactory, mapper, this.databaseSrc);
     }
 
 

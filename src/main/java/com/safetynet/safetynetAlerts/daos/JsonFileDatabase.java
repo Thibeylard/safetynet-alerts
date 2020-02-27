@@ -27,9 +27,6 @@ public class JsonFileDatabase {
     private final JsonFactory factory;
     private File data;
 
-    @Value("${json-database.src}")
-    private String src;
-
     private JsonFileDatabaseDTO jsonFileDTO;
 
     /**
@@ -40,8 +37,10 @@ public class JsonFileDatabase {
      */
 
     @Autowired
-    public JsonFileDatabase(final JsonFactory jsonFactory, ObjectMapper mapper) throws IOException {
-        this.data = new File(this.src);
+    public JsonFileDatabase(final JsonFactory jsonFactory,
+                            final ObjectMapper mapper,
+                            @Value("${jsondatabase.src}") String src) throws IOException {
+        this.data = new File(src);
         this.factory = jsonFactory.setCodec(mapper);
         JsonParser parser = factory.createParser(this.data);
         this.jsonFileDTO = parser.readValueAs(JsonFileDatabaseDTO.class);
