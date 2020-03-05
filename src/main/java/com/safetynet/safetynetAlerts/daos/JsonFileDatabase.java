@@ -67,7 +67,10 @@ public class JsonFileDatabase {
 //    ---------------------------------------------------------------------------------------- FIRESTATION
 
     public Firestation getFirestation(final String address) throws IOException, NoSuchDataException {
-        return null;
+        return this.jsonFileDTO.getFirestations().stream()
+                .filter(firestation -> firestation.getAddress().equals(address))
+                .findFirst()
+                .orElseThrow(NoSuchDataException::new);
     }
 
     public List<Firestation> getFirestations(final int number) throws IOException, NoSuchDataException {
