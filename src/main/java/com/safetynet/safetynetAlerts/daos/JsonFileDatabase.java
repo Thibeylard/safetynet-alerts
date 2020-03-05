@@ -119,7 +119,11 @@ public class JsonFileDatabase {
     //    ---------------------------------------------------------------------------------------- MEDICALRECORD
 
     public MedicalRecord getMedicalRecord(final String firstName, final String lastName) throws IOException, NoSuchDataException {
-        return null;
+        return this.jsonFileDTO.getMedicalRecords().stream()
+                .filter(medicalRecord -> medicalRecord.getLastName().equals(lastName))
+                .filter(medicalRecord -> medicalRecord.getFirstName().equals(firstName))
+                .findFirst()
+                .orElseThrow(NoSuchDataException::new);
     }
 
     public List<MedicalRecord> getMedicalRecords(final List<Person> person) throws IOException, NoSuchDataException {

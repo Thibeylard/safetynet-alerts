@@ -36,7 +36,7 @@ public class MedicalRecordFactory {
      * @return medications String List
      */
     private static List<String> generateMedications() {
-        int count = getRandom().nextInt(3);
+        int count = getRandom().nextInt(3) + 1;
         List<String> medications = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
@@ -52,7 +52,7 @@ public class MedicalRecordFactory {
      * @return allergies String List
      */
     private static List<String> generateAllergies() {
-        int count = getRandom().nextInt(3);
+        int count = getRandom().nextInt(3) + 1;
         List<String> allergies = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
@@ -63,11 +63,21 @@ public class MedicalRecordFactory {
     }
 
     /**
+     * Generates a MedicalRecord with randomly generated values.
+     *
+     * @param isChild birthDate will correspond to a less than 18 year old
+     * @return new MedicalRecord
+     */
+    public static MedicalRecord getMedicalRecord(boolean isChild) {
+        return getMedicalRecord(isChild, Optional.empty(), Optional.empty());
+    }
+
+    /**
      * Generates a MedicalRecord with randomly generated values for empty optional parameters.
      *
-     * @param isChild     birthDate will correspond to a less than 18 year old
-     * @param firstName   MedicalRecord attribute value (Optional)
-     * @param lastName    MedicalRecord attribute value (Optional)
+     * @param isChild   birthDate will correspond to a less than 18 year old
+     * @param firstName MedicalRecord attribute value (Optional)
+     * @param lastName  MedicalRecord attribute value (Optional)
      * @return new MedicalRecord
      */
     public static MedicalRecord getMedicalRecord(boolean isChild,
@@ -86,5 +96,44 @@ public class MedicalRecordFactory {
         List<String> allergies = generateAllergies();
 
         return new MedicalRecord(firstName.get(), lastName.get(), birthDate, medications, allergies);
+    }
+
+    /**
+     * Generates a MedicalRecord with randomly generated values for empty optional parameters.
+     *
+     * @param isChild     birthDate will correspond to a less than 18 year old
+     * @param firstName   MedicalRecord attribute value (Optional)
+     * @param lastName    MedicalRecord attribute value (Optional)
+     * @param birthDate   MedicalRecord attribute value (Optional)
+     * @param medications MedicalRecord attribute value (Optional)
+     * @param allergies   MedicalRecord attribute value (Optional)
+     * @return new MedicalRecord
+     */
+    public static MedicalRecord getMedicalRecord(boolean isChild,
+                                                 Optional<String> firstName,
+                                                 Optional<String> lastName,
+                                                 Optional<String> birthDate,
+                                                 Optional<List<String>> medications,
+                                                 Optional<List<String>> allergies) {
+        if (firstName.isEmpty()) {
+            firstName = Optional.of(generateName());
+        }
+
+        if (lastName.isEmpty()) {
+            lastName = Optional.of(generateName());
+        }
+
+        if (birthDate.isEmpty()) {
+            birthDate = Optional.of(generateBirthDate(isChild));
+        }
+
+        if (medications.isEmpty()) {
+            medications = Optional.of(generateMedications());
+        }
+        if (allergies.isEmpty()) {
+            allergies = Optional.of(generateAllergies());
+        }
+
+        return new MedicalRecord(firstName.get(), lastName.get(), birthDate.get(), medications.get(), allergies.get());
     }
 }
