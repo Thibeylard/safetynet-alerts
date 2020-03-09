@@ -1,9 +1,10 @@
 package com.safetynet.safetynetAlerts.daos;
 
-import com.safetynet.safetynetAlerts.models.MedicalRecord;
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Person;
-import org.springframework.util.MultiValueMap;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,13 +22,13 @@ public interface PersonDAO {
      * @param email     value to set for email attribute
      * @return operation success
      */
-    public boolean add(final String firstName,
-                       final String lastName,
-                       final String address,
-                       final String city,
-                       final String zip,
-                       final String phone,
-                       final String email);
+    boolean add(final String firstName,
+                final String lastName,
+                final String address,
+                final String city,
+                final String zip,
+                final String phone,
+                final String email) throws IOException, IllegalDataOverrideException;
 
     /**
      * Update specific Person from database.
@@ -41,13 +42,13 @@ public interface PersonDAO {
      * @param email     optional value to set for email attribute
      * @return operation success
      */
-    public boolean update(final String firstName,
-                          final String lastName,
-                          final Optional<String> address,
-                          final Optional<String> city,
-                          final Optional<String> zip,
-                          final Optional<String> phone,
-                          final Optional<String> email);
+    boolean update(final String firstName,
+                   final String lastName,
+                   final Optional<String> address,
+                   final Optional<String> city,
+                   final Optional<String> zip,
+                   final Optional<String> phone,
+                   final Optional<String> email) throws IOException, NoSuchDataException;
 
     /**
      * Delete specific Person from database.
@@ -56,8 +57,8 @@ public interface PersonDAO {
      * @param lastName  Person to delete lastName attribute value
      * @return operation success
      */
-    public boolean delete(final String firstName,
-                          final String lastName);
+    boolean delete(final String firstName,
+                   final String lastName) throws IOException, NoSuchDataException;
 
     /**
      * Get specific Person instance by whole name from database.
@@ -65,44 +66,44 @@ public interface PersonDAO {
      * @param firstName firstName value to search
      * @param lastName  lastName value to search
      * @return Person instance
-     * @throws Exception for data access failure
+     * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    public Person getFromName(final String firstName,
-                              final String lastName) throws Exception;
+    Person getFromName(final String firstName,
+                       final String lastName) throws NoSuchDataException;
 
     /**
      * Get specific Person instances by lastName from database.
      *
      * @param lastName lastName value to search
      * @return Person instance
-     * @throws Exception for data access failure
+     * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    public List<Person> getFromName(final String lastName) throws Exception;
+    List<Person> getFromName(final String lastName) throws NoSuchDataException;
 
     /**
      * Get list of Persons by address from database.
      *
      * @param address address value to search
      * @return List of Person instances
-     * @throws Exception for data access failure
+     * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    public List<Person> getFromAddress(final String address) throws Exception;
+    List<Person> getFromAddress(final String address) throws NoSuchDataException;
 
     /**
      * Get Persons leaving in all addresses in the list from database.
      *
      * @param addresses List of addresses of which to get Persons
      * @return List of Person instance
-     * @throws Exception for data access failure
+     * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    public List<Person> getFromAddress(final List<String> addresses) throws Exception;
+    List<Person> getFromAddress(final List<String> addresses) throws NoSuchDataException;
 
     /**
      * Get list of Persons by city from database.
      *
      * @param city address value to search
      * @return List of Person instances
-     * @throws Exception for data access failure
+     * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    public List<Person> getCommunity(final String city) throws Exception;
+    List<Person> getCommunity(final String city) throws NoSuchDataException;
 }

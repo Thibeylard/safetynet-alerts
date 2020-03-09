@@ -3,15 +3,16 @@ package com.safetynet.safetynetAlerts.daos;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.safetynet.safetynetAlerts.dtos.JsonFileDatabaseDTO;
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.tinylog.Logger;
 
@@ -23,34 +24,31 @@ import java.util.Optional;
 @Repository
 public class JsonFileDatabase {
 
-    private final ObjectMapper MAPPER;
-    private final File DATA;
+    private final JsonFactory factory;
+    private File data;
 
     private JsonFileDatabaseDTO jsonFileDTO;
-    private JsonFactory factory;
-
 
     /**
      * Constructor.
      *
-     * @param pMapper Autowired ObjectMapper Singleton
+     * @param jsonFactory Autowired JsonFactory Singleton
      * @throws IOException Handles dataSrc file related errors
      */
 
     @Autowired
-    public JsonFileDatabase(final ObjectMapper pMapper) throws IOException {
-        this.DATA = new File("src/main/resources/static/data.json");
-        this.MAPPER = pMapper;
-        this.jsonFileDTO = MAPPER.convertValue(MAPPER.readTree(DATA), new TypeReference<JsonFileDatabaseDTO>() {
-        });
-        this.factory = new JsonFactory().setCodec(this.MAPPER);
+    public JsonFileDatabase(final JsonFactory jsonFactory,
+                            final ObjectMapper mapper,
+                            @Value("${jsondatabase.src}") String src) throws IOException {
+        this.data = new File(src);
+        this.factory = jsonFactory.setCodec(mapper);
+        JsonParser parser = factory.createParser(this.data);
+        this.jsonFileDTO = parser.readValueAs(JsonFileDatabaseDTO.class);
     }
 
-
-
-    private boolean writeDataToJsonFile() {
+    private boolean writeDataToJsonFile() throws IOException {
         try {
-            JsonGenerator generator = factory.createGenerator(this.DATA, JsonEncoding.UTF8);
+            JsonGenerator generator = factory.createGenerator(this.data, JsonEncoding.UTF8);
             generator.writeStartObject();
             generator.writeObjectField("persons", this.jsonFileDTO.getPersons());
             generator.writeObjectField("firestations", this.jsonFileDTO.getFirestations());
@@ -58,57 +56,77 @@ public class JsonFileDatabase {
             generator.writeEndObject();
             generator.close();
             Logger.debug("data.json successfully saved.");
-            return true;
         } catch (IOException e) {
             Logger.error("An IOException occurred : data.json save failed.");
-            e.printStackTrace();
-            return false;
+            throw new IOException();
         }
+
+        return true;
     }
 
 //    ---------------------------------------------------------------------------------------- FIRESTATION
 
-    public Firestation getFirestation(final String address) {
+    public Firestation getFirestation(final String address) throws IOException, NoSuchDataException {
+        return this.jsonFileDTO.getFirestations().stream()
+                .filter(firestation -> firestation.getAddress().equals(address))
+                .findFirst()
+                .orElseThrow(NoSuchDataException::new);
+    }
+
+    public List<Firestation> getFirestations(final int number) throws IOException, NoSuchDataException {
         return null;
     }
 
-    public List<Firestation> getFirestations(final int number) {
-        return null;
-    }
+    public boolean addFirestation(final String address, final int number) throws IOException, IllegalDataOverrideException {
+        Optional<Firestation> existantFirestation = this.jsonFileDTO.getFirestations().stream()
+                .filter(firestation -> firestation.getAddress().equals(address))
+                .findFirst();
 
-    public boolean addFirestation(final String address, final int number) {
-        this.jsonFileDTO.getFirestations().add(new Firestation(address, number));
+        if (existantFirestation.isPresent()) {
+            throw new IllegalDataOverrideException();
+        } else {
+            this.jsonFileDTO.getFirestations().add(new Firestation(address, number));
+        }
 
         return writeDataToJsonFile();
     }
 
-    public boolean updateFirestation(final String address, final int number) {
+    public boolean updateFirestation(final String address, final int number) throws IOException, NoSuchDataException {
+
         this.jsonFileDTO.getFirestations().stream()
                 .filter(firestation -> firestation.getAddress().equals(address))
-                .forEach(firestation -> firestation.setStation(number));
+                .findFirst()
+                .orElseThrow(NoSuchDataException::new)
+                .setStation(number);
 
         return writeDataToJsonFile();
     }
 
-    public boolean deleteFirestation(final int number) {
-        jsonFileDTO.getFirestations().removeIf(firestation -> firestation.getStation() == number);
-
+    public boolean deleteFirestation(final int number) throws IOException, NoSuchDataException {
+        if (!jsonFileDTO.getFirestations().removeIf(firestation -> firestation.getStation() == number)) {
+            throw new NoSuchDataException();
+        }
         return writeDataToJsonFile();
     }
 
-    public boolean deleteFirestation(final String address) {
-        jsonFileDTO.getFirestations().removeIf(firestation -> firestation.getAddress().equals(address));
-
+    public boolean deleteFirestation(final String address) throws IOException, NoSuchDataException {
+        if (!jsonFileDTO.getFirestations().removeIf(firestation -> firestation.getAddress().equals(address))) {
+            throw new NoSuchDataException();
+        }
         return writeDataToJsonFile();
     }
 
     //    ---------------------------------------------------------------------------------------- MEDICALRECORD
 
-    public MedicalRecord getMedicalRecord(final Person person) {
-        return null;
+    public MedicalRecord getMedicalRecord(final String firstName, final String lastName) throws IOException, NoSuchDataException {
+        return this.jsonFileDTO.getMedicalRecords().stream()
+                .filter(medicalRecord -> medicalRecord.getLastName().equals(lastName))
+                .filter(medicalRecord -> medicalRecord.getFirstName().equals(firstName))
+                .findFirst()
+                .orElseThrow(NoSuchDataException::new);
     }
 
-    public List<MedicalRecord> getMedicalRecords(final List<Person> person) {
+    public List<MedicalRecord> getMedicalRecords(final List<Person> person) throws IOException, NoSuchDataException {
         return null;
     }
 
@@ -116,14 +134,23 @@ public class JsonFileDatabase {
                                     final String lastName,
                                     final String birthDate,
                                     final List<String> medications,
-                                    final List<String> allergies) {
-        this.jsonFileDTO.getMedicalRecords().add(new MedicalRecord(
-                firstName,
-                lastName,
-                birthDate,
-                medications,
-                allergies
-        ));
+                                    final List<String> allergies) throws IOException, IllegalDataOverrideException {
+
+        Optional<MedicalRecord> existantMedicalRecord = this.jsonFileDTO.getMedicalRecords().stream()
+                .filter(medicalRecord -> medicalRecord.getLastName().equals(lastName))
+                .filter(medicalRecord -> medicalRecord.getFirstName().equals(firstName))
+                .findFirst();
+
+        if (existantMedicalRecord.isPresent()) {
+            throw new IllegalDataOverrideException();
+        } else {
+            this.jsonFileDTO.getMedicalRecords().add(new MedicalRecord(
+                    firstName,
+                    lastName,
+                    birthDate,
+                    medications,
+                    allergies));
+        }
 
         return writeDataToJsonFile();
     }
@@ -132,47 +159,56 @@ public class JsonFileDatabase {
                                        final String lastName,
                                        final Optional<String> birthDate,
                                        final Optional<List<String>> medications,
-                                       final Optional<List<String>> allergies) {
-        this.jsonFileDTO.getMedicalRecords().stream()
+                                       final Optional<List<String>> allergies) throws IOException, NoSuchDataException {
+
+        MedicalRecord existantMedicalRecord = this.jsonFileDTO.getMedicalRecords().stream()
                 .filter(medicalRecord -> medicalRecord.getLastName().equals(lastName))
                 .filter(medicalRecord -> medicalRecord.getFirstName().equals(firstName))
-                .forEach(medicalRecord -> {
-                    birthDate.ifPresent(medicalRecord::setBirthDate);
-                    medications.ifPresent(medicalRecord::setMedications);
-                    allergies.ifPresent(medicalRecord::setAllergies);
-                });
+                .findFirst()
+                .orElseThrow(NoSuchDataException::new);
+
+        birthDate.ifPresent(existantMedicalRecord::setBirthDate);
+        medications.ifPresent(existantMedicalRecord::setMedications);
+        allergies.ifPresent(existantMedicalRecord::setAllergies);
 
         return writeDataToJsonFile();
     }
 
     public boolean deleteMedicalRecord(final String firstName,
-                                       final String lastName) {
-        jsonFileDTO.getMedicalRecords().removeIf(medicalRecord ->
-                medicalRecord.getFirstName().equals(firstName) && medicalRecord.getLastName().equals(lastName));
+                                       final String lastName) throws IOException, NoSuchDataException {
+        if (!jsonFileDTO.getMedicalRecords().removeIf(medicalRecord ->
+                medicalRecord.getFirstName().equals(firstName) && medicalRecord.getLastName().equals(lastName))) {
+            throw new NoSuchDataException();
+        }
+
         return writeDataToJsonFile();
     }
 
     //    ---------------------------------------------------------------------------------------- PERSON
 
     public Person getPerson(final String firstName,
-                            final String lastName) {
+                            final String lastName) throws NoSuchDataException {
+        return this.jsonFileDTO.getPersons().stream()
+                .filter(person -> person.getLastName().equals(lastName))
+                .filter(person -> person.getFirstName().equals(firstName))
+                .findFirst()
+                .orElseThrow(NoSuchDataException::new);
+    }
+
+    public List<Person> getPersonFromLastName(final String firstName,
+                                              final String lastName) throws IOException, NoSuchDataException {
         return null;
     }
 
-    public Person getPersonFromLastName(final String firstName,
-                                        final String lastName) {
+    public List<Person> getPersonFromAddress(final String address) throws IOException, NoSuchDataException {
         return null;
     }
 
-    public Person getPersonFromAddress(final String address) {
+    public List<Person> getPersonFromAddress(final List<String> address) throws IOException, NoSuchDataException {
         return null;
     }
 
-    public Person getPersonFromAddress(final List<String> address) {
-        return null;
-    }
-
-    public Person getPersonFromCity(final String city) {
+    public List<Person> getPersonFromCity(final String city) throws IOException, NoSuchDataException {
         return null;
     }
 
@@ -182,18 +218,28 @@ public class JsonFileDatabase {
                              final String city,
                              final String zip,
                              final String phone,
-                             final String email) {
-        this.jsonFileDTO.getPersons().add(new Person(
-                firstName,
-                lastName,
-                address,
-                city,
-                zip,
-                phone,
-                email,
-                Optional.empty()));
+                             final String email) throws IOException, IllegalDataOverrideException {
 
-        return writeDataToJsonFile();
+        Optional<Person> existantPerson = this.jsonFileDTO.getPersons().stream()
+                .filter(person -> person.getLastName().equals(lastName))
+                .filter(person -> person.getFirstName().equals(firstName))
+                .findFirst();
+
+        if (existantPerson.isPresent()) {
+            throw new IllegalDataOverrideException();
+        } else {
+            this.jsonFileDTO.getPersons().add(new Person(
+                    firstName,
+                    lastName,
+                    address,
+                    city,
+                    zip,
+                    phone,
+                    email));
+
+            return writeDataToJsonFile();
+        }
+
     }
 
     public boolean updatePerson(final String firstName,
@@ -202,25 +248,31 @@ public class JsonFileDatabase {
                                 final Optional<String> city,
                                 final Optional<String> zip,
                                 final Optional<String> phone,
-                                final Optional<String> email) {
-        this.jsonFileDTO.getPersons().stream()
+                                final Optional<String> email) throws IOException, NoSuchDataException {
+
+        Person existantPerson = this.jsonFileDTO.getPersons().stream()
                 .filter(person -> person.getLastName().equals(lastName))
                 .filter(person -> person.getFirstName().equals(firstName))
-                .forEach(person -> {
-                    address.ifPresent(person::setAddress);
-                    city.ifPresent(person::setCity);
-                    zip.ifPresent(person::setZip);
-                    phone.ifPresent(person::setPhone);
-                    email.ifPresent(person::setEmail);
-                });
+                .findFirst()
+                .orElseThrow(NoSuchDataException::new);
+
+
+        address.ifPresent(existantPerson::setAddress);
+        city.ifPresent(existantPerson::setCity);
+        zip.ifPresent(existantPerson::setZip);
+        phone.ifPresent(existantPerson::setPhone);
+        email.ifPresent(existantPerson::setEmail);
 
         return writeDataToJsonFile();
     }
 
     public boolean deletePerson(final String firstName,
-                                final String lastName) {
-        jsonFileDTO.getPersons().removeIf(person ->
-                person.getFirstName().equals(firstName) && person.getLastName().equals(lastName));
+                                final String lastName) throws IOException, NoSuchDataException {
+        if (!jsonFileDTO.getPersons().removeIf(person ->
+                person.getFirstName().equals(firstName) && person.getLastName().equals(lastName))) {
+            throw new NoSuchDataException();
+        }
+
         return writeDataToJsonFile();
     }
 

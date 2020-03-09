@@ -1,9 +1,11 @@
 package com.safetynet.safetynetAlerts.daos;
 
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
-import org.springframework.util.MultiValueMap;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,11 +21,11 @@ public interface MedicalRecordDAO {
      * @param allergies   value to set for allergies attribute
      * @return operation success
      */
-    public boolean add(final String firstName,
-                       final String lastName,
-                       final String birthDate,
-                       final List<String> medications,
-                       final List<String> allergies);
+    boolean add(final String firstName,
+                final String lastName,
+                final String birthDate,
+                final List<String> medications,
+                final List<String> allergies) throws IOException, IllegalDataOverrideException;
 
     /**
      * Update specific MedicalRecord from database.
@@ -35,11 +37,11 @@ public interface MedicalRecordDAO {
      * @param allergies   optional value to set for birthDate attribute
      * @return operation success
      */
-    public boolean update(final String firstName,
-                          final String lastName,
-                          final Optional<String> birthDate,
-                          final Optional<List<String>> medications,
-                          final Optional<List<String>> allergies);
+    boolean update(final String firstName,
+                   final String lastName,
+                   final Optional<String> birthDate,
+                   final Optional<List<String>> medications,
+                   final Optional<List<String>> allergies) throws IOException, NoSuchDataException;
 
     /**
      * Delete specific MedicalRecord from database.
@@ -48,8 +50,8 @@ public interface MedicalRecordDAO {
      * @param lastName  MedicalRecord to delete lastName attribute value
      * @return operation success
      */
-    public boolean delete(final String firstName,
-                          final String lastName);
+    boolean delete(final String firstName,
+                   final String lastName) throws IOException, NoSuchDataException;
 
     /**
      * Get specific MedicalRecord by name from database.
@@ -57,34 +59,29 @@ public interface MedicalRecordDAO {
      * @param firstName firstName value to search
      * @param lastName  lastName value to search
      * @return MedicalRecord instance
-     * @throws Exception for data access failure
+     * @throws IOException for data access failure
      */
-    public MedicalRecord getPersonMedicalRecord(final String firstName,
-                                                final String lastName) throws Exception;
+    MedicalRecord getMedicalRecord(final String firstName,
+                                   final String lastName) throws IOException, NoSuchDataException;
 
     /**
      * Get MedicalRecords of all Persons in the list from database.
      *
-     * @param persons List of Persons of which to get MedicalRecords
+     * @param person Person of which to get MedicalRecord
      * @return List of MedicalRecord instance
-     * @throws Exception for data access failure
+     * @throws IOException for data access failure
      */
-    public List<MedicalRecord> getPersonsMedicalRecord(final List<Person> persons) throws Exception;
+    MedicalRecord getMedicalRecord(Person person) throws IOException, NoSuchDataException;
 
     /**
-     * Get adults MedicalRecords from database.
+     * Get MedicalRecords of Persons List from database.
      *
+     * @param persons List of Persons of which to get MedicalRecords
      * @return MedicalRecord instance
-     * @throws Exception for data access failure
+     * @throws IOException         for data access failure
+     * @throws NoSuchDataException for data access failure
      */
-    public List<MedicalRecord> getAdultMedicalRecords() throws Exception;
+    List<MedicalRecord> getMedicalRecords(final List<Person> persons) throws IOException, NoSuchDataException;
 
-    /**
-     * Get children MedicalRecords from database.
-     *
-     * @return MedicalRecord instance
-     * @throws Exception for data access failure
-     */
-    public List<MedicalRecord> getChildrenMedicalRecords() throws Exception;
 
 }

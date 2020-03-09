@@ -19,9 +19,9 @@ public class JsonFileDatabaseDTO {
     @JsonProperty("medicalrecords")
     private List<MedicalRecord> medicalRecords;
 
-    public JsonFileDatabaseDTO(List<Person> pPersons,
-                               List<Firestation> pFirestations,
-                               List<MedicalRecord> pMedicalRecords) {
+    public JsonFileDatabaseDTO(@JsonProperty("persons") List<Person> pPersons,
+                               @JsonProperty("firestations") List<Firestation> pFirestations,
+                               @JsonProperty("medicalrecords") List<MedicalRecord> pMedicalRecords) {
         this.persons = pPersons;
         this.firestations = pFirestations;
         this.medicalRecords = pMedicalRecords;

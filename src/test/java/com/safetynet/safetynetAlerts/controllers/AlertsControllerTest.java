@@ -16,13 +16,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AlertsController.class)
@@ -309,8 +312,8 @@ class AlertsControllerTest {
             params.add("stations", "2");
             params.add("stations", "5");
 
-            doReturn(new URLFloodDTO(new HashMap<String, List<EndangeredPersonDTO>>()))
-                    .when(mockAlertsService).getURLFloodDTO(Arrays.asList(2, 5));
+            doReturn(new URLFloodDTO(new HashMap<>()))
+                    .when(mockAlertsService).getURLFloodDTO(List.of(2, 5));
 
             mvcMock.perform(get("/flood/stations")
                     .params(params)
@@ -324,7 +327,7 @@ class AlertsControllerTest {
             params.add("stations", "5");
 
             doReturn(null)
-                    .when(mockAlertsService).getURLFloodDTO(Arrays.asList(2, 5));
+                    .when(mockAlertsService).getURLFloodDTO(List.of(2, 5));
 
             mvcMock.perform(get("/flood/stations")
                     .params(params)
@@ -365,7 +368,7 @@ class AlertsControllerTest {
             params.add("stations", "5");
 
             when(mockAlertsService.getURLFloodDTO(
-                    Arrays.asList(2, 5)))
+                    List.of(2, 5)))
                     .thenThrow(new Exception());
 
             mvcMock.perform(get("/flood/stations")

@@ -1,7 +1,10 @@
 package com.safetynet.safetynetAlerts.daos;
 
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Firestation;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface FirestationDAO {
@@ -13,8 +16,8 @@ public interface FirestationDAO {
      * @param number  value to set for number attribute
      * @return operation success
      */
-    public boolean add(final String address,
-                       final int number);
+    boolean add(final String address,
+                final int number) throws IOException, IllegalDataOverrideException;
 
     /**
      * Update specific Firestation number instance from database.
@@ -23,8 +26,8 @@ public interface FirestationDAO {
      * @param number  value to set for number attribute
      * @return operation success
      */
-    public boolean update(final String address,
-                          final int number);
+    boolean update(final String address,
+                   final int number) throws IOException, NoSuchDataException;
 
     /**
      * Delete Firestation mapping(s) by number from database.
@@ -32,7 +35,7 @@ public interface FirestationDAO {
      * @param number Firestation(s) to delete number attribute value
      * @return operation success
      */
-    public boolean delete(final int number);
+    boolean delete(final int number) throws IOException, NoSuchDataException;
 
     /**
      * Delete specified address Firestation mapping from database.
@@ -40,23 +43,23 @@ public interface FirestationDAO {
      * @param address Firestation to delete address attribute value
      * @return operation success
      */
-    public boolean delete(final String address);
-
-    /**
-     * Get Firestation address list with specified number as number.
-     *
-     * @param number number value to search
-     * @throws Exception for data access failure
-     * @return List of addresses
-     */
-    public List<String> getFirestations(final int number) throws Exception;
+    boolean delete(final String address) throws IOException, NoSuchDataException;
 
     /**
      * Get Firestation instance with specified address.
      *
      * @param address address value to search
-     * @throws Exception for data access failure
      * @return Firestation instance
+     * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    public Firestation getFirestation(final String address) throws Exception;
+    Firestation getFirestation(final String address) throws IOException, NoSuchDataException;
+
+    /**
+     * Get Firestation address list with specified number as number.
+     *
+     * @param number number value to search
+     * @return List of addresses
+     * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
+     */
+    List<Firestation> getFirestations(final int number) throws IOException, NoSuchDataException;
 }

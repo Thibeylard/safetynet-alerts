@@ -36,11 +36,11 @@ public class MedicalRecord {
      * @param medications value to initialize medications attribute
      * @param allergies   value to initialize allergies attribute
      */
-    public MedicalRecord(final String firstName,
-                         final String lastName,
-                         final String birthDate,
-                         final List<String> medications,
-                         final List<String> allergies) {
+    public MedicalRecord(@JsonProperty("firstName") final String firstName,
+                         @JsonProperty("lastName") final String lastName,
+                         @JsonProperty("birthdate") final String birthDate,
+                         @JsonProperty("medications") final List<String> medications,
+                         @JsonProperty("allergies") final List<String> allergies) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;

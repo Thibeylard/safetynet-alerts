@@ -32,7 +32,7 @@ public class Person {
     @JsonProperty("email")
     private String email;
     @JsonIgnore
-    private Optional<MedicalRecord> medicalRecord;
+    private MedicalRecord medicalRecord;
 
     /**
      * Constructor used for JSON serialization and deserialization.
@@ -45,14 +45,13 @@ public class Person {
      * @param phone     value to initialize phone number attribute
      * @param email     value to initialize email attribute
      */
-    public Person(final String firstName,
-                  final String lastName,
-                  final String address,
-                  final String city,
-                  final String zip,
-                  final String phone,
-                  final String email,
-                  final Optional<MedicalRecord> medicalRecord) {
+    public Person(@JsonProperty("firstName") final String firstName,
+                  @JsonProperty("lastName") final String lastName,
+                  @JsonProperty("address") final String address,
+                  @JsonProperty("city") final String city,
+                  @JsonProperty("zip") final String zip,
+                  @JsonProperty("phone") final String phone,
+                  @JsonProperty("email") final String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -60,7 +59,6 @@ public class Person {
         this.zip = zip;
         this.phone = phone;
         this.email = email;
-        this.medicalRecord = medicalRecord;
     }
 
     //    -------------------------------------------------------------------- SETTERS
@@ -110,6 +108,14 @@ public class Person {
         this.email = email;
     }
 
+    /**
+     * medicalRecord attribute getter.
+     *
+     * @return this.medicalRecord
+     */
+    public Optional<MedicalRecord> getMedicalRecord() {
+        return Optional.ofNullable(medicalRecord);
+    }
 
     //    -------------------------------------------------------------------- GETTERS
 
@@ -177,12 +183,13 @@ public class Person {
     }
 
     /**
-     * medicalRecord attribute getter.
+     * medicalRecord attribute setter.
      *
-     * @return this.medicalRecord
+     * @param medicalRecord new value for this.medicalRecord
      */
-    public Optional<MedicalRecord> getMedicalRecord() {
-        return medicalRecord;
+    public Person setMedicalRecord(MedicalRecord medicalRecord) {
+        this.medicalRecord = medicalRecord;
+        return this;
     }
 
     /**
@@ -193,14 +200,14 @@ public class Person {
     @JsonIgnore
     public int getAge() {
         //TODO Refactored method with date parsing, date as parameter...
-        if (medicalRecord.isPresent()) {
+        if (medicalRecord != null) {
             String[] currentDateParts = Instant.now().toString().split("T")[0].split("-");
             // Instant.now date format is yyyy-mm-ddT...Z
             int currentYear = Integer.parseInt(currentDateParts[0]);
             int currentMonth = Integer.parseInt(currentDateParts[1]);
             int currentDay = Integer.parseInt(currentDateParts[2]);
 
-            String[] dateBirthParts = this.medicalRecord.get().getBirthDate().split("/");
+            String[] dateBirthParts = this.medicalRecord.getBirthDate().split("/");
             // datebirth format is dd/mm/yyyy
             int birthYear = Integer.parseInt(dateBirthParts[2]);
             int birthMonth = Integer.parseInt(dateBirthParts[1]);

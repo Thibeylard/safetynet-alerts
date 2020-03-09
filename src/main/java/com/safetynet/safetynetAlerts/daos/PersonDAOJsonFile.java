@@ -1,11 +1,13 @@
 package com.safetynet.safetynetAlerts.daos;
 
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.MultiValueMap;
 import org.tinylog.Logger;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +39,7 @@ public class PersonDAOJsonFile implements PersonDAO {
                        final String city,
                        final String zip,
                        final String phone,
-                       final String email) {
+                       final String email) throws IOException, IllegalDataOverrideException {
         Logger.debug("Person DAO pass add request to JsonFileDatabase");
         return jsonFileDatabase.addPerson(firstName, lastName, address, city, zip, phone, email);
     }
@@ -52,7 +54,7 @@ public class PersonDAOJsonFile implements PersonDAO {
                           final Optional<String> city,
                           final Optional<String> zip,
                           final Optional<String> phone,
-                          final Optional<String> email) {
+                          final Optional<String> email) throws IOException, NoSuchDataException {
         Logger.debug("Person DAO pass update request to JsonFileDatabase");
         return jsonFileDatabase.updatePerson(firstName, lastName, address, city, zip, phone, email);
     }
@@ -62,7 +64,7 @@ public class PersonDAOJsonFile implements PersonDAO {
      */
     @Override
     public boolean delete(final String firstName,
-                          final String lastName) {
+                          final String lastName) throws IOException, NoSuchDataException {
         Logger.debug("Person DAO pass delete request to JsonFileDatabase");
         return jsonFileDatabase.deletePerson(firstName, lastName);
     }
@@ -74,7 +76,15 @@ public class PersonDAOJsonFile implements PersonDAO {
      */
     @Override
     public Person getFromName(final String firstName,
-                              final String lastName) throws Exception {
+                              final String lastName) throws NoSuchDataException {
+        return this.jsonFileDatabase.getPerson(firstName, lastName);
+    }
+
+    /**
+     * @see PersonDAO
+     */
+    @Override
+    public List<Person> getFromName(final String lastName) throws NoSuchDataException {
         return null;
     }
 
@@ -82,7 +92,7 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @see PersonDAO
      */
     @Override
-    public List<Person> getFromName(final String lastName) throws Exception {
+    public List<Person> getFromAddress(final String address) throws NoSuchDataException {
         return null;
     }
 
@@ -90,7 +100,7 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @see PersonDAO
      */
     @Override
-    public List<Person> getFromAddress(final String address) throws Exception {
+    public List<Person> getFromAddress(List<String> addresses) throws NoSuchDataException {
         return null;
     }
 
@@ -98,15 +108,7 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @see PersonDAO
      */
     @Override
-    public List<Person> getFromAddress(List<String> addresses) throws Exception {
-        return null;
-    }
-
-    /**
-     * @see PersonDAO
-     */
-    @Override
-    public List<Person> getCommunity(final String city) throws Exception {
+    public List<Person> getCommunity(final String city) throws NoSuchDataException {
         return null;
     }
 }

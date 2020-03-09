@@ -1,6 +1,8 @@
 package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.daos.MedicalRecordDAO;
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,11 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -35,14 +40,13 @@ class MedicalRecordServiceImplTest {
     @DisplayName("add()")
     class addTestMethods {
         @Test
-        void Given_validParameters_When_addMedicalRecord_Then_returnTrue() {
-            when(mockMedicalRecordDAO.add(
+        void Given_validParameters_When_add_Then_returnTrue() throws Exception {
+            doReturn(true).when(mockMedicalRecordDAO).add(
                     "firstName",
                     "lastName",
                     "birthDate",
                     Collections.singletonList("medications"),
-                    Collections.singletonList("allergies")))
-                    .thenReturn(true);
+                    Collections.singletonList("allergies"));
             assertTrue(medicalRecordService.add(
                     "firstName",
                     "lastName",
@@ -52,15 +56,30 @@ class MedicalRecordServiceImplTest {
         }
 
         @Test
-        void Given_validParametersButDAOErrorOccurs_When_addMedicalRecord_Then_returnFalse() {
-            when(mockMedicalRecordDAO.add(
+        void Given_IllegalDataOverrideException_When_add_Then_throwsIllegalDataOverrideException() throws Exception {
+            doThrow(new IllegalDataOverrideException()).when(mockMedicalRecordDAO).add(
                     "firstName",
                     "lastName",
                     "birthDate",
                     Collections.singletonList("medications"),
-                    Collections.singletonList("allergies")))
-                    .thenReturn(false);
-            assertFalse(medicalRecordService.add(
+                    Collections.singletonList("allergies"));
+            assertThrows(IllegalDataOverrideException.class, () -> medicalRecordService.add(
+                    "firstName",
+                    "lastName",
+                    "birthDate",
+                    Collections.singletonList("medications"),
+                    Collections.singletonList("allergies")));
+        }
+
+        @Test
+        void Given_IOException_When_add_Then_throwsIOException() throws Exception {
+            doThrow(new IOException()).when(mockMedicalRecordDAO).add(
+                    "firstName",
+                    "lastName",
+                    "birthDate",
+                    Collections.singletonList("medications"),
+                    Collections.singletonList("allergies"));
+            assertThrows(IOException.class, () -> medicalRecordService.add(
                     "firstName",
                     "lastName",
                     "birthDate",
@@ -75,14 +94,14 @@ class MedicalRecordServiceImplTest {
     @DisplayName("update()")
     class updateTestMethods {
         @Test
-        void Given_validParameters_When_updateMedicalRecord_Then_returnTrue() {
-            when(mockMedicalRecordDAO.update(
-                    "firstName",
-                    "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty()))
-                    .thenReturn(true);
+        void Given_validParameters_When_update_Then_returnTrue() throws Exception {
+            doReturn(true).when(mockMedicalRecordDAO)
+                    .update(
+                            "firstName",
+                            "lastName",
+                            Optional.of("birthDate"),
+                            Optional.empty(),
+                            Optional.empty());
             assertTrue(medicalRecordService.update(
                     "firstName",
                     "lastName",
@@ -92,15 +111,30 @@ class MedicalRecordServiceImplTest {
         }
 
         @Test
-        void Given_validParametersButDAOErrorOccurs_When_updateMedicalRecord_Then_returnFalse() {
-            when(mockMedicalRecordDAO.update(
+        void Given_NoSuchDataException_When_update_Then_throwsNoSuchDataException() throws Exception {
+            doThrow(new NoSuchDataException()).when(mockMedicalRecordDAO).update(
                     "firstName",
                     "lastName",
                     Optional.of("birthDate"),
                     Optional.empty(),
-                    Optional.empty()))
-                    .thenReturn(false);
-            assertFalse(medicalRecordService.update(
+                    Optional.empty());
+            assertThrows(NoSuchDataException.class, () -> medicalRecordService.update(
+                    "firstName",
+                    "lastName",
+                    Optional.of("birthDate"),
+                    Optional.empty(),
+                    Optional.empty()));
+        }
+
+        @Test
+        void Given_IOException_When_update_Then_throwsIOException() throws Exception {
+            doThrow(new IOException()).when(mockMedicalRecordDAO).update(
+                    "firstName",
+                    "lastName",
+                    Optional.of("birthDate"),
+                    Optional.empty(),
+                    Optional.empty());
+            assertThrows(IOException.class, () -> medicalRecordService.update(
                     "firstName",
                     "lastName",
                     Optional.of("birthDate"),
@@ -115,25 +149,28 @@ class MedicalRecordServiceImplTest {
     @DisplayName("delete()")
     class deleteTestMethods {
         @Test
-        void Given_validParameters_When_deleteMedicalRecord_Then_returnTrue() {
-            when(mockMedicalRecordDAO.delete(
-                    "firstName",
-                    "lastName"))
-                    .thenReturn(true);
+        void Given_validParameters_When_delete_Then_returnTrue() throws Exception {
+            doReturn(true).when(mockMedicalRecordDAO)
+                    .delete("firstName", "lastName");
             assertTrue(medicalRecordService.delete(
                     "firstName",
                     "lastName"));
         }
 
         @Test
-        void Given_validParametersButDAOErrorOccurs_When_deleteMedicalRecord_Then_returnFalse() {
-            when(mockMedicalRecordDAO.delete(
-                    "firstName",
-                    "lastName"))
-                    .thenReturn(false);
-            assertFalse(medicalRecordService.delete(
-                    "firstName",
-                    "lastName"));
+        void Given_NoSuchDataException_When_delete_Then_throwsNoSuchDataException() throws Exception {
+            doThrow(new NoSuchDataException()).when(mockMedicalRecordDAO)
+                    .delete("firstName", "lastName");
+            assertThrows(NoSuchDataException.class, () -> medicalRecordService
+                    .delete("firstName", "lastName"));
+        }
+
+        @Test
+        void Given_IOException_When_delete_Then_throwsIOException() throws Exception {
+            doThrow(new IOException()).when(mockMedicalRecordDAO)
+                    .delete("firstName", "lastName");
+            assertThrows(IOException.class, () -> medicalRecordService
+                    .delete("firstName", "lastName"));
         }
     }
 }

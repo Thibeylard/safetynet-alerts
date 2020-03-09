@@ -20,8 +20,8 @@ public class Firestation {
      * @param address value to initialize address attribute
      * @param station value to initialize number attribute
      */
-    public Firestation(final String address,
-                       final int station) {
+    public Firestation(@JsonProperty("address") final String address,
+                       @JsonProperty("station") final int station) {
         this.address = address;
         this.station = station;
     }

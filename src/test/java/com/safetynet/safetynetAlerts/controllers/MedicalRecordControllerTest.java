@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.controllers;
 
-import com.safetynet.safetynetAlerts.services.FirestationService;
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.services.MedicalRecordService;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
@@ -13,14 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,19 +50,18 @@ class MedicalRecordControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("add_Success")
-        void Given_validRequest_When_add_Then_statusIsCreated() {
+        void Given_validRequest_When_add_Then_statusIsCreated() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("birthDate", "someBirthDate");
             params.addAll("medications", Collections.singletonList("someMedic:somePosology"));
             params.addAll("allergies", Collections.singletonList("someAllergy"));
-            when(mockMedicalRecordService.add(
+            doReturn(true).when(mockMedicalRecordService).add(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
                     params.getFirst("birthDate"),
                     params.get("medications"),
-                    params.get("allergies")))
-                    .thenReturn(true);
+                    params.get("allergies"));
             try {
                 mvcMock.perform(post("/medicalRecord")
                         .params(params)
@@ -93,23 +92,48 @@ class MedicalRecordControllerTest {
             }
         }
 
-        //    ------------------------------------------------------------------------------ server error
+        //    ------------------------------------------------------------------------------ forbidden
         @Test
         @Tag("ServerErrorStatus")
-        @DisplayName("add_ServerError")
-        void Given_validRequestButServiceNotWorking_When_add_Then_statusIsInternalServerError() {
+        @DisplayName("add_Forbidden")
+        void Given_illegalDataOverrideException_When_add_Then_statusIsForbidden() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("birthDate", "someBirthDate");
             params.addAll("medications", Collections.singletonList("someMedic:somePosology"));
             params.addAll("allergies", Collections.singletonList("someAllergy"));
-            when(mockMedicalRecordService.add(
+            doThrow(new IllegalDataOverrideException()).when(mockMedicalRecordService).add(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
                     params.getFirst("birthDate"),
                     params.get("medications"),
-                    params.get("allergies")))
-                    .thenReturn(false);
+                    params.get("allergies"));
+            try {
+                mvcMock.perform(post("/medicalRecord")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isForbidden());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ServerErrorStatus")
+        @DisplayName("add_ServerError")
+        void Given_IOException_When_add_Then_statusIsInternalServerError() throws Exception {
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+            params.add("birthDate", "someBirthDate");
+            params.addAll("medications", Collections.singletonList("someMedic:somePosology"));
+            params.addAll("allergies", Collections.singletonList("someAllergy"));
+            doThrow(new IOException()).when(mockMedicalRecordService).add(
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    params.getFirst("birthDate"),
+                    params.get("medications"),
+                    params.get("allergies"));
             try {
                 mvcMock.perform(post("/medicalRecord")
                         .params(params)
@@ -131,7 +155,7 @@ class MedicalRecordControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("update_Success")
-        void Given_validRequest_When_update_Then_statusIsNoContent() {
+        void Given_validRequest_When_update_Then_statusIsNoContent() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("birthDate", "someBirthDate");
@@ -140,18 +164,17 @@ class MedicalRecordControllerTest {
             MultiValueMap<String, String> optParams = new LinkedMultiValueMap<String, String>();
             optParams.add("birthDate", params.getFirst("birthDate"));
 
-            when(mockMedicalRecordService.update(
+            doReturn(true).when(mockMedicalRecordService).update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
                     Optional.ofNullable(params.getFirst("birthDate")),
                     Optional.empty(),
-                    Optional.empty()))
-                    .thenReturn(true);
+                    Optional.empty());
             try {
                 mvcMock.perform(put("/medicalRecord")
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNoContent());
+                        .andExpect(status().isOk());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -194,25 +217,46 @@ class MedicalRecordControllerTest {
             }
         }
 
-        //    ------------------------------------------------------------------------------ server error
+        //    ------------------------------------------------------------------------------ notFound
         @Test
         @Tag("ServerErrorStatus")
-        @DisplayName("updateServerError")
-        void Given_validRequestButServiceNotWorking_When_update_Then_statusIsInternalServerError() {
+        @DisplayName("update_notFound")
+        void Given_noSuchDataException_When_update_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("birthDate", "someBirthDate");
 
-            MultiValueMap<String, String> optParams = new LinkedMultiValueMap<String, String>();
-            optParams.add("birthDate", params.getFirst("birthDate"));
-
-            when(mockMedicalRecordService.update(
+            doThrow(new NoSuchDataException()).when(mockMedicalRecordService).update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
                     Optional.ofNullable(params.getFirst("birthDate")),
                     Optional.empty(),
-                    Optional.empty()))
-                    .thenReturn(false);
+                    Optional.empty());
+            try {
+                mvcMock.perform(put("/medicalRecord")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ServerErrorStatus")
+        @DisplayName("updateServerError")
+        void Given_IOException_When_update_Then_statusIsInternalServerError() throws Exception {
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+            params.add("birthDate", "someBirthDate");
+
+            doThrow(new IOException()).when(mockMedicalRecordService).update(
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    Optional.ofNullable(params.getFirst("birthDate")),
+                    Optional.empty(),
+                    Optional.empty());
             try {
                 mvcMock.perform(put("/medicalRecord")
                         .params(params)
@@ -233,18 +277,17 @@ class MedicalRecordControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("deleteSuccess")
-        void Given_validRequest_When_delete_Then_statusIsNoContent() {
+        void Given_validRequest_When_delete_Then_statusIsNoContent() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
-            when(mockMedicalRecordService.delete(
+            doReturn(true).when(mockMedicalRecordService).delete(
                     params.getFirst("firstName"),
-                    params.getFirst("lastName")))
-                    .thenReturn(true);
+                    params.getFirst("lastName"));
             try {
                 mvcMock.perform(delete("/medicalRecord")
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNoContent());
+                        .andExpect(status().isOk());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -267,17 +310,36 @@ class MedicalRecordControllerTest {
             }
         }
 
+        //    ------------------------------------------------------------------------------ notFound
+        @Test
+        @Tag("ServerErrorStatus")
+        @DisplayName("delete_notFound")
+        void Given_noSuchDataException_When_delete_Then_statusIsNotFound() throws Exception {
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+            doThrow(new NoSuchDataException()).when(mockMedicalRecordService).delete(
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"));
+            try {
+                mvcMock.perform(delete("/medicalRecord")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
         //    ------------------------------------------------------------------------------ server error
         @Test
         @Tag("ServerErrorStatus")
         @DisplayName("deleteServerError")
-        void Given_validRequestButServiceNotWorking_When_delete_Then_statusIsInternalServerError() {
+        void Given_IOException_When_delete_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
-            when(mockMedicalRecordService.delete(
+            doThrow(new IOException()).when(mockMedicalRecordService).delete(
                     params.getFirst("firstName"),
-                    params.getFirst("lastName")))
-                    .thenReturn(false);
+                    params.getFirst("lastName"));
             try {
                 mvcMock.perform(delete("/medicalRecord")
                         .params(params)

@@ -1,5 +1,7 @@
 package com.safetynet.safetynetAlerts.controllers;
 
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.services.PersonService;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
@@ -12,12 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -45,8 +48,8 @@ class PersonControllerTest {
         //    ------------------------------------------------------------------------------ success
         @Test
         @Tag("SuccessStatus")
-        @DisplayName("addSuccess")
-        void Given_validRequest_When_add_Then_statusIsCreated() {
+        @DisplayName("add_Success")
+        void Given_validRequest_When_add_Then_statusIsCreated() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("address", "someAddress");
@@ -54,15 +57,14 @@ class PersonControllerTest {
             params.add("zip", "someZip");
             params.add("phone", "somePhone");
             params.add("email", "someMail");
-            when(mockPersonService.add(
+            doReturn(true).when(mockPersonService).add(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
                     params.getFirst("address"),
                     params.getFirst("city"),
                     params.getFirst("zip"),
                     params.getFirst("phone"),
-                    params.getFirst("email")))
-                    .thenReturn(true);
+                    params.getFirst("email"));
             try {
                 mvcMock.perform(post("/person")
                         .params(params)
@@ -76,8 +78,8 @@ class PersonControllerTest {
         //    ------------------------------------------------------------------------------ bad request
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("add_MissingParameter_BadRequest")
-        void Given_missingParameter_When_add_Then_statusIsBadRequest() {
+        @DisplayName("add_MissingParameter")
+        void Given_missingParameter_When_add_Then_statusIsBadRequest() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("address", "someAddress");
@@ -95,11 +97,11 @@ class PersonControllerTest {
             }
         }
 
-        //    ------------------------------------------------------------------------------ server error
+        //    ------------------------------------------------------------------------------ forbidden
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("addServerError")
-        void Given_validRequestButServiceNotWorking_When_add_Then_statusIsInternalServerError() {
+        @Tag("ErrorStatus")
+        @DisplayName("add_IllegalDataOverride")
+        void Given_illegalDataOverrideException_When_add_Then_statusIsForbidden() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("address", "someAddress");
@@ -107,15 +109,44 @@ class PersonControllerTest {
             params.add("zip", "someZip");
             params.add("phone", "somePhone");
             params.add("email", "someMail");
-            when(mockPersonService.add(
+            doThrow(new IllegalDataOverrideException()).when(mockPersonService).add(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
                     params.getFirst("address"),
                     params.getFirst("city"),
                     params.getFirst("zip"),
                     params.getFirst("phone"),
-                    params.getFirst("email")))
-                    .thenReturn(false);
+                    params.getFirst("email"));
+            try {
+                mvcMock.perform(post("/person")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isForbidden());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ErrorStatus")
+        @DisplayName("add_IOException")
+        void Given_IOException_When_add_Then_statusIsInternalServerError() throws Exception {
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+            params.add("address", "someAddress");
+            params.add("city", "someCity");
+            params.add("zip", "someZip");
+            params.add("phone", "somePhone");
+            params.add("email", "someMail");
+            doThrow(new IOException()).when(mockPersonService).add(
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    params.getFirst("address"),
+                    params.getFirst("city"),
+                    params.getFirst("zip"),
+                    params.getFirst("phone"),
+                    params.getFirst("email"));
             try {
                 mvcMock.perform(post("/person")
                         .params(params)
@@ -135,27 +166,27 @@ class PersonControllerTest {
         //    ------------------------------------------------------------------------------ success
         @Test
         @Tag("SuccessStatus")
-        @DisplayName("updateSuccess")
-        void Given_validRequest_When_update_Then_statusIsNoContent() {
+        @DisplayName("update_Success")
+        void Given_validRequest_When_update_Then_statusIsNoContent() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("phone", "somePhone");
             // Works even with not all parameters
 
-            when(mockPersonService.update(
-                    params.getFirst("firstName"),
-                    params.getFirst("lastName"),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.ofNullable(params.getFirst("phone")),
-                    Optional.empty()))
-                    .thenReturn(true);
+            doReturn(true).when(mockPersonService)
+                    .update(
+                            params.getFirst("firstName"),
+                            params.getFirst("lastName"),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.ofNullable(params.getFirst("phone")),
+                            Optional.empty());
             try {
                 mvcMock.perform(put("/person")
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNoContent());
+                        .andExpect(status().isOk());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -164,7 +195,7 @@ class PersonControllerTest {
         //    ------------------------------------------------------------------------------ bad request
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("updateMissingRequiredBadRequest")
+        @DisplayName("update_MissingRequired")
         void Given_missingRequiredParameter_When_update_Then_statusIsBadRequest() {
             params.add("firstName", "someFirstName");
             // No required parameter lastName
@@ -183,7 +214,7 @@ class PersonControllerTest {
 
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("update_NoParameterToUpdate_BadRequest")
+        @DisplayName("update_NoParameterToUpdate")
         void Given_missingParameterToUpdate_When_update_Then_statusIsBadRequest() {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -198,11 +229,11 @@ class PersonControllerTest {
             }
         }
 
-        //    ------------------------------------------------------------------------------ server error
+        //    ------------------------------------------------------------------------------ not found
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("update_ServerError")
-        void Given_validRequestButServiceNotWorking_When_update_Then_statusIsInternalServerError() {
+        @Tag("ErrorStatus")
+        @DisplayName("update_NoSuchDataException")
+        void Given_noSuchDataException_When_update_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("phone", "somePhone");
@@ -210,15 +241,44 @@ class PersonControllerTest {
             MultiValueMap<String, String> optParams = new LinkedMultiValueMap<String, String>();
             optParams.add("phone", params.getFirst("phone"));
 
-            when(mockPersonService.update(
+            doThrow(new NoSuchDataException()).when(mockPersonService).update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
                     Optional.ofNullable(params.getFirst("phone")),
-                    Optional.empty()))
-                    .thenReturn(false);
+                    Optional.empty());
+            try {
+                mvcMock.perform(put("/person")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ServerErrorStatus")
+        @DisplayName("update_IOException")
+        void Given_validRequestButServiceNotWorking_When_update_Then_statusIsInternalServerError() throws Exception {
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+            params.add("phone", "somePhone");
+
+            MultiValueMap<String, String> optParams = new LinkedMultiValueMap<String, String>();
+            optParams.add("phone", params.getFirst("phone"));
+
+            doThrow(new IOException()).when(mockPersonService).update(
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.empty(),
+                    Optional.ofNullable(params.getFirst("phone")),
+                    Optional.empty());
             try {
                 mvcMock.perform(put("/person")
                         .params(params)
@@ -239,18 +299,17 @@ class PersonControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("delete_Success")
-        void Given_validRequest_When_delete_Then_statusIsNoContent() {
+        void Given_validRequest_When_delete_Then_statusIsNoContent() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
-            when(mockPersonService.delete(
+            doReturn(true).when(mockPersonService).delete(
                     params.getFirst("firstName"),
-                    params.getFirst("lastName")))
-                    .thenReturn(true);
+                    params.getFirst("lastName"));
             try {
                 mvcMock.perform(delete("/person")
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNoContent());
+                        .andExpect(status().isOk());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -259,7 +318,7 @@ class PersonControllerTest {
         //    ------------------------------------------------------------------------------ bad request
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("delete_MissingParameter_BadRequest")
+        @DisplayName("delete_MissingParameter")
         void Given_missingParameter_When_delete_Then_statusIsBadRequest() {
             // Required parameter firstName is missing
             params.add("lastName", "someLastName");
@@ -275,15 +334,34 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("delete_ServerError")
-        void Given_validRequestButServiceNotWorking_When_delete_Then_statusIsInternalServerError() {
+        @Tag("ErrorStatus")
+        @DisplayName("delete_NoSuchDataException")
+        void Given_noSuchDataException_When_delete_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
-            when(mockPersonService.delete(
+            doThrow(new NoSuchDataException()).when(mockPersonService).delete(
                     params.getFirst("firstName"),
-                    params.getFirst("lastName")))
-                    .thenReturn(false);
+                    params.getFirst("lastName"));
+            try {
+                mvcMock.perform(delete("/person")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ServerErrorStatus")
+        @DisplayName("delete_ServerError")
+        void Given_IOException_When_delete_Then_statusIsInternalServerError() throws Exception {
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+            doThrow(new IOException()).when(mockPersonService).delete(
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"));
             try {
                 mvcMock.perform(delete("/person")
                         .params(params)

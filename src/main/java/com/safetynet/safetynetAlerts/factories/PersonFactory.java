@@ -27,6 +27,15 @@ public class PersonFactory {
     }
 
     /**
+     * Generates a Person with randomly generated values.
+     *
+     * @return new Person
+     */
+    public static Person getPerson() {
+        return getPerson(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+    }
+
+    /**
      * Generates a Person with randomly generated values for empty optional parameters.
      *
      * @param firstName       Person attribute value (Optional)
@@ -39,30 +48,20 @@ public class PersonFactory {
                                    Optional<String> lastName,
                                    Optional<Addresses> completeAddress,
                                    Optional<MedicalRecord> medicalRecord) {
-        if (firstName.isEmpty()) {
-            firstName = Optional.of(generateName());
-        }
 
-        if (lastName.isEmpty()) {
-            lastName = Optional.of(generateName());
-        }
+        String firstNameStr = firstName.orElse(generateName());
+        String lastNameStr = lastName.orElse(generateName());
+        String email = firstNameStr + "." + lastNameStr + "@email.com";
 
-        if (completeAddress.isEmpty()) {
-            completeAddress = Optional.of(assignAddress());
-        }
-
-        String phone = generatePhone();
-        String email = firstName.get() + "." + lastName.get() + "@email.com";
-
-
-        return new Person(firstName.get(),
-                lastName.get(),
-                completeAddress.get().getName(),
-                completeAddress.get().getCity().getName(),
-                completeAddress.get().getCity().getZip(),
-                phone,
-                email,
-                medicalRecord);
+        return new Person(
+                firstNameStr,
+                lastNameStr,
+                completeAddress.orElse(assignAddress()).getName(),
+                completeAddress.orElse(assignAddress()).getCity().getName(),
+                completeAddress.orElse(assignAddress()).getCity().getZip(),
+                generatePhone(),
+                email)
+                .setMedicalRecord(medicalRecord.orElse(null));
     }
 
     /**

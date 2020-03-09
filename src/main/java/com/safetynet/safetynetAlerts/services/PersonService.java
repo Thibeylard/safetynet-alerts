@@ -1,8 +1,11 @@
 package com.safetynet.safetynetAlerts.services;
 
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
+import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -20,7 +23,7 @@ public interface PersonService {
      * @param email     value to set for email attribute
      * @return operation success
      */
-    boolean add(String firstName, String lastName, String address, String city, String zip, String phone, String email);
+    boolean add(String firstName, String lastName, String address, String city, String zip, String phone, String email) throws IOException, IllegalDataOverrideException;
 
     /**
      * Pass parameters from controllers to DAO to update specific Person from database.
@@ -40,7 +43,7 @@ public interface PersonService {
                    final Optional<String> city,
                    final Optional<String> zip,
                    final Optional<String> phone,
-                   final Optional<String> email);
+                   final Optional<String> email) throws IOException, NoSuchDataException;
 
     /**
      * Pass parameters from controllers to DAO to delete specific Person from database.
@@ -49,5 +52,14 @@ public interface PersonService {
      * @param lastName  Person to delete lastName attribute value
      * @return operation success
      */
-    boolean delete(final String firstName, final String lastName);
+    boolean delete(final String firstName, final String lastName) throws IOException, NoSuchDataException;
+
+    /**
+     * Pass parameters from controllers to DAO to get specific Person from database.
+     *
+     * @param firstName Person to get firstName attribute value
+     * @param lastName  Person to get lastName attribute value
+     * @return operation success
+     */
+    Person get(String firstName, String lastName) throws NoSuchDataException;
 }

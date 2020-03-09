@@ -1,5 +1,7 @@
 package com.safetynet.safetynetAlerts.daos;
 
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,17 +12,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DisplayName("MedicalRecordDAOJsonFile Tests on :")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MedicalRecordDAOJsonFileTest {
+
 
     @MockBean
     private JsonFileDatabase mockJsonFileDatabase;
@@ -34,14 +40,13 @@ class MedicalRecordDAOJsonFileTest {
     @DisplayName("add()")
     class addTestMethods {
         @Test
-        void Given_validParameters_When_addMedicalRecord_Then_returnTrue() {
-            when(mockJsonFileDatabase.addMedicalRecord(
+        void Given_validParameters_When_add_Then_returnTrue() throws Exception {
+            doReturn(true).when(mockJsonFileDatabase).addMedicalRecord(
                     "firstName",
                     "lastName",
                     "birthDate",
                     Collections.singletonList("medications"),
-                    Collections.singletonList("allergies")))
-                    .thenReturn(true);
+                    Collections.singletonList("allergies"));
             assertTrue(medicalRecordDAO.add(
                     "firstName",
                     "lastName",
@@ -51,15 +56,30 @@ class MedicalRecordDAOJsonFileTest {
         }
 
         @Test
-        void Given_validParametersButDAOErrorOccurs_When_addMedicalRecord_Then_returnFalse() {
-            when(mockJsonFileDatabase.addMedicalRecord(
+        void Given_IllegalDataOverrideException_When_add_Then_throwsIllegalDataOverrideException() throws Exception {
+            doThrow(new IllegalDataOverrideException()).when(mockJsonFileDatabase).addMedicalRecord(
                     "firstName",
                     "lastName",
                     "birthDate",
                     Collections.singletonList("medications"),
-                    Collections.singletonList("allergies")))
-                    .thenReturn(false);
-            assertFalse(medicalRecordDAO.add(
+                    Collections.singletonList("allergies"));
+            assertThrows(IllegalDataOverrideException.class, () -> medicalRecordDAO.add(
+                    "firstName",
+                    "lastName",
+                    "birthDate",
+                    Collections.singletonList("medications"),
+                    Collections.singletonList("allergies")));
+        }
+
+        @Test
+        void Given_IOException_When_add_Then_throwsIOException() throws Exception {
+            doThrow(new IOException()).when(mockJsonFileDatabase).addMedicalRecord(
+                    "firstName",
+                    "lastName",
+                    "birthDate",
+                    Collections.singletonList("medications"),
+                    Collections.singletonList("allergies"));
+            assertThrows(IOException.class, () -> medicalRecordDAO.add(
                     "firstName",
                     "lastName",
                     "birthDate",
@@ -74,14 +94,14 @@ class MedicalRecordDAOJsonFileTest {
     @DisplayName("update()")
     class updateTestMethods {
         @Test
-        void Given_validParameters_When_updateMedicalRecord_Then_returnTrue() {
-            when(mockJsonFileDatabase.updateMedicalRecord(
-                    "firstName",
-                    "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty()))
-                    .thenReturn(true);
+        void Given_validParameters_When_update_Then_returnTrue() throws Exception {
+            doReturn(true).when(mockJsonFileDatabase)
+                    .updateMedicalRecord(
+                            "firstName",
+                            "lastName",
+                            Optional.of("birthDate"),
+                            Optional.empty(),
+                            Optional.empty());
             assertTrue(medicalRecordDAO.update(
                     "firstName",
                     "lastName",
@@ -91,15 +111,30 @@ class MedicalRecordDAOJsonFileTest {
         }
 
         @Test
-        void Given_validParametersButDAOErrorOccurs_When_updateMedicalRecord_Then_returnFalse() {
-            when(mockJsonFileDatabase.updateMedicalRecord(
+        void Given_NoSuchDataException_When_update_Then_throwsNoSuchDataException() throws Exception {
+            doThrow(new NoSuchDataException()).when(mockJsonFileDatabase).updateMedicalRecord(
                     "firstName",
                     "lastName",
                     Optional.of("birthDate"),
                     Optional.empty(),
-                    Optional.empty()))
-                    .thenReturn(false);
-            assertFalse(medicalRecordDAO.update(
+                    Optional.empty());
+            assertThrows(NoSuchDataException.class, () -> medicalRecordDAO.update(
+                    "firstName",
+                    "lastName",
+                    Optional.of("birthDate"),
+                    Optional.empty(),
+                    Optional.empty()));
+        }
+
+        @Test
+        void Given_IOException_When_update_Then_throwsIOException() throws Exception {
+            doThrow(new IOException()).when(mockJsonFileDatabase).updateMedicalRecord(
+                    "firstName",
+                    "lastName",
+                    Optional.of("birthDate"),
+                    Optional.empty(),
+                    Optional.empty());
+            assertThrows(IOException.class, () -> medicalRecordDAO.update(
                     "firstName",
                     "lastName",
                     Optional.of("birthDate"),
@@ -114,25 +149,28 @@ class MedicalRecordDAOJsonFileTest {
     @DisplayName("delete()")
     class deleteTestMethods {
         @Test
-        void Given_validParameters_When_deleteMedicalRecord_Then_returnTrue() {
-            when(mockJsonFileDatabase.deleteMedicalRecord(
-                    "firstName",
-                    "lastName"))
-                    .thenReturn(true);
+        void Given_validParameters_When_delete_Then_returnTrue() throws Exception {
+            doReturn(true).when(mockJsonFileDatabase)
+                    .deleteMedicalRecord("firstName", "lastName");
             assertTrue(medicalRecordDAO.delete(
                     "firstName",
                     "lastName"));
         }
 
         @Test
-        void Given_validParametersButDAOErrorOccurs_When_deleteMedicalRecord_Then_returnFalse() {
-            when(mockJsonFileDatabase.deleteMedicalRecord(
-                    "firstName",
-                    "lastName"))
-                    .thenReturn(false);
-            assertFalse(medicalRecordDAO.delete(
-                    "firstName",
-                    "lastName"));
+        void Given_NoSuchDataException_When_delete_Then_throwsNoSuchDataException() throws Exception {
+            doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
+                    .deleteMedicalRecord("firstName", "lastName");
+            assertThrows(NoSuchDataException.class, () -> medicalRecordDAO
+                    .delete("firstName", "lastName"));
+        }
+
+        @Test
+        void Given_IOException_When_delete_Then_throwsIOException() throws Exception {
+            doThrow(new IOException()).when(mockJsonFileDatabase)
+                    .deleteMedicalRecord("firstName", "lastName");
+            assertThrows(IOException.class, () -> medicalRecordDAO
+                    .delete("firstName", "lastName"));
         }
     }
 }

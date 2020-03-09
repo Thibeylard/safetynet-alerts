@@ -1,10 +1,13 @@
 package com.safetynet.safetynetAlerts.daos;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.safetynet.safetynetAlerts.dtos.JsonFileDatabaseDTO;
+import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.factories.FirestationFactory;
 import com.safetynet.safetynetAlerts.factories.MedicalRecordFactory;
 import com.safetynet.safetynetAlerts.factories.PersonFactory;
@@ -14,8 +17,10 @@ import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
@@ -24,21 +29,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+// TODO check tests and add new ones
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DisplayName("JsonFileDatabase Tests on :")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JsonFileDatabaseTest {
 
+    @MockBean
+    private ObjectMapper mapper;
+    @SpyBean
+    private JsonFactory spyFactory;
+    @MockBean
+    private JsonParser mockParser;
+    @MockBean
+    private JsonGenerator mockGenerator;
+    @Value("${jsondatabase.src}")
+    private String databaseSrc;
+
     JsonFileDatabaseTest() {
     }
-
-    @MockBean
-    private ObjectMapper mockMapper;
 
     private JsonFileDatabase jsonFileDatabase;
 
@@ -47,40 +62,41 @@ class JsonFileDatabaseTest {
     private List<Person> persons = new ArrayList<Person>();
 
     @BeforeAll
-    public void resetDatafileContent() throws IOException {
-        when(mockMapper.readTree(any(File.class))).thenReturn(JsonNodeFactory.instance.objectNode());
-        when(mockMapper.convertValue(any(JsonNode.class), any(TypeReference.class))).thenReturn(
-                new JsonFileDatabaseDTO(persons, firestations, medicalRecords));
-        jsonFileDatabase = new JsonFileDatabase(mockMapper);
+    public void initializeMocks() throws IOException {
+        doReturn(mockParser).when(spyFactory).createParser(any(File.class));
+        when(mockParser.readValueAs(JsonFileDatabaseDTO.class)).thenReturn(new JsonFileDatabaseDTO(persons, firestations, medicalRecords));
+        jsonFileDatabase = new JsonFileDatabase(spyFactory, mapper, this.databaseSrc);
     }
 
 
     @BeforeEach
-    public void resetData() {
-        reset(mockMapper);
+    public void resetData() throws IOException {
+        doReturn(mockGenerator).when(spyFactory).createGenerator(any(File.class), any(JsonEncoding.class));
         firestations.clear();
         medicalRecords.clear();
         persons.clear();
     }
 
+    // ==================================================================================================== FirestationDAO TESTS
+    // =========================================================================================================================
     @Nested
-    @DisplayName("FirestationDAO :")
+    @DisplayName("FirestationDAO related:")
     class FirestationDAOMethods {
+
         //    --------------------------------------------------------------------------------- ADD
         //    -------------------------------------------------------------------------------------
         @Nested
         @DisplayName("add()")
         class addTestMethods {
             @Test
-            void Given_firestationParameters_When_addFirestation_Then_returnTrue() {
+            void Given_firestationParameters_When_addFirestation_Then_returnTrue() throws Exception {
                 Firestation newFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
-
                 assertThat(jsonFileDatabase.addFirestation(newFirestation.getAddress(), newFirestation.getStation()))
                         .isTrue();
             }
 
             @Test
-            void Given_firestationParameters_When_addFirestation_Then_createNewFirestation() {
+            void Given_firestationParameters_When_addFirestation_Then_createNewFirestation() throws Exception {
                 Firestation newFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
 
                 jsonFileDatabase.addFirestation(newFirestation.getAddress(), newFirestation.getStation());
@@ -92,12 +108,23 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_addFirestation_Then_returnFalse() throws IOException {
+            void Given_identicalExistantData_When_addFirestation_Then_throwsIllegalDataOverrideException() throws Exception {
+                Firestation newFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                firestations.add(newFirestation); // firestation is already present in data
+
+                assertThrows(IllegalDataOverrideException.class,
+                        () -> jsonFileDatabase.addFirestation(newFirestation.getAddress(), newFirestation.getStation()));
+            }
+
+            @Test
+            void Given_IOExceptionOnWrite_When_addFirestation_Then_throwsIOException() throws Exception {
                 Firestation newFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
 
-                doThrow(IOException.class).when(mockMapper).writeValue(any(File.class), any(JsonFileDatabaseDTO.class));
-                assertThat(jsonFileDatabase.addFirestation(newFirestation.getAddress(), newFirestation.getStation()))
-                        .isFalse();
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.addFirestation(newFirestation.getAddress(), newFirestation.getStation()));
             }
         }
 
@@ -107,19 +134,23 @@ class JsonFileDatabaseTest {
         @DisplayName("update()")
         class updateTestMethods {
             @Test
-            void Given_firestationParameters_When_updateFirestation_Then_returnTrue() {
-                assertThat(jsonFileDatabase.updateFirestation("1509 Culver St", 5))
+            void Given_firestationParameters_When_updateFirestation_Then_returnTrue() throws Exception {
+                Firestation firestationToUpdate = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+
+                firestations.add(firestationToUpdate);
+
+                assertThat(jsonFileDatabase.updateFirestation(firestationToUpdate.getAddress(), firestationToUpdate.getStation() + 1))
                         .isTrue();
             }
 
             @Test
-            void Given_firestationParameters_When_updateFirestation_Then_firestationUpdated() {
-                Firestation originalFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
-                Firestation updatedFirestation = new Firestation(originalFirestation.getAddress(), originalFirestation.getStation() + 1);
+            void Given_firestationParameters_When_updateFirestation_Then_firestationUpdated() throws Exception {
+                Firestation firestationToUpdate = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation updatedFirestation = new Firestation(firestationToUpdate.getAddress(), firestationToUpdate.getStation() + 1);
 
-                firestations.add(originalFirestation);
+                firestations.add(firestationToUpdate);
 
-                jsonFileDatabase.updateFirestation(originalFirestation.getAddress(), updatedFirestation.getStation());
+                jsonFileDatabase.updateFirestation(firestationToUpdate.getAddress(), updatedFirestation.getStation());
 
                 assertThat(firestations)
                         .isNotNull()
@@ -128,12 +159,24 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_updateFirestation_Then_returnFalse() throws IOException {
-                Firestation newFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+            void Given_dataToUpdateNotPresent_When_updateFirestation_Then_throwsNoSuchDataException() throws Exception {
+                Firestation firestationToUpdate = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
 
-                doThrow(IOException.class).when(mockMapper).writeValue(any(File.class), any(JsonFileDatabaseDTO.class));
-                assertThat(jsonFileDatabase.updateFirestation(newFirestation.getAddress(), newFirestation.getStation() + 1))
-                        .isFalse();
+                assertThrows(NoSuchDataException.class,
+                        () -> jsonFileDatabase.updateFirestation(firestationToUpdate.getAddress(), firestationToUpdate.getStation() + 1));
+            }
+
+            @Test
+            void Given_IOExceptionOnWrite_When_updateFirestation_Then_throwsIOException() throws Exception {
+                Firestation firestationToUpdate = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+
+                firestations.add(firestationToUpdate);
+
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.updateFirestation(firestationToUpdate.getAddress(), firestationToUpdate.getStation() + 1));
             }
         }
 
@@ -144,7 +187,7 @@ class JsonFileDatabaseTest {
         class deleteTestMethods {
 
             @Test
-            void Given_firestationParameters_When_deleteFirestationByAddress_Then_returnTrue() {
+            void Given_firestationParameters_When_deleteFirestationByAddress_Then_returnTrue() throws Exception {
                 Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
                 firestations.add(firestationToDelete);
                 assertThat(jsonFileDatabase.deleteFirestation(firestationToDelete.getAddress()))
@@ -152,14 +195,15 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_firestationParameters_When_deleteFirestationByNumber_Then_returnTrue() {
+            void Given_firestationParameters_When_deleteFirestationByNumber_Then_returnTrue() throws Exception {
                 Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                firestations.add(firestationToDelete);
                 assertThat(jsonFileDatabase.deleteFirestation(firestationToDelete.getStation()))
                         .isTrue();
             }
 
             @Test
-            void Given_firestationParameters_When_deleteFirestationByAddress_Then_allFirestationsDeleted() {
+            void Given_firestationParameters_When_deleteFirestationByAddress_Then_allFirestationsDeleted() throws Exception {
                 Firestation firestationToDelete1 = FirestationFactory
                         .getFirestation(Optional.empty(), Optional.empty());
                 Firestation firestationToDelete2 = FirestationFactory
@@ -177,9 +221,9 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_firestationParameters_When_deleteFirestationByNumber_Then_noMoreFirestationWithNumber() {
-                Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
-                Firestation firestationToKeep = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+            void Given_firestationParameters_When_deleteFirestationByNumber_Then_noMoreFirestationWithNumber() throws Exception {
+                Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.of(4));
+                Firestation firestationToKeep = FirestationFactory.getFirestation(Optional.empty(), Optional.of(3));
 
                 firestations.add(firestationToDelete);
                 firestations.add(firestationToKeep);
@@ -193,21 +237,38 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_deleteFirestation_Then_returnFalse() throws IOException {
+            void Given_dataToDeleteNotPresent_When_deleteFirestation_Then_throwsNoSuchDataException() throws Exception {
                 Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
 
-                doThrow(IOException.class).when(mockMapper).writeValue(any(File.class), any(JsonFileDatabaseDTO.class));
+                assertThrows(NoSuchDataException.class,
+                        () -> jsonFileDatabase.deleteFirestation(firestationToDelete.getAddress()));
+                assertThrows(NoSuchDataException.class,
+                        () -> jsonFileDatabase.deleteFirestation(firestationToDelete.getStation()));
+            }
 
-                assertThat(jsonFileDatabase.deleteFirestation(firestationToDelete.getAddress()))
-                        .isFalse();
-                assertThat(jsonFileDatabase.deleteFirestation(firestationToDelete.getStation()))
-                        .isFalse();
+            @Test
+            void Given_IOExceptionOnWrite_When_deleteFirestation_Then_throwsIOException() throws Exception {
+                Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
+
+                firestations.add(firestationToDelete);
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.deleteFirestation(firestationToDelete.getAddress()));
+
+                firestations.add(firestationToDelete);
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.deleteFirestation(firestationToDelete.getStation()));
             }
         }
     }
 
+    // ================================================================================================== MedicalRecordDAO TESTS
+    // =========================================================================================================================
     @Nested
-    @DisplayName("MedicalRecordDAO :")
+    @DisplayName("MedicalRecordDAO related :")
     class MedicalRecordDAOMethods {
         //    --------------------------------------------------------------------------------- ADD
         //    -------------------------------------------------------------------------------------
@@ -215,7 +276,7 @@ class JsonFileDatabaseTest {
         @DisplayName("add()")
         class addTestMethods {
             @Test
-            void Given_medicalRecordParameters_When_addMedicalRecord_Then_returnTrue() {
+            void Given_medicalRecordParameters_When_addMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
                         false,
                         Optional.empty(),
@@ -231,7 +292,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_medicalRecordParameters_When_addMedicalRecord_Then_createNewMedicalRecord() {
+            void Given_medicalRecordParameters_When_addMedicalRecord_Then_createNewMedicalRecord() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
                         false,
                         Optional.empty(),
@@ -251,20 +312,42 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_addMedicalRecord_Then_returnFalse() throws IOException {
+            void Given_identicalExistantData_When_addMedicalRecord_Then_throwsIllegalDataOverrideException() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
                         false,
                         Optional.empty(),
                         Optional.empty());
 
-                doThrow(IOException.class).when(mockMapper).writeValue(any(File.class), any(JsonFileDatabaseDTO.class));
-                assertThat(jsonFileDatabase.addMedicalRecord(
-                        newMedicalRecord.getFirstName(),
-                        newMedicalRecord.getLastName(),
-                        newMedicalRecord.getBirthDate(),
-                        newMedicalRecord.getMedications(),
-                        newMedicalRecord.getAllergies()
-                )).isFalse();
+                medicalRecords.add(newMedicalRecord);
+
+
+                assertThrows(IllegalDataOverrideException.class,
+                        () -> jsonFileDatabase.addMedicalRecord(
+                                newMedicalRecord.getFirstName(),
+                                newMedicalRecord.getLastName(),
+                                newMedicalRecord.getBirthDate(),
+                                newMedicalRecord.getMedications(),
+                                newMedicalRecord.getAllergies()));
+            }
+
+            @Test
+            void Given_IOExceptionOnWrite_When_addMedicalRecord_Then_throwsIOException() throws Exception {
+                MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
+                        false,
+                        Optional.empty(),
+                        Optional.empty());
+
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
+
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.addMedicalRecord(
+                                newMedicalRecord.getFirstName(),
+                                newMedicalRecord.getLastName(),
+                                newMedicalRecord.getBirthDate(),
+                                newMedicalRecord.getMedications(),
+                                newMedicalRecord.getAllergies()));
             }
         }
 
@@ -274,11 +357,13 @@ class JsonFileDatabaseTest {
         @DisplayName("update()")
         class updateTestMethods {
             @Test
-            void Given_medicalRecordParameters_When_updateMedicalRecord_Then_returnTrue() {
+            void Given_medicalRecordParameters_When_updateMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
                         false,
                         Optional.empty(),
                         Optional.empty());
+
+                medicalRecords.add(newMedicalRecord);
 
                 assertThat(jsonFileDatabase.updateMedicalRecord(
                         newMedicalRecord.getFirstName(),
@@ -290,7 +375,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_medicalRecordParameters_When_updateMedicalRecord_Then_updateOriginalMedicalRecord() {
+            void Given_medicalRecordParameters_When_updateMedicalRecord_Then_updateOriginalMedicalRecord() throws Exception {
                 MedicalRecord originalMedicalRecord = MedicalRecordFactory.getMedicalRecord(
                         false,
                         Optional.empty(),
@@ -321,29 +406,43 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_updateMedicalRecord_Then_returnFalse() throws IOException {
-                MedicalRecord originalMedicalRecord = MedicalRecordFactory.getMedicalRecord(
-                        false,
-                        Optional.empty(),
-                        Optional.empty());
-                MedicalRecord updatedMedicalRecord = MedicalRecordFactory.getMedicalRecord(
+            void Given_dataToUpdateNotPresent_When_updateMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
+                MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.getMedicalRecord(
                         false,
                         Optional.empty(),
                         Optional.empty());
 
-                originalMedicalRecord.setAllergies(List.of(""));
-                updatedMedicalRecord.setAllergies(List.of("peanuts", "wheat"));
+                assertThrows(NoSuchDataException.class,
+                        () -> jsonFileDatabase.updateMedicalRecord(
+                                medicalRecordToUpdate.getFirstName(),
+                                medicalRecordToUpdate.getLastName(),
+                                Optional.of(medicalRecordToUpdate.getBirthDate()),
+                                Optional.of(medicalRecordToUpdate.getMedications()),
+                                Optional.of(List.of("peanuts", "wheat"))));
+            }
 
-                medicalRecords.add(originalMedicalRecord);
+            @Test
+            void Given_IOExceptionOnWrite_When_updateMedicalRecord_Then_throwsIOException() throws Exception {
+                MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.getMedicalRecord(
+                        false,
+                        Optional.empty(),
+                        Optional.empty());
 
-                doThrow(IOException.class).when(mockMapper).writeValue(any(File.class), any(JsonFileDatabaseDTO.class));
-                assertThat(jsonFileDatabase.updateMedicalRecord(
-                        originalMedicalRecord.getFirstName(),
-                        originalMedicalRecord.getLastName(),
-                        Optional.of(updatedMedicalRecord.getBirthDate()),
-                        Optional.of(updatedMedicalRecord.getMedications()),
-                        Optional.of(updatedMedicalRecord.getAllergies())
-                )).isFalse();
+                medicalRecordToUpdate.setAllergies(List.of(""));
+
+                medicalRecords.add(medicalRecordToUpdate);
+
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
+
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.updateMedicalRecord(
+                                medicalRecordToUpdate.getFirstName(),
+                                medicalRecordToUpdate.getLastName(),
+                                Optional.of(medicalRecordToUpdate.getBirthDate()),
+                                Optional.of(medicalRecordToUpdate.getMedications()),
+                                Optional.of(List.of("peanuts", "wheat"))));
             }
         }
 
@@ -354,7 +453,7 @@ class JsonFileDatabaseTest {
         class deleteTestMethods {
 
             @Test
-            void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_returnTrue() {
+            void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
                         false,
                         Optional.empty(),
@@ -366,7 +465,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_medicalRecordIsDeleted() {
+            void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_medicalRecordIsDeleted() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
                         false,
                         Optional.empty(),
@@ -383,7 +482,21 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_deleteMedicalRecord_Then_returnFalse() throws IOException {
+            void Given_dataToDeleteNotPresent_When_deleteMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
+                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
+                        false,
+                        Optional.empty(),
+                        Optional.empty()
+                );
+
+                assertThrows(NoSuchDataException.class,
+                        () -> jsonFileDatabase.deleteMedicalRecord(
+                                medicalRecordToDelete.getFirstName(),
+                                medicalRecordToDelete.getLastName()));
+            }
+
+            @Test
+            void Given_IOExceptionOnWrite_When_deleteMedicalRecord_Then_throwsIOException() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
                         false,
                         Optional.empty(),
@@ -392,16 +505,20 @@ class JsonFileDatabaseTest {
 
                 medicalRecords.add(medicalRecordToDelete);
 
-                doThrow(IOException.class).when(mockMapper).writeValue(any(File.class), any(JsonFileDatabaseDTO.class));
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
 
-                assertThat(jsonFileDatabase.deleteMedicalRecord(
-                        medicalRecordToDelete.getFirstName(),
-                        medicalRecordToDelete.getLastName()))
-                        .isFalse();
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.deleteMedicalRecord(
+                                medicalRecordToDelete.getFirstName(),
+                                medicalRecordToDelete.getLastName()));
             }
         }
     }
 
+    // ========================================================================================================= PersonDAO TESTS
+    // =========================================================================================================================
     @Nested
     @DisplayName("PersonDAO :")
     class PersonDAOMethods {
@@ -411,13 +528,14 @@ class JsonFileDatabaseTest {
         @DisplayName("add()")
         class addTestMethods {
             @Test
-            void Given_personParameters_When_addPerson_Then_returnTrue() {
+            void Given_personParameters_When_addPerson_Then_returnTrue() throws Exception {
                 Person newPerson = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty()
                 );
+
 
                 assertThat(jsonFileDatabase.addPerson(
                         newPerson.getFirstName(),
@@ -431,7 +549,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_personParameters_When_addPerson_Then_createNewPerson() {
+            void Given_personParameters_When_addPerson_Then_createNewPerson() throws Exception {
                 Person newPerson = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
@@ -456,7 +574,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_addPerson_Then_returnFalse() throws IOException {
+            void Given_identicalExistantData_When_addPerson_Then_throwsIllegalDataOverrideException() throws Exception {
                 Person newPerson = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
@@ -464,16 +582,41 @@ class JsonFileDatabaseTest {
                         Optional.empty()
                 );
 
-                doThrow(IOException.class).when(mockMapper).writeValue(any(File.class), any(JsonFileDatabaseDTO.class));
-                assertThat(jsonFileDatabase.addPerson(
-                        newPerson.getFirstName(),
-                        newPerson.getLastName(),
-                        newPerson.getAddress(),
-                        newPerson.getCity(),
-                        newPerson.getZip(),
-                        newPerson.getPhone(),
-                        newPerson.getEmail()
-                )).isFalse();
+                persons.add(newPerson);
+
+                assertThrows(IllegalDataOverrideException.class,
+                        () -> jsonFileDatabase.addPerson(
+                                newPerson.getFirstName(),
+                                newPerson.getLastName(),
+                                newPerson.getAddress(),
+                                newPerson.getCity(),
+                                newPerson.getZip(),
+                                newPerson.getPhone(),
+                                newPerson.getEmail()));
+            }
+
+            @Test
+            void Given_IOExceptionOnWrite_When_addPerson_Then_throwsIOException() throws Exception {
+                Person newPerson = PersonFactory.getPerson(
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty()
+                );
+
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
+
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.addPerson(
+                                newPerson.getFirstName(),
+                                newPerson.getLastName(),
+                                newPerson.getAddress(),
+                                newPerson.getCity(),
+                                newPerson.getZip(),
+                                newPerson.getPhone(),
+                                newPerson.getEmail()));
             }
         }
 
@@ -483,7 +626,7 @@ class JsonFileDatabaseTest {
         @DisplayName("update()")
         class updateTestMethods {
             @Test
-            void Given_personParameters_When_updatePerson_Then_returnTrue() {
+            void Given_personParameters_When_updatePerson_Then_returnTrue() throws Exception {
                 Person originalPerson = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
@@ -512,7 +655,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_personParameters_When_updatePerson_Then_updateOriginalPerson() {
+            void Given_personParameters_When_updatePerson_Then_updateOriginalPerson() throws Exception {
                 Person originalPerson = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
@@ -547,7 +690,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_updatePerson_Then_returnFalse() throws IOException {
+            void Given_dataToUpdateNotPresent_When_updatePerson_Then_throwsNoSuchDataException() throws Exception {
                 Person originalPerson = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
@@ -555,26 +698,41 @@ class JsonFileDatabaseTest {
                         Optional.empty()
                 );
 
-                Person updatedPerson = PersonFactory.getPerson(
+                assertThrows(NoSuchDataException.class,
+                        () -> jsonFileDatabase.updatePerson(
+                                originalPerson.getFirstName(),
+                                originalPerson.getLastName(),
+                                Optional.of(Addresses.CIRCLE.getName()),
+                                Optional.of(Addresses.CIRCLE.getCity().getName()),
+                                Optional.of(Addresses.CIRCLE.getCity().getZip()),
+                                Optional.empty(),
+                                Optional.empty()));
+            }
+
+            @Test
+            void Given_IOExceptionOnWrite_When_updatePerson_Then_throwsIOException() throws Exception {
+                Person originalPerson = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
-                        Optional.of(Addresses.CIRCLE),
+                        Optional.of(Addresses.APPLEGATE),
                         Optional.empty()
                 );
 
-
                 persons.add(originalPerson);
 
-                doThrow(IOException.class).when(mockMapper).writeValue(any(File.class), any(JsonFileDatabaseDTO.class));
-                assertThat(jsonFileDatabase.updatePerson(
-                        originalPerson.getFirstName(),
-                        originalPerson.getLastName(),
-                        Optional.of(updatedPerson.getAddress()),
-                        Optional.of(updatedPerson.getCity()),
-                        Optional.of(updatedPerson.getZip()),
-                        Optional.empty(),
-                        Optional.empty()
-                )).isFalse();
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
+
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.updatePerson(
+                                originalPerson.getFirstName(),
+                                originalPerson.getLastName(),
+                                Optional.of(Addresses.CIRCLE.getName()),
+                                Optional.of(Addresses.CIRCLE.getCity().getName()),
+                                Optional.of(Addresses.CIRCLE.getCity().getZip()),
+                                Optional.empty(),
+                                Optional.empty()));
             }
         }
 
@@ -585,7 +743,7 @@ class JsonFileDatabaseTest {
         class deleteTestMethods {
 
             @Test
-            void Given_personParameters_When_deletePerson_Then_returnTrue() {
+            void Given_personParameters_When_deletePerson_Then_returnTrue() throws Exception {
                 Person personToDelete = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
@@ -599,7 +757,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_personParameters_When_deletePerson_Then_personIsDeleted() {
+            void Given_personParameters_When_deletePerson_Then_personIsDeleted() throws Exception {
                 Person personToDelete = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
@@ -617,7 +775,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_validParametersButIOExceptionOccurs_When_deletePerson_Then_returnFalse() throws IOException {
+            void Given_dataToDeleteNotPresent_When_deletePerson_Then_throwsNoSuchDataException() throws Exception {
                 Person personToDelete = PersonFactory.getPerson(
                         Optional.empty(),
                         Optional.empty(),
@@ -627,12 +785,35 @@ class JsonFileDatabaseTest {
 
                 persons.add(personToDelete);
 
-                doThrow(IOException.class).when(mockMapper).writeValue(any(File.class), any(JsonFileDatabaseDTO.class));
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
 
-                assertThat(jsonFileDatabase.deletePerson(
-                        personToDelete.getFirstName(),
-                        personToDelete.getLastName()))
-                        .isFalse();
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.deletePerson(
+                                personToDelete.getFirstName(),
+                                personToDelete.getLastName()));
+            }
+
+            @Test
+            void Given_IOExceptionOnWrite_When_deletePerson_Then_throwsIOException() throws Exception {
+                Person personToDelete = PersonFactory.getPerson(
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty()
+                );
+
+                persons.add(personToDelete);
+
+                doThrow(new IOException())
+                        .when(spyFactory)
+                        .createGenerator(any(File.class), any(JsonEncoding.class));
+
+                assertThrows(IOException.class,
+                        () -> jsonFileDatabase.deletePerson(
+                                personToDelete.getFirstName(),
+                                personToDelete.getLastName()));
             }
         }
     }

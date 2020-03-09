@@ -10,6 +10,17 @@ import static com.safetynet.safetynetAlerts.factories.UtilsFactory.assignAddress
 import static com.safetynet.safetynetAlerts.factories.UtilsFactory.getRandom;
 
 public class FirestationFactory {
+
+    /**
+     * Generates a Firestation with randomly generated values.
+     *
+     * @return new Firestation
+     */
+    public static Firestation getFirestation() {
+        return getFirestation(Optional.empty(), Optional.empty());
+    }
+
+
     /**
      * Generates a Firestation with randomly generated values for empty optional parameters.
      *
@@ -18,7 +29,7 @@ public class FirestationFactory {
      * @return new Firestation
      */
     public static Firestation getFirestation(Optional<String> address,
-                                      Optional<Integer> station) {
+                                             Optional<Integer> station) {
         if (address.isEmpty()) {
             address = Optional.of(assignAddress().getName());
         }
