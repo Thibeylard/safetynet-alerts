@@ -278,9 +278,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_medicalRecordParameters_When_addMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        false);
 
                 assertThat(jsonFileDatabase.addMedicalRecord(
                         newMedicalRecord.getFirstName(),
@@ -294,9 +294,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_medicalRecordParameters_When_addMedicalRecord_Then_createNewMedicalRecord() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        false);
 
                 jsonFileDatabase.addMedicalRecord(
                         newMedicalRecord.getFirstName(),
@@ -314,9 +314,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_identicalExistantData_When_addMedicalRecord_Then_throwsIllegalDataOverrideException() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        false);
 
                 medicalRecords.add(newMedicalRecord);
 
@@ -333,9 +333,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_IOExceptionOnWrite_When_addMedicalRecord_Then_throwsIOException() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        false);
 
                 doThrow(new IOException())
                         .when(spyFactory)
@@ -359,9 +359,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_medicalRecordParameters_When_updateMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        false);
 
                 medicalRecords.add(newMedicalRecord);
 
@@ -377,14 +377,14 @@ class JsonFileDatabaseTest {
             @Test
             void Given_medicalRecordParameters_When_updateMedicalRecord_Then_updateOriginalMedicalRecord() throws Exception {
                 MedicalRecord originalMedicalRecord = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        false);
 
                 MedicalRecord updatedMedicalRecord = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.of(originalMedicalRecord.getFirstName()),
-                        Optional.of(originalMedicalRecord.getLastName()));
+                        Optional.of(originalMedicalRecord.getLastName()),
+                        false);
 
                 originalMedicalRecord.setAllergies(List.of(""));
                 updatedMedicalRecord.setAllergies(List.of("peanuts", "wheat"));
@@ -408,9 +408,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_dataToUpdateNotPresent_When_updateMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
                 MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        false);
 
                 assertThrows(NoSuchDataException.class,
                         () -> jsonFileDatabase.updateMedicalRecord(
@@ -424,9 +424,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_IOExceptionOnWrite_When_updateMedicalRecord_Then_throwsIOException() throws Exception {
                 MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        false);
 
                 medicalRecordToUpdate.setAllergies(List.of(""));
 
@@ -455,9 +455,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty());
+                        Optional.empty(),
+                        false);
 
                 medicalRecords.add(medicalRecordToDelete);
                 assertThat(jsonFileDatabase.deleteMedicalRecord(medicalRecordToDelete.getFirstName(), medicalRecordToDelete.getLastName()))
@@ -467,9 +467,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_medicalRecordIsDeleted() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty()
+                        Optional.empty(),
+                        false
                 );
 
                 medicalRecords.add(medicalRecordToDelete);
@@ -484,9 +484,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_dataToDeleteNotPresent_When_deleteMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty()
+                        Optional.empty(),
+                        false
                 );
 
                 assertThrows(NoSuchDataException.class,
@@ -498,10 +498,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_IOExceptionOnWrite_When_deleteMedicalRecord_Then_throwsIOException() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
-                        false,
                         Optional.empty(),
-                        Optional.empty()
-                );
+                        Optional.empty(),
+                        false);
 
                 medicalRecords.add(medicalRecordToDelete);
 
@@ -529,7 +528,7 @@ class JsonFileDatabaseTest {
         class addTestMethods {
             @Test
             void Given_personParameters_When_addPerson_Then_returnTrue() throws Exception {
-                Person newPerson = PersonFactory.getPerson(
+                Person newPerson = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),
@@ -550,7 +549,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_personParameters_When_addPerson_Then_createNewPerson() throws Exception {
-                Person newPerson = PersonFactory.getPerson(
+                Person newPerson = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),
@@ -575,7 +574,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_identicalExistantData_When_addPerson_Then_throwsIllegalDataOverrideException() throws Exception {
-                Person newPerson = PersonFactory.getPerson(
+                Person newPerson = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),
@@ -597,7 +596,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_addPerson_Then_throwsIOException() throws Exception {
-                Person newPerson = PersonFactory.getPerson(
+                Person newPerson = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),
@@ -627,14 +626,14 @@ class JsonFileDatabaseTest {
         class updateTestMethods {
             @Test
             void Given_personParameters_When_updatePerson_Then_returnTrue() throws Exception {
-                Person originalPerson = PersonFactory.getPerson(
+                Person originalPerson = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.of(Addresses.APPLEGATE),
                         Optional.empty()
                 );
 
-                Person updatedPerson = PersonFactory.getPerson(
+                Person updatedPerson = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.of(Addresses.CIRCLE),
@@ -656,14 +655,14 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_personParameters_When_updatePerson_Then_updateOriginalPerson() throws Exception {
-                Person originalPerson = PersonFactory.getPerson(
+                Person originalPerson = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.of(Addresses.APPLEGATE),
                         Optional.empty()
                 );
 
-                Person updatedPerson = PersonFactory.getPerson(
+                Person updatedPerson = PersonFactory.createPerson(
                         Optional.of(originalPerson.getFirstName()),
                         Optional.of(originalPerson.getLastName()),
                         Optional.of(Addresses.CIRCLE),
@@ -691,7 +690,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_dataToUpdateNotPresent_When_updatePerson_Then_throwsNoSuchDataException() throws Exception {
-                Person originalPerson = PersonFactory.getPerson(
+                Person originalPerson = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.of(Addresses.APPLEGATE),
@@ -711,7 +710,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_updatePerson_Then_throwsIOException() throws Exception {
-                Person originalPerson = PersonFactory.getPerson(
+                Person originalPerson = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.of(Addresses.APPLEGATE),
@@ -744,7 +743,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_personParameters_When_deletePerson_Then_returnTrue() throws Exception {
-                Person personToDelete = PersonFactory.getPerson(
+                Person personToDelete = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),
@@ -758,7 +757,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_personParameters_When_deletePerson_Then_personIsDeleted() throws Exception {
-                Person personToDelete = PersonFactory.getPerson(
+                Person personToDelete = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),
@@ -776,7 +775,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_dataToDeleteNotPresent_When_deletePerson_Then_throwsNoSuchDataException() throws Exception {
-                Person personToDelete = PersonFactory.getPerson(
+                Person personToDelete = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),
@@ -797,7 +796,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_deletePerson_Then_throwsIOException() throws Exception {
-                Person personToDelete = PersonFactory.getPerson(
+                Person personToDelete = PersonFactory.createPerson(
                         Optional.empty(),
                         Optional.empty(),
                         Optional.empty(),

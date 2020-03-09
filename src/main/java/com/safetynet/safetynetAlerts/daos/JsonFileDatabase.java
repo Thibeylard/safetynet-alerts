@@ -7,7 +7,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.safetynetAlerts.dtos.JsonFileDatabaseDTO;
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
+import com.safetynet.safetynetAlerts.factories.PersonFactory;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
@@ -18,8 +20,10 @@ import org.tinylog.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class JsonFileDatabase {
@@ -35,7 +39,6 @@ public class JsonFileDatabase {
      * @param jsonFactory Autowired JsonFactory Singleton
      * @throws IOException Handles dataSrc file related errors
      */
-
     @Autowired
     public JsonFileDatabase(final JsonFactory jsonFactory,
                             final ObjectMapper mapper,
@@ -66,15 +69,21 @@ public class JsonFileDatabase {
 
 //    ---------------------------------------------------------------------------------------- FIRESTATION
 
-    public Firestation getFirestation(final String address) throws IOException, NoSuchDataException {
+    public Firestation getFirestation(final String address) throws NoSuchDataException {
         return this.jsonFileDTO.getFirestations().stream()
                 .filter(firestation -> firestation.getAddress().equals(address))
                 .findFirst()
                 .orElseThrow(NoSuchDataException::new);
     }
 
-    public List<Firestation> getFirestations(final int number) throws IOException, NoSuchDataException {
-        return null;
+    public List<Firestation> getFirestations(final int number) throws NoSuchDataException {
+        List<Firestation> firestations = this.jsonFileDTO.getFirestations().stream()
+                .filter(firestation -> firestation.getStation() == number)
+                .collect(Collectors.toList());
+        if (firestations.isEmpty()) {
+            throw new NoSuchDataException();
+        }
+        return firestations;
     }
 
     public boolean addFirestation(final String address, final int number) throws IOException, IllegalDataOverrideException {
@@ -126,9 +135,6 @@ public class JsonFileDatabase {
                 .orElseThrow(NoSuchDataException::new);
     }
 
-    public List<MedicalRecord> getMedicalRecords(final List<Person> person) throws IOException, NoSuchDataException {
-        return null;
-    }
 
     public boolean addMedicalRecord(final String firstName,
                                     final String lastName,
@@ -187,29 +193,70 @@ public class JsonFileDatabase {
     //    ---------------------------------------------------------------------------------------- PERSON
 
     public Person getPerson(final String firstName,
-                            final String lastName) throws NoSuchDataException {
-        return this.jsonFileDTO.getPersons().stream()
-                .filter(person -> person.getLastName().equals(lastName))
-                .filter(person -> person.getFirstName().equals(firstName))
+                            final String lastName, boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
+        Person person = this.jsonFileDTO.getPersons().stream()
+                .filter(p -> p.getLastName().equals(lastName))
+                .filter(p -> p.getFirstName().equals(firstName))
                 .findFirst()
                 .orElseThrow(NoSuchDataException::new);
+        MedicalRecord medicalRecord;
+        if (withMedicalRecord) {
+            medicalRecord = this.jsonFileDTO.getMedicalRecords().stream()
+                    .filter(m -> m.getLastName().equals(lastName))
+                    .filter(m -> m.getFirstName().equals(firstName))
+                    .findFirst()
+                    .orElseThrow(() -> new NoMedicalRecordException(firstName, lastName));
+
+            person = PersonFactory.buildPerson(person, medicalRecord);
+        }
+
+        return person;
     }
 
-    public List<Person> getPersonFromLastName(final String firstName,
-                                              final String lastName) throws IOException, NoSuchDataException {
-        return null;
+
+    public List<Person> getPersonFromAddress(final String address,
+                                             boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
+        List<Person> persons = this.jsonFileDTO.getPersons().stream()
+                .filter(p -> p.getAddress().equals(address))
+                .collect(Collectors.toList());
+
+        if (withMedicalRecord) {
+            return getPersonsWithMedicalRecords(persons);
+        } else {
+            return persons;
+        }
     }
 
-    public List<Person> getPersonFromAddress(final String address) throws IOException, NoSuchDataException {
-        return null;
+    public List<Person> getPersonFromCity(final String city,
+                                          boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
+        List<Person> persons = this.jsonFileDTO.getPersons().stream()
+                .filter(p -> p.getCity().equals(city))
+                .collect(Collectors.toList());
+
+        if (withMedicalRecord) {
+            return getPersonsWithMedicalRecords(persons);
+        } else {
+            return persons;
+        }
     }
 
-    public List<Person> getPersonFromAddress(final List<String> address) throws IOException, NoSuchDataException {
-        return null;
-    }
+    private List<Person> getPersonsWithMedicalRecords(List<Person> persons) throws NoSuchDataException, NoMedicalRecordException {
 
-    public List<Person> getPersonFromCity(final String city) throws IOException, NoSuchDataException {
-        return null;
+        if (persons.isEmpty()) {
+            throw new NoSuchDataException();
+        }
+
+        List<Person> personsWithMedicalRecord = new ArrayList<>();
+        for (Person person : persons) {
+            personsWithMedicalRecord.add(PersonFactory.buildPerson(person,
+                    this.jsonFileDTO.getMedicalRecords().stream()
+                            .filter(m -> m.getFirstName().equals(person.getFirstName()))
+                            .filter(m -> m.getLastName().equals(person.getLastName()))
+                            .findFirst()
+                            .orElseThrow(() -> new NoMedicalRecordException(person.getFirstName(), person.getLastName()))));
+        }
+
+        return personsWithMedicalRecord;
     }
 
     public boolean addPerson(final String firstName,

@@ -3,7 +3,6 @@ package com.safetynet.safetynetAlerts.daos;
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
-import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.tinylog.Logger;
@@ -70,24 +69,7 @@ public class MedicalRecordDAOJsonFile implements MedicalRecordDAO {
      * @see MedicalRecordDAO
      */
     @Override
-    public MedicalRecord getMedicalRecord(String firstName, String lastName) throws IOException, NoSuchDataException {
+    public MedicalRecord get(String firstName, String lastName) throws IOException, NoSuchDataException {
         return jsonFileDatabase.getMedicalRecord(firstName, lastName);
     }
-
-    /**
-     * @see MedicalRecordDAO
-     */
-    @Override
-    public MedicalRecord getMedicalRecord(Person person) throws IOException, NoSuchDataException {
-        return jsonFileDatabase.getMedicalRecord(person.getFirstName(), person.getLastName());
-    }
-
-    /**
-     * @see MedicalRecordDAO
-     */
-    @Override
-    public List<MedicalRecord> getMedicalRecords(List<Person> persons) throws IOException, NoSuchDataException {
-        return jsonFileDatabase.getMedicalRecords(persons);
-    }
-
 }

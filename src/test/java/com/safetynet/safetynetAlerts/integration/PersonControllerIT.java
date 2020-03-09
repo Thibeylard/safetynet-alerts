@@ -76,7 +76,7 @@ public class PersonControllerIT {
     @Test
     @DisplayName("POST successful")
     void Given_dataAddedToDatabase_When_POSTPerson_Then_correspondingDataCanBeRetrieved() throws Exception {
-        Person person = PersonFactory.getPerson();
+        Person person = PersonFactory.createPerson();
 
         // Checking that this specific person doesn't already exist in database.
         ResponseEntity<Person> response = restTemplate.getForEntity(personIDURL, Person.class, person.getFirstName(), person.getLastName());
@@ -104,7 +104,7 @@ public class PersonControllerIT {
     @Test
     @DisplayName("POST no partial data")
     void Given_wrongParameters_When_POSTPerson_Then_noPartialDataSaved() throws Exception {
-        Person person = PersonFactory.getPerson();
+        Person person = PersonFactory.createPerson();
 
         // Checking that this specific person doesn't already exist in database.
         ResponseEntity<Person> response = restTemplate.getForEntity(personIDURL, Person.class, person.getFirstName(), person.getLastName());
@@ -131,8 +131,8 @@ public class PersonControllerIT {
     @DisplayName("POST already exists")
     void Given_existingPerson_When_POSTPerson_Then_personNotReplaced() throws Exception {
         // Two persons with same name but different addresses
-        Person existing = PersonFactory.getPerson();
-        Person added = PersonFactory.getPerson(Optional.of(existing.getFirstName()), Optional.of(existing.getLastName()), Optional.empty(), Optional.empty());
+        Person existing = PersonFactory.createPerson();
+        Person added = PersonFactory.createPerson(Optional.of(existing.getFirstName()), Optional.of(existing.getLastName()), Optional.empty(), Optional.empty());
 
 
         params.add("firstName", existing.getFirstName());
@@ -175,8 +175,8 @@ public class PersonControllerIT {
     @DisplayName("UPDATE successful")
     void Given_dataAddedToDatabase_When_UPDATEPerson_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
         // Two persons with same name but different addresses
-        Person existing = PersonFactory.getPerson(Optional.empty(), Optional.empty(), Optional.of(Addresses.APPLEGATE), Optional.empty());
-        Person update = PersonFactory.getPerson(Optional.of(existing.getFirstName()), Optional.of(existing.getLastName()), Optional.of(Addresses.BAYMEADOWS), Optional.empty());
+        Person existing = PersonFactory.createPerson(Optional.empty(), Optional.empty(), Optional.of(Addresses.APPLEGATE), Optional.empty());
+        Person update = PersonFactory.createPerson(Optional.of(existing.getFirstName()), Optional.of(existing.getLastName()), Optional.of(Addresses.BAYMEADOWS), Optional.empty());
 
         params.add("firstName", existing.getFirstName());
         params.add("lastName", existing.getLastName());
@@ -212,7 +212,7 @@ public class PersonControllerIT {
     @Test
     @DisplayName("UPDATE no partial data")
     void Given_noCorrespondingData_When_UPDATEPerson_Then_noPartialDataSaved() throws Exception {
-        Person update = PersonFactory.getPerson();
+        Person update = PersonFactory.createPerson();
 
         // Checking that this specific persons don't already exist in database.
         ResponseEntity<Person> response = restTemplate.getForEntity(personIDURL, Person.class, update.getFirstName(), update.getLastName());
@@ -239,7 +239,7 @@ public class PersonControllerIT {
     @Test
     @DisplayName("DELETE successful")
     void Given_dataAddedToDatabase_When_DELETEPerson_Then_dataCantBeRetrievedAfterDeletion() {
-        Person existing = PersonFactory.getPerson();
+        Person existing = PersonFactory.createPerson();
 
         params.add("firstName", existing.getFirstName());
         params.add("lastName", existing.getLastName());

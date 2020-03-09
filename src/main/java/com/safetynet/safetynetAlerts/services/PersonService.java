@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.stereotype.Service;
@@ -61,5 +62,5 @@ public interface PersonService {
      * @param lastName  Person to get lastName attribute value
      * @return operation success
      */
-    Person get(String firstName, String lastName) throws NoSuchDataException;
+    Person get(String firstName, String lastName) throws NoSuchDataException, IOException, NoMedicalRecordException;
 }

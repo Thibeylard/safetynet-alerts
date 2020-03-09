@@ -64,6 +64,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
      */
     @Override
     public MedicalRecord get(String firstName, String lastName) throws IOException, NoSuchDataException {
-        return medicalRecordDAO.getMedicalRecord(firstName, lastName);
+        return medicalRecordDAO.get(firstName, lastName);
     }
 }

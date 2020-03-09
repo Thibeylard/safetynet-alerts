@@ -2,6 +2,9 @@ package com.safetynet.safetynetAlerts.daos;
 
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
+import com.safetynet.safetynetAlerts.factories.FirestationFactory;
+import com.safetynet.safetynetAlerts.factories.enums.Addresses;
+import com.safetynet.safetynetAlerts.models.Firestation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,7 +16,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -157,6 +163,68 @@ class FirestationDAOJsonFileTest {
                     .deleteFirestation(anyInt());
             assertThrows(IOException.class, () -> firestationDAO.delete(
                     2));
+        }
+    }
+
+    //    ------------------------------------------------------------------------------ GET
+    //    -------------------------------------------------------------------------------------
+
+    @Nested
+    @DisplayName("get...() ")
+    class getTestMethods {
+        @Nested
+        @DisplayName("getFirestation() ")
+        class getFirestationTestMethods {
+            @Test
+            void Given_validParameters_When_getFirestation_Then_returnFirestation() throws IOException, NoSuchDataException {
+                Firestation firestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+
+                doReturn(firestation).when(mockJsonFileDatabase)
+                        .getFirestation(anyString());
+
+                assertThat(firestationDAO.getFirestation(Addresses.FIFTHROAD.getName()))
+                        .isNotNull()
+                        .usingRecursiveComparison()
+                        .isEqualTo(firestation);
+            }
+
+            @Test
+            void Given_NoSuchDataException_When_getFirestation_Then_throwsNoSuchDataException() throws NoSuchDataException {
+                doThrow(new NoSuchDataException())
+                        .when(mockJsonFileDatabase)
+                        .getFirestation(anyString());
+
+                assertThrows(NoSuchDataException.class,
+                        () -> firestationDAO.getFirestation(Addresses.FIFTHROAD.getName()));
+            }
+        }
+
+        @Nested
+        @DisplayName("getFirestations() ")
+        class getFirestationsTestMethods {
+            @Test
+            void Given_validParameters_When_getFirestations_Then_returnFirestation() throws IOException, NoSuchDataException {
+                List<Firestation> firestations = FirestationFactory.getFirestations(2, Optional.empty());
+
+                doReturn(firestations).when(mockJsonFileDatabase)
+                        .getFirestations(anyInt());
+
+                assertThat(firestationDAO.getFirestations(1))
+                        .isNotNull()
+                        .usingRecursiveFieldByFieldElementComparator()
+                        .isEqualTo(firestations);
+            }
+
+            @Test
+            void Given_NoSuchDataException_When_getFirestations_Then_throwsNoSuchDataException() throws NoSuchDataException {
+                doThrow(new NoSuchDataException())
+                        .when(mockJsonFileDatabase)
+                        .getFirestation(anyString());
+
+                assertThrows(NoSuchDataException.class,
+                        () -> firestationDAO.getFirestation(Addresses.FIFTHROAD.getName()));
+            }
+
         }
     }
 }

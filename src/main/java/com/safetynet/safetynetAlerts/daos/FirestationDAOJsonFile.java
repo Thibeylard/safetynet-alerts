@@ -70,7 +70,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public Firestation getFirestation(final String address) throws IOException, NoSuchDataException {
+    public Firestation getFirestation(final String address) throws NoSuchDataException {
         return jsonFileDatabase.getFirestation(address);
     }
 
@@ -78,7 +78,7 @@ public class FirestationDAOJsonFile implements FirestationDAO {
      * @see FirestationDAO
      */
     @Override
-    public List<Firestation> getFirestations(final int number) throws IOException, NoSuchDataException {
+    public List<Firestation> getFirestations(final int number) throws NoSuchDataException {
         return jsonFileDatabase.getFirestations(number);
     }
 }

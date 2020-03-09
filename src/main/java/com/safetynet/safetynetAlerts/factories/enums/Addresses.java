@@ -33,4 +33,14 @@ public enum Addresses {
     public Cities getCity() {
         return city;
     }
+
+    public static Addresses getFromAddress(String address) {
+        for (Addresses completeAddress : values()
+        ) {
+            if (completeAddress.name.equals(address)) {
+                return completeAddress;
+            }
+        }
+        return null;
+    }
 }

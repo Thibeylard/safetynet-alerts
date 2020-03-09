@@ -2,6 +2,9 @@ package com.safetynet.safetynetAlerts.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
+import com.safetynet.safetynetAlerts.models.MedicalRecord;
+import com.safetynet.safetynetAlerts.models.Person;
 
 import java.util.List;
 
@@ -12,7 +15,7 @@ public class EndangeredPersonDTO {
     private final String firstName;
     @JsonProperty("lastName")
     private final String lastName;
-    @JsonProperty("pPhone")
+    @JsonProperty("phone")
     private final String phone;
     @JsonProperty("age")
     private final String age;
@@ -21,17 +24,28 @@ public class EndangeredPersonDTO {
     @JsonProperty("allergies")
     private final List<String> allergies;
 
-    public EndangeredPersonDTO(final String pFirstName,
-                               final String pLastName,
+    public EndangeredPersonDTO(final String firstName,
+                               final String lastName,
                                final String phone,
                                final String age,
                                final List<String> medications,
                                final List<String> allergies) {
-        this.firstName = pFirstName;
-        this.lastName = pLastName;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.phone = phone;
         this.age = age;
         this.medications = medications;
         this.allergies = allergies;
+    }
+
+    public EndangeredPersonDTO(Person person) throws NoMedicalRecordException {
+        MedicalRecord personMedicalRecord = person.getMedicalRecord().orElseThrow(() -> new NoMedicalRecordException(person.getFirstName(), person.getLastName()));
+
+        this.firstName = person.getFirstName();
+        this.lastName = person.getLastName();
+        this.phone = person.getPhone();
+        this.age = String.valueOf(person.getAge());
+        this.medications = personMedicalRecord.getMedications();
+        this.allergies = personMedicalRecord.getAllergies();
     }
 }

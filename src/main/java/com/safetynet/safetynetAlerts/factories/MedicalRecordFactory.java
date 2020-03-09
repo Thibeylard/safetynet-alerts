@@ -1,6 +1,9 @@
 package com.safetynet.safetynetAlerts.factories;
 
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
+import com.safetynet.safetynetAlerts.services.ClockService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +11,14 @@ import java.util.Optional;
 
 import static com.safetynet.safetynetAlerts.factories.UtilsFactory.*;
 
+@Repository
 public class MedicalRecordFactory {
 
-    private MedicalRecordFactory() {
+    private static ClockService clock;
+
+    @Autowired
+    private MedicalRecordFactory(ClockService clockService) {
+        clock = clockService;
     }
 
     /**
@@ -23,9 +31,9 @@ public class MedicalRecordFactory {
         String birthDate = (getRandom().nextInt(31) + 1) + "/"
                 + (getRandom().nextInt(12) + 1) + "/";
         if (isChild) {
-            birthDate += (getRandom().nextInt(17) + 2003);
+            birthDate += clock.getYear() - (getRandom().nextInt(17));
         } else {
-            birthDate += (getRandom().nextInt(52) + 1950);
+            birthDate += clock.getYear() - 20 - (getRandom().nextInt(50));
         }
         return birthDate;
     }
@@ -36,7 +44,7 @@ public class MedicalRecordFactory {
      * @return medications String List
      */
     private static List<String> generateMedications() {
-        int count = getRandom().nextInt(3) + 1;
+        int count = getRandom().nextInt(3);
         List<String> medications = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
@@ -52,7 +60,7 @@ public class MedicalRecordFactory {
      * @return allergies String List
      */
     private static List<String> generateAllergies() {
-        int count = getRandom().nextInt(3) + 1;
+        int count = getRandom().nextInt(3);
         List<String> allergies = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
@@ -69,7 +77,7 @@ public class MedicalRecordFactory {
      * @return new MedicalRecord
      */
     public static MedicalRecord getMedicalRecord(boolean isChild) {
-        return getMedicalRecord(isChild, Optional.empty(), Optional.empty());
+        return getMedicalRecord(Optional.empty(), Optional.empty(), isChild);
     }
 
     /**
@@ -80,9 +88,9 @@ public class MedicalRecordFactory {
      * @param lastName  MedicalRecord attribute value (Optional)
      * @return new MedicalRecord
      */
-    public static MedicalRecord getMedicalRecord(boolean isChild,
-                                                 Optional<String> firstName,
-                                                 Optional<String> lastName) {
+    public static MedicalRecord getMedicalRecord(Optional<String> firstName,
+                                                 Optional<String> lastName,
+                                                 boolean isChild) {
         if (firstName.isEmpty()) {
             firstName = Optional.of(generateName());
         }
@@ -109,12 +117,12 @@ public class MedicalRecordFactory {
      * @param allergies   MedicalRecord attribute value (Optional)
      * @return new MedicalRecord
      */
-    public static MedicalRecord getMedicalRecord(boolean isChild,
-                                                 Optional<String> firstName,
+    public static MedicalRecord getMedicalRecord(Optional<String> firstName,
                                                  Optional<String> lastName,
                                                  Optional<String> birthDate,
                                                  Optional<List<String>> medications,
-                                                 Optional<List<String>> allergies) {
+                                                 Optional<List<String>> allergies,
+                                                 boolean isChild) {
         if (firstName.isEmpty()) {
             firstName = Optional.of(generateName());
         }

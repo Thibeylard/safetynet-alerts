@@ -3,13 +3,12 @@ package com.safetynet.safetynetAlerts.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
 
-import java.time.Instant;
 import java.util.Optional;
 
 @JsonPropertyOrder({"firstName", "lastName", "address", "city", "zip", "phone", "email"})
 public class Person {
-
 
     /**
      * firstName used with lastName as identifier. Final attribute.
@@ -33,9 +32,11 @@ public class Person {
     private String email;
     @JsonIgnore
     private MedicalRecord medicalRecord;
+    @JsonIgnore
+    private final Integer age;
 
     /**
-     * Constructor used for JSON serialization and deserialization.
+     * Constructor used for JSON deserialization.
      *
      * @param firstName value to initialize firstName attribute
      * @param lastName  value to initialize lastName attribute
@@ -59,6 +60,63 @@ public class Person {
         this.zip = zip;
         this.phone = phone;
         this.email = email;
+        this.age = null;
+    }
+
+    /**
+     * Constructor used to create Person instance associated to its MedicalRecord.
+     *
+     * @param person        person instance to copy attribute value from.
+     * @param medicalRecord associated medicalRecord instance
+     * @param age           deduced age from medicalRecord birthdate
+     */
+    public Person(final Person person,
+                  final MedicalRecord medicalRecord,
+                  final Integer age) {
+
+        this.firstName = person.getFirstName();
+        this.lastName = person.getLastName();
+        this.address = person.getAddress();
+        this.city = person.getCity();
+        this.zip = person.getZip();
+        this.phone = person.getPhone();
+        this.email = person.getEmail();
+        this.medicalRecord = medicalRecord;
+        this.age = age;
+    }
+
+    /**
+     * Constructor used to create Person instance associated to its MedicalRecord.
+     *
+     * @param firstName     value to initialize firstName attribute
+     * @param lastName      value to initialize lastName attribute
+     * @param address       value to initialize address attribute
+     * @param city          value to initialize city attribute
+     * @param zip           value to initialize zip code attribute
+     * @param phone         value to initialize phone number attribute
+     * @param email         value to initialize email attribute
+     * @param medicalRecord associated medicalRecord instance
+     * @param age           deduced age from medicalRecord birthdate
+     */
+    public Person(final String firstName,
+                  final String lastName,
+                  final String address,
+                  final String city,
+                  final String zip,
+                  final String phone,
+                  final String email,
+                  final MedicalRecord medicalRecord,
+                  final Integer age) {
+
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.city = city;
+        this.zip = zip;
+        this.phone = phone;
+        this.email = email;
+        this.medicalRecord = medicalRecord;
+        this.age = age;
     }
 
     //    -------------------------------------------------------------------- SETTERS
@@ -108,14 +166,6 @@ public class Person {
         this.email = email;
     }
 
-    /**
-     * medicalRecord attribute getter.
-     *
-     * @return this.medicalRecord
-     */
-    public Optional<MedicalRecord> getMedicalRecord() {
-        return Optional.ofNullable(medicalRecord);
-    }
 
     //    -------------------------------------------------------------------- GETTERS
 
@@ -183,13 +233,13 @@ public class Person {
     }
 
     /**
-     * medicalRecord attribute setter.
+     * medicalRecord attribute getter.
      *
-     * @param medicalRecord new value for this.medicalRecord
+     * @return this.medicalRecord
      */
-    public Person setMedicalRecord(MedicalRecord medicalRecord) {
-        this.medicalRecord = medicalRecord;
-        return this;
+    @JsonIgnore
+    public Optional<MedicalRecord> getMedicalRecord() {
+        return Optional.ofNullable(medicalRecord);
     }
 
     /**
@@ -198,26 +248,12 @@ public class Person {
      * @return age result
      */
     @JsonIgnore
-    public int getAge() {
-        //TODO Refactored method with date parsing, date as parameter...
-        if (medicalRecord != null) {
-            String[] currentDateParts = Instant.now().toString().split("T")[0].split("-");
-            // Instant.now date format is yyyy-mm-ddT...Z
-            int currentYear = Integer.parseInt(currentDateParts[0]);
-            int currentMonth = Integer.parseInt(currentDateParts[1]);
-            int currentDay = Integer.parseInt(currentDateParts[2]);
+    public Optional<Integer> getAge() {
+        return Optional.ofNullable(this.age);
+    }
 
-            String[] dateBirthParts = this.medicalRecord.getBirthDate().split("/");
-            // datebirth format is dd/mm/yyyy
-            int birthYear = Integer.parseInt(dateBirthParts[2]);
-            int birthMonth = Integer.parseInt(dateBirthParts[1]);
-            int birthDay = Integer.parseInt(dateBirthParts[0]);
-
-            boolean yearsBirthdayPassed = (currentMonth > birthMonth) || (currentMonth == birthMonth && currentDay > birthDay);
-
-            return yearsBirthdayPassed ? currentYear - birthYear : currentYear - birthYear - 1;
-        } else {
-            throw new NullPointerException("Person has no assigned medical record to determine his age.");
-        }
+    @JsonIgnore
+    public boolean isAdult() throws NoMedicalRecordException {
+        return getAge().orElseThrow(() -> new NoMedicalRecordException(this.firstName, this.lastName)) > 18;
     }
 }

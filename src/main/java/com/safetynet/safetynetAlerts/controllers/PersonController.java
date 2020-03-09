@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.controllers;
 
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Person;
 import com.safetynet.safetynetAlerts.services.PersonService;
@@ -113,8 +114,10 @@ public class PersonController {
 
         try {
             return new ResponseEntity<Person>(this.personService.get(firstName, lastName), HttpStatus.OK);
-        } catch (NoSuchDataException e) {
-            return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
+        } catch (NoSuchDataException | NoMedicalRecordException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

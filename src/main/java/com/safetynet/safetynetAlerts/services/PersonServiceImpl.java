@@ -2,6 +2,7 @@ package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.daos.PersonDAO;
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class PersonServiceImpl implements PersonService {
      * @see PersonService
      */
     @Override
-    public Person get(String firstName, String lastName) throws NoSuchDataException {
-        return this.personDAO.getFromName(firstName, lastName);
+    public Person get(String firstName, String lastName) throws NoSuchDataException, IOException, NoMedicalRecordException {
+        return this.personDAO.getFromName(firstName, lastName, false);
     }
 }

@@ -2,10 +2,13 @@ package com.safetynet.safetynetAlerts.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
+import com.safetynet.safetynetAlerts.models.MedicalRecord;
+import com.safetynet.safetynetAlerts.models.Person;
 
 import java.util.List;
 
-@JsonPropertyOrder({"firstName","lastName","address","age","email","medications","allergies"})
+@JsonPropertyOrder({"firstName", "lastName", "address", "age", "email", "medications", "allergies"})
 public class URLPersonInfoDTO {
 
     @JsonProperty("firstName")
@@ -37,6 +40,17 @@ public class URLPersonInfoDTO {
         this.email = email;
         this.medications = medications;
         this.allergies = allergies;
+    }
+
+    public URLPersonInfoDTO(final Person person) throws NoMedicalRecordException {
+        MedicalRecord medicalRecord = person.getMedicalRecord().orElseThrow(() -> new NoMedicalRecordException(person.getFirstName(), person.getLastName()));
+        this.firstName = person.getFirstName();
+        this.lastName = person.getLastName();
+        this.address = person.getLastName();
+        this.age = String.valueOf(person.getAge());
+        this.email = person.getEmail();
+        this.medications = medicalRecord.getMedications();
+        this.allergies = medicalRecord.getAllergies();
     }
 }
 

@@ -1,6 +1,8 @@
 package com.safetynet.safetynetAlerts.controllers;
 
 import com.safetynet.safetynetAlerts.dtos.*;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
+import com.safetynet.safetynetAlerts.models.Person;
 import com.safetynet.safetynetAlerts.services.AlertsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,14 +18,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,7 +59,6 @@ class AlertsControllerTest {
                     .andExpect(status().isOk());
         }
 
-
         @Test
         void Given_validRequestButNoData_When_getURLFirestationDTO_Then_returnNullAndStatusIsNoContent() throws Exception {
             params.add("stationNumber", "2");
@@ -70,7 +71,6 @@ class AlertsControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNoContent());
         }
-
 
         @Test
         void Given_missingParameter_When_getURLFirestationDTO_Then_statusIsBadRequest() throws Exception {
@@ -100,12 +100,26 @@ class AlertsControllerTest {
         }
 
         @Test
-        void Given_daoError_When_getURLFirestationDTO_Then_statusIsServerError() throws Exception {
+        void Given_NoMedicalRecordExceptionThrown_When_getURLFirestationDTO_Then_statusIsNotFound() throws Exception {
             params.add("stationNumber", "2");
 
-            when(mockAlertsService.getURLFirestationDTO(
-                    2))
-                    .thenThrow(new Exception());
+            doThrow(new NoMedicalRecordException("Bob", "Hawkins"))
+                    .when(mockAlertsService)
+                    .getURLFirestationDTO(2);
+
+            mvcMock.perform(get("/firestation")
+                    .params(params)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void Given_IOExceptionThrown_When_getURLFirestationDTO_Then_statusIsServerError() throws Exception {
+            params.add("stationNumber", "2");
+
+            doThrow(new IOException())
+                    .when(mockAlertsService)
+                    .getURLFirestationDTO(2);
 
             mvcMock.perform(get("/firestation")
                     .params(params)
@@ -145,7 +159,6 @@ class AlertsControllerTest {
                     .andExpect(status().isNoContent());
         }
 
-
         @Test
         void Given_missingParameter_When_getURLChildAlertDTO_Then_statusIsBadRequest() throws Exception {
             params.add("addres", "someAddress"); // mistyped parameter
@@ -160,12 +173,26 @@ class AlertsControllerTest {
         }
 
         @Test
-        void Given_daoError_When_getURLChildAlertDTO_Then_statusIsServerError() throws Exception {
+        void Given_NoMedicalRecordExceptionThrown_When_getURLChildAlertDTO_Then_statusIsNotFound() throws Exception {
             params.add("address", "someAddress");
 
-            when(mockAlertsService.getURLChildAlertDTO(
-                    params.getFirst("address")))
-                    .thenThrow(new Exception());
+            doThrow(new NoMedicalRecordException("Bob", "Hawkins"))
+                    .when(mockAlertsService)
+                    .getURLChildAlertDTO(params.getFirst("address"));
+
+            mvcMock.perform(get("/childAlert")
+                    .params(params)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void Given_IOExceptionThrown_When_getURLChildAlertDTO_Then_statusIsServerError() throws Exception {
+            params.add("address", "someAddress");
+
+            doThrow(new IOException())
+                    .when(mockAlertsService)
+                    .getURLChildAlertDTO(params.getFirst("address"));
 
             mvcMock.perform(get("/childAlert")
                     .params(params)
@@ -182,7 +209,7 @@ class AlertsControllerTest {
         void Given_validRequest_When_getURLPhoneAlertDTO_Then_statusIsOK() throws Exception {
             params.add("firestation", "2");
 
-            doReturn(new URLPhoneAlertDTO(new ArrayList<String>()))
+            doReturn(new URLPhoneAlertDTO(new ArrayList<>()))
                     .when(mockAlertsService).getURLPhoneAlertDTO(2);
 
             mvcMock.perform(get("/phoneAlert")
@@ -203,7 +230,6 @@ class AlertsControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNoContent());
         }
-
 
         @Test
         void Given_missingParameter_When_getURLPhoneAlertDTO_Then_statusIsBadRequest() throws Exception {
@@ -231,11 +257,11 @@ class AlertsControllerTest {
         }
 
         @Test
-        void Given_daoError_When_getURLPhoneAlertDTO_Then_statusIsServerError() throws Exception {
+        void Given_IOExceptionThrown_When_getURLPhoneAlertDTO_Then_statusIsServerError() throws Exception {
             params.add("firestation", "2");
 
             when(mockAlertsService.getURLPhoneAlertDTO(2))
-                    .thenThrow(Exception.class);
+                    .thenThrow(new IOException());
 
             mvcMock.perform(get("/phoneAlert")
                     .params(params)
@@ -274,7 +300,6 @@ class AlertsControllerTest {
                     .andExpect(status().isNoContent());
         }
 
-
         @Test
         void Given_missingParameter_When_getURLFireDTO_Then_statusIsBadRequest() throws Exception {
             params.add("addres", "someAddress"); // mistyped parameter
@@ -289,12 +314,26 @@ class AlertsControllerTest {
         }
 
         @Test
-        void Given_daoError_When_getURLFireDTO_Then_statusIsServerError() throws Exception {
+        void Given_NoMedicalRecordExceptionThrown_When_getURLFireDTO_Then_statusIsNotFound() throws Exception {
             params.add("address", "someAddress"); // mistyped parameter
 
-            when(mockAlertsService.getURLFireDTO(
-                    params.getFirst("address")))
-                    .thenThrow(new Exception());
+            doThrow(new NoMedicalRecordException("Bob", "Hawkins"))
+                    .when(mockAlertsService)
+                    .getURLFireDTO(params.getFirst("address"));
+
+            mvcMock.perform(get("/fire")
+                    .params(params)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void Given_IOExceptionThrown_When_getURLFireDTO_Then_statusIsServerError() throws Exception {
+            params.add("address", "someAddress"); // mistyped parameter
+
+            doThrow(new IOException())
+                    .when(mockAlertsService)
+                    .getURLFireDTO(params.getFirst("address"));
 
             mvcMock.perform(get("/fire")
                     .params(params)
@@ -335,7 +374,6 @@ class AlertsControllerTest {
                     .andExpect(status().isNoContent());
         }
 
-
         @Test
         void Given_missingParameter_When_getURLFloodDTO_Then_statusIsBadRequest() throws Exception {
             params.add("station", "2"); // mistyped parameter
@@ -363,13 +401,28 @@ class AlertsControllerTest {
         }
 
         @Test
-        void Given_daoError_When_getURLFloodDTO_Then_statusIsServerError() throws Exception {
+        void Given_NoMedicalRecordExceptionThrown_When_getURLFloodDTO_Then_statusIsNotFound() throws Exception {
             params.add("stations", "2");
             params.add("stations", "5");
 
-            when(mockAlertsService.getURLFloodDTO(
-                    List.of(2, 5)))
-                    .thenThrow(new Exception());
+            doThrow(new NoMedicalRecordException("Bob", "Hawkins"))
+                    .when(mockAlertsService)
+                    .getURLFloodDTO(List.of(2, 5));
+
+            mvcMock.perform(get("/flood/stations")
+                    .params(params)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void Given_IOExceptionThrown_When_getURLFloodDTO_Then_statusIsServerError() throws Exception {
+            params.add("stations", "2");
+            params.add("stations", "5");
+
+            doThrow(new IOException())
+                    .when(mockAlertsService)
+                    .getURLFloodDTO(List.of(2, 5));
 
             mvcMock.perform(get("/flood/stations")
                     .params(params)
@@ -418,7 +471,6 @@ class AlertsControllerTest {
                     .andExpect(status().isNoContent());
         }
 
-
         @Test
         void Given_missingParameter_When_getURLPersonInfoDTO_Then_statusIsBadRequest() throws Exception {
             params.add("firstName", "someFirstName");
@@ -435,14 +487,28 @@ class AlertsControllerTest {
         }
 
         @Test
-        void Given_daoError_When_getURLPersonInfoDTO_Then_statusIsServerError() throws Exception {
+        void Given_NoMedicalRecordExceptionThrown_When_getURLPersonInfoDTO_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
 
-            when(mockAlertsService.getURLPersonInfoDTO(
-                    params.getFirst("firstName"),
-                    params.getFirst("lastName")))
-                    .thenThrow(new Exception());
+            doThrow(new NoMedicalRecordException("Bob", "Hawkins"))
+                    .when(mockAlertsService)
+                    .getURLPersonInfoDTO(params.getFirst("firstName"), params.getFirst("lastName"));
+
+            mvcMock.perform(get("/personInfo")
+                    .params(params)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void Given_IOExceptionThrown_When_getURLPersonInfoDTO_Then_statusIsServerError() throws Exception {
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+
+            doThrow(new IOException())
+                    .when(mockAlertsService)
+                    .getURLPersonInfoDTO(params.getFirst("firstName"), params.getFirst("lastName"));
 
             mvcMock.perform(get("/personInfo")
                     .params(params)
@@ -459,7 +525,7 @@ class AlertsControllerTest {
         void Given_validRequest_When_getURLCommunityEmailDTO_Then_statusIsOK() throws Exception {
             params.add("city", "someCity");
 
-            doReturn(new URLCommunityEmailDTO(new ArrayList<String>()))
+            doReturn(new URLCommunityEmailDTO(new ArrayList<Person>()))
                     .when(mockAlertsService).getURLCommunityEmailDTO(params.getFirst("city"));
 
             mvcMock.perform(get("/communityEmail")
@@ -485,7 +551,7 @@ class AlertsControllerTest {
         @Test
         void Given_missingParameter_When_getURLCommunityEmailDTO_Then_statusIsBadRequest() throws Exception {
             // no params
-            doReturn(new URLCommunityEmailDTO(new ArrayList<String>()))
+            doReturn(new URLCommunityEmailDTO(new ArrayList<Person>()))
                     .when(mockAlertsService).getURLCommunityEmailDTO(params.getFirst("city"));
 
             mvcMock.perform(get("/communityEmail")
@@ -495,12 +561,12 @@ class AlertsControllerTest {
         }
 
         @Test
-        void Given_daoError_When_getURLCommunityEmailDTO_Then_statusIsServerError() throws Exception {
+        void Given_IOExceptionThrown_When_getURLCommunityEmailDTO_Then_statusIsServerError() throws Exception {
             params.add("city", "someCity");
 
             when(mockAlertsService.getURLCommunityEmailDTO(
                     params.getFirst("city")))
-                    .thenThrow(new Exception());
+                    .thenThrow(new IOException());
 
             mvcMock.perform(get("/communityEmail")
                     .params(params)

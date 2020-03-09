@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.daos;
 
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Person;
 
@@ -63,47 +64,43 @@ public interface PersonDAO {
     /**
      * Get specific Person instance by whole name from database.
      *
-     * @param firstName firstName value to search
-     * @param lastName  lastName value to search
+     * @param firstName         firstName value to search
+     * @param lastName          lastName value to search
+     * @param withMedicalRecord whether to add corresponding MedicalRecord instance to Person attribute
      * @return Person instance
      * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
     Person getFromName(final String firstName,
-                       final String lastName) throws NoSuchDataException;
+                       final String lastName, boolean withMedicalRecord) throws IOException, NoSuchDataException, NoMedicalRecordException;
 
-    /**
-     * Get specific Person instances by lastName from database.
-     *
-     * @param lastName lastName value to search
-     * @return Person instance
-     * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
-     */
-    List<Person> getFromName(final String lastName) throws NoSuchDataException;
 
     /**
      * Get list of Persons by address from database.
      *
-     * @param address address value to search
+     * @param address           address value to search
+     * @param withMedicalRecord whether to add corresponding MedicalRecord instance to Person attribute
      * @return List of Person instances
      * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    List<Person> getFromAddress(final String address) throws NoSuchDataException;
+    List<Person> getFromAddress(final String address, boolean withMedicalRecord) throws IOException, NoSuchDataException, NoMedicalRecordException;
 
     /**
      * Get Persons leaving in all addresses in the list from database.
      *
-     * @param addresses List of addresses of which to get Persons
+     * @param addresses         List of addresses of which to get Persons
+     * @param withMedicalRecord whether to add corresponding MedicalRecord instance to Persons attributes
      * @return List of Person instance
      * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    List<Person> getFromAddress(final List<String> addresses) throws NoSuchDataException;
+    List<Person> getFromAddress(final List<String> addresses, boolean withMedicalRecord) throws IOException, NoSuchDataException, NoMedicalRecordException;
 
     /**
      * Get list of Persons by city from database.
      *
-     * @param city address value to search
+     * @param city              address value to search
+     * @param withMedicalRecord whether to add corresponding MedicalRecord instance to Persons attribute
      * @return List of Person instances
      * @throws IOException, IllegalDataOverrideException, NoSuchDataException for data access failure
      */
-    List<Person> getCommunity(final String city) throws NoSuchDataException;
+    List<Person> getCommunity(final String city, boolean withMedicalRecord) throws IOException, NoSuchDataException, NoMedicalRecordException;
 }

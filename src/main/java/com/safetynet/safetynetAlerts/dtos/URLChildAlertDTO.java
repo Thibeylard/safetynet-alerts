@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"children","familyMembers"})
+@JsonPropertyOrder({"children", "familyMembers"})
 public class URLChildAlertDTO {
     @JsonProperty("children")
     private List<ChildDTO> childDTOList;
@@ -16,5 +16,13 @@ public class URLChildAlertDTO {
                             List<ChildFamilyMemberDTO> pChildFamilyMemberDTOS) {
         this.childDTOList = pChildDTOList;
         this.childFamilyMemberDTOS = pChildFamilyMemberDTOS;
+    }
+
+    public List<ChildDTO> getChildDTOList() {
+        return childDTOList;
+    }
+
+    public List<ChildFamilyMemberDTO> getChildFamilyMemberDTOS() {
+        return childFamilyMemberDTOS;
     }
 }

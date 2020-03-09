@@ -1,6 +1,7 @@
 package com.safetynet.safetynetAlerts.factories;
 
 import com.safetynet.safetynetAlerts.models.Firestation;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import static com.safetynet.safetynetAlerts.factories.UtilsFactory.assignAddress;
 import static com.safetynet.safetynetAlerts.factories.UtilsFactory.getRandom;
 
+@Repository
 public class FirestationFactory {
 
     /**
@@ -19,7 +21,6 @@ public class FirestationFactory {
     public static Firestation getFirestation() {
         return getFirestation(Optional.empty(), Optional.empty());
     }
-
 
     /**
      * Generates a Firestation with randomly generated values for empty optional parameters.

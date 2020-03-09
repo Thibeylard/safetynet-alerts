@@ -126,7 +126,7 @@ public class MedicalRecordControllerIT {
     void Given_existingPerson_When_POSTMedicalRecord_Then_personNotReplaced() throws Exception {
         // Two medicalRecords with same name but different values
         MedicalRecord existing = MedicalRecordFactory.getMedicalRecord(false);
-        MedicalRecord added = MedicalRecordFactory.getMedicalRecord(false, Optional.of(existing.getFirstName()), Optional.ofNullable(existing.getLastName()));
+        MedicalRecord added = MedicalRecordFactory.getMedicalRecord(Optional.of(existing.getFirstName()), Optional.ofNullable(existing.getLastName()), false);
 
 
         params.add("firstName", existing.getFirstName());
@@ -163,12 +163,13 @@ public class MedicalRecordControllerIT {
     void Given_dataAddedToDatabase_When_UPDATEMedicalRecord_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
         // Two medicalRecords with same name but different values
         MedicalRecord existing = MedicalRecordFactory.getMedicalRecord(false);
-        MedicalRecord updated = MedicalRecordFactory.getMedicalRecord(false,
+        MedicalRecord updated = MedicalRecordFactory.getMedicalRecord(
                 Optional.of(existing.getFirstName()),
                 Optional.of(existing.getLastName()),
                 Optional.of(existing.getBirthDate()),
                 Optional.of(List.of("test:250mg")),
-                Optional.of(Lists.emptyList()));
+                Optional.of(Lists.emptyList()),
+                false);
         //TODO Optionals in parameters with list break method : Empty List is considered empty parameters, which is wrong.
 
         params.add("firstName", existing.getFirstName());

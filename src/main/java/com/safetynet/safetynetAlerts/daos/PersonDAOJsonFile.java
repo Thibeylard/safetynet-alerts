@@ -1,19 +1,23 @@
 package com.safetynet.safetynetAlerts.daos;
 
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.Person;
+import com.safetynet.safetynetAlerts.services.ClockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.tinylog.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class PersonDAOJsonFile implements PersonDAO {
 
+    ClockService clock;
     /**
      * JsonFileDatabase singleton instance.
      */
@@ -25,8 +29,9 @@ public class PersonDAOJsonFile implements PersonDAO {
      * @param jsonFileDatabase instance to initialize this.jsonFileDatabase
      */
     @Autowired
-    public PersonDAOJsonFile(final JsonFileDatabase jsonFileDatabase) {
+    public PersonDAOJsonFile(final JsonFileDatabase jsonFileDatabase, ClockService clock) {
         this.jsonFileDatabase = jsonFileDatabase;
+        this.clock = clock;
     }
 
     /**
@@ -69,46 +74,45 @@ public class PersonDAOJsonFile implements PersonDAO {
         return jsonFileDatabase.deletePerson(firstName, lastName);
     }
 
-    //TODO Enable asking for person related medical record  when ask for person.
-
     /**
      * @see PersonDAO
      */
     @Override
     public Person getFromName(final String firstName,
-                              final String lastName) throws NoSuchDataException {
-        return this.jsonFileDatabase.getPerson(firstName, lastName);
+                              final String lastName,
+                              final boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
+
+        return this.jsonFileDatabase.getPerson(firstName, lastName, withMedicalRecord);
     }
 
     /**
      * @see PersonDAO
      */
     @Override
-    public List<Person> getFromName(final String lastName) throws NoSuchDataException {
-        return null;
+    public List<Person> getFromAddress(final String address,
+                                       boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
+        return this.jsonFileDatabase.getPersonFromAddress(address, withMedicalRecord);
     }
 
     /**
      * @see PersonDAO
      */
     @Override
-    public List<Person> getFromAddress(final String address) throws NoSuchDataException {
-        return null;
+    public List<Person> getFromAddress(List<String> addresses,
+                                       boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
+        List<Person> persons = new ArrayList<>();
+        for (String address : addresses) {
+            persons.addAll(this.jsonFileDatabase.getPersonFromAddress(address, withMedicalRecord));
+        }
+        return persons;
     }
 
     /**
      * @see PersonDAO
      */
     @Override
-    public List<Person> getFromAddress(List<String> addresses) throws NoSuchDataException {
-        return null;
-    }
-
-    /**
-     * @see PersonDAO
-     */
-    @Override
-    public List<Person> getCommunity(final String city) throws NoSuchDataException {
-        return null;
+    public List<Person> getCommunity(final String city,
+                                     boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
+        return this.jsonFileDatabase.getPersonFromCity(city, withMedicalRecord);
     }
 }

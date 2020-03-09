@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"stationNumber","residents"})
+@JsonPropertyOrder({"stationNumber", "residents"})
 public class URLFireDTO {
     @JsonProperty("stationNumber")
     private int stationNumber;

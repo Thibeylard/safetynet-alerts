@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"adults","children","inhabitants"})
+@JsonPropertyOrder({"adults", "children", "inhabitants"})
 public class URLFirestationDTO {
 
     @JsonProperty("adults")
@@ -21,5 +21,17 @@ public class URLFirestationDTO {
         this.adults = adults;
         this.children = children;
         this.inhabitants = inhabitants;
+    }
+
+    public int getAdults() {
+        return adults;
+    }
+
+    public int getChildren() {
+        return children;
+    }
+
+    public List<PersonAddressPhoneDTO> getInhabitants() {
+        return inhabitants;
     }
 }

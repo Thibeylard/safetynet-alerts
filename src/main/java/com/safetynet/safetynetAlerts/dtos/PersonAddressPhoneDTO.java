@@ -2,8 +2,9 @@ package com.safetynet.safetynetAlerts.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.safetynet.safetynetAlerts.models.Person;
 
-@JsonPropertyOrder({"firstName","lastName","address","phone"})
+@JsonPropertyOrder({"firstName", "lastName", "address", "phone"})
 public class PersonAddressPhoneDTO {
     @JsonProperty("firstName")
     private final String lastName;
@@ -18,9 +19,16 @@ public class PersonAddressPhoneDTO {
                                  final String pLastName,
                                  final String pAddress,
                                  final String pPhone) {
-        this.lastName = pLastName;
         this.firstName = pFirstName;
+        this.lastName = pLastName;
         this.address = pAddress;
         this.phone = pPhone;
+    }
+
+    public PersonAddressPhoneDTO(final Person person) {
+        this.firstName = person.getFirstName();
+        this.lastName = person.getFirstName();
+        this.address = person.getAddress();
+        this.phone = person.getPhone();
     }
 }

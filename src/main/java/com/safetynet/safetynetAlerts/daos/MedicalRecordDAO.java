@@ -3,7 +3,6 @@ package com.safetynet.safetynetAlerts.daos;
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
-import com.safetynet.safetynetAlerts.models.Person;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,34 +53,12 @@ public interface MedicalRecordDAO {
                    final String lastName) throws IOException, NoSuchDataException;
 
     /**
-     * Get specific MedicalRecord by name from database.
+     * Get Firestation instance with specified address.
      *
-     * @param firstName firstName value to search
-     * @param lastName  lastName value to search
-     * @return MedicalRecord instance
-     * @throws IOException for data access failure
+     * @param firstName MedicalRecord to access firstName attribute value
+     * @param lastName  MedicalRecord to access lastName attribute value
+     * @throws IOException, NoSuchDataException for data access failure
      */
-    MedicalRecord getMedicalRecord(final String firstName,
-                                   final String lastName) throws IOException, NoSuchDataException;
-
-    /**
-     * Get MedicalRecords of all Persons in the list from database.
-     *
-     * @param person Person of which to get MedicalRecord
-     * @return List of MedicalRecord instance
-     * @throws IOException for data access failure
-     */
-    MedicalRecord getMedicalRecord(Person person) throws IOException, NoSuchDataException;
-
-    /**
-     * Get MedicalRecords of Persons List from database.
-     *
-     * @param persons List of Persons of which to get MedicalRecords
-     * @return MedicalRecord instance
-     * @throws IOException         for data access failure
-     * @throws NoSuchDataException for data access failure
-     */
-    List<MedicalRecord> getMedicalRecords(final List<Person> persons) throws IOException, NoSuchDataException;
-
-
+    MedicalRecord get(final String firstName,
+                      final String lastName) throws IOException, NoSuchDataException;
 }
