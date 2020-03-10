@@ -231,7 +231,7 @@ class PersonDAOJsonFileTest {
                         .isEqualTo(person);
 
                 // Case with MedicalRecord asked
-                MedicalRecord medicalRecord = MedicalRecordFactory.getMedicalRecord(Optional.empty(), Optional.empty(), false);
+                MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(Optional.empty(), Optional.empty(), false);
                 Person personWithMedicalRecord = PersonFactory.createPerson(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(medicalRecord));
 
                 doReturn(personWithMedicalRecord).when(mockJsonFileDatabase)

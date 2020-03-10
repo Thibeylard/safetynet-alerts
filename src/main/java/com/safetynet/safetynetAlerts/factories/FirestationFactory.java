@@ -18,8 +18,8 @@ public class FirestationFactory {
      *
      * @return new Firestation
      */
-    public static Firestation getFirestation() {
-        return getFirestation(Optional.empty(), Optional.empty());
+    public static Firestation createFirestation() {
+        return createFirestation(Optional.empty(), Optional.empty());
     }
 
     /**
@@ -29,8 +29,8 @@ public class FirestationFactory {
      * @param station Firestation attribute value (Optional)
      * @return new Firestation
      */
-    public static Firestation getFirestation(Optional<String> address,
-                                             Optional<Integer> station) {
+    public static Firestation createFirestation(Optional<String> address,
+                                                Optional<Integer> station) {
         if (address.isEmpty()) {
             address = Optional.of(assignAddress().getName());
         }
@@ -49,11 +49,11 @@ public class FirestationFactory {
      * @param station Firestation attribute value for all Firestations (Optional)
      * @return new Firestation List
      */
-    public static List<Firestation> getFirestations(int count, Optional<Integer> station) {
+    public static List<Firestation> createFirestations(int count, Optional<Integer> station) {
         List<Firestation> firestations = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            firestations.add(getFirestation(Optional.empty(), station));
+            firestations.add(createFirestation(Optional.empty(), station));
         }
 
         return firestations;

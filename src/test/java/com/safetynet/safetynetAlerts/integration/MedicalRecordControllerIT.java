@@ -74,7 +74,7 @@ public class MedicalRecordControllerIT {
     @Test
     @DisplayName("POST successful")
     void Given_dataAddedToDatabase_When_POSTMedicalRecord_Then_correspondingDataCanBeRetrieved() throws Exception {
-        MedicalRecord medicalRecord = MedicalRecordFactory.getMedicalRecord(false);
+        MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(false);
 
         // Checking that this specific medicalRecord doesn't already exist in database.
         ResponseEntity<MedicalRecord> response = restTemplate.getForEntity(medicalRecordIDURL, MedicalRecord.class, medicalRecord.getFirstName(), medicalRecord.getLastName());
@@ -100,7 +100,7 @@ public class MedicalRecordControllerIT {
     @Test
     @DisplayName("POST no partial data")
     void Given_wrongParameters_When_POSTMedicalRecord_Then_noPartialDataSaved() throws Exception {
-        MedicalRecord medicalRecord = MedicalRecordFactory.getMedicalRecord(false);
+        MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(false);
 
         // Checking that this specific medicalRecord doesn't already exist in database.
         ResponseEntity<MedicalRecord> response = restTemplate.getForEntity(medicalRecordIDURL, MedicalRecord.class, medicalRecord.getFirstName(), medicalRecord.getLastName());
@@ -125,8 +125,8 @@ public class MedicalRecordControllerIT {
     @DisplayName("POST already exists")
     void Given_existingPerson_When_POSTMedicalRecord_Then_personNotReplaced() throws Exception {
         // Two medicalRecords with same name but different values
-        MedicalRecord existing = MedicalRecordFactory.getMedicalRecord(false);
-        MedicalRecord added = MedicalRecordFactory.getMedicalRecord(Optional.of(existing.getFirstName()), Optional.ofNullable(existing.getLastName()), false);
+        MedicalRecord existing = MedicalRecordFactory.createMedicalRecord(false);
+        MedicalRecord added = MedicalRecordFactory.createMedicalRecord(Optional.of(existing.getFirstName()), Optional.ofNullable(existing.getLastName()), false);
 
 
         params.add("firstName", existing.getFirstName());
@@ -162,8 +162,8 @@ public class MedicalRecordControllerIT {
     @DisplayName("UPDATE successful")
     void Given_dataAddedToDatabase_When_UPDATEMedicalRecord_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
         // Two medicalRecords with same name but different values
-        MedicalRecord existing = MedicalRecordFactory.getMedicalRecord(false);
-        MedicalRecord updated = MedicalRecordFactory.getMedicalRecord(
+        MedicalRecord existing = MedicalRecordFactory.createMedicalRecord(false);
+        MedicalRecord updated = MedicalRecordFactory.createMedicalRecord(
                 Optional.of(existing.getFirstName()),
                 Optional.of(existing.getLastName()),
                 Optional.of(existing.getBirthDate()),
@@ -206,7 +206,7 @@ public class MedicalRecordControllerIT {
     @Test
     @DisplayName("UPDATE no partial data")
     void Given_noCorrespondingData_When_UPDATEMedicalRecord_Then_noPartialDataSaved() throws Exception {
-        MedicalRecord updated = MedicalRecordFactory.getMedicalRecord(false);
+        MedicalRecord updated = MedicalRecordFactory.createMedicalRecord(false);
 
         // Checking that MedicalRecord is not in database
         ResponseEntity<MedicalRecord> response = restTemplate.getForEntity(medicalRecordIDURL, MedicalRecord.class, updated.getFirstName(), updated.getLastName());
@@ -230,7 +230,7 @@ public class MedicalRecordControllerIT {
     @Test
     @DisplayName("DELETE successful")
     void Given_dataAddedToDatabase_When_DELETEMedicalRecord_Then_dataCantBeRetrievedAfterDeletion() {
-        MedicalRecord existing = MedicalRecordFactory.getMedicalRecord(false);
+        MedicalRecord existing = MedicalRecordFactory.createMedicalRecord(false);
 
         params.add("firstName", existing.getFirstName());
         params.add("lastName", existing.getLastName());

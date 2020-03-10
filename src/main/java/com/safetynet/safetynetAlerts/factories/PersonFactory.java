@@ -35,8 +35,10 @@ public class PersonFactory {
     }
 
     /**
-     * Generates a Person with randomly generated values.
+     * Build a Person with its MedicalRecord and its age.
      *
+     * @param person        Person instance base (no MedicalRecord neither age)
+     * @param medicalRecord MedicalRecord instance to assign to person
      * @return new Person
      */
     public static Person buildPerson(Person person, MedicalRecord medicalRecord) {
@@ -134,7 +136,7 @@ public class PersonFactory {
                     Optional.of(firstName),
                     lastName,
                     completeAddress,
-                    Optional.of(MedicalRecordFactory.getMedicalRecord(
+                    Optional.of(MedicalRecordFactory.createMedicalRecord(
                             Optional.of(firstName),
                             lastName,
                             false))));
@@ -161,7 +163,7 @@ public class PersonFactory {
                     Optional.of(firstName),
                     lastName,
                     completeAddress,
-                    Optional.of(MedicalRecordFactory.getMedicalRecord(
+                    Optional.of(MedicalRecordFactory.createMedicalRecord(
                             Optional.of(firstName),
                             lastName,
                             true))));

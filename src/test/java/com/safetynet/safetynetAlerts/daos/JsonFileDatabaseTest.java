@@ -90,14 +90,14 @@ class JsonFileDatabaseTest {
         class addTestMethods {
             @Test
             void Given_firestationParameters_When_addFirestation_Then_returnTrue() throws Exception {
-                Firestation newFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation newFirestation = FirestationFactory.createFirestation();
                 assertThat(jsonFileDatabase.addFirestation(newFirestation.getAddress(), newFirestation.getStation()))
                         .isTrue();
             }
 
             @Test
             void Given_firestationParameters_When_addFirestation_Then_createNewFirestation() throws Exception {
-                Firestation newFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation newFirestation = FirestationFactory.createFirestation();
 
                 jsonFileDatabase.addFirestation(newFirestation.getAddress(), newFirestation.getStation());
 
@@ -109,7 +109,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_identicalExistantData_When_addFirestation_Then_throwsIllegalDataOverrideException() throws Exception {
-                Firestation newFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation newFirestation = FirestationFactory.createFirestation();
                 firestations.add(newFirestation); // firestation is already present in data
 
                 assertThrows(IllegalDataOverrideException.class,
@@ -118,7 +118,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_addFirestation_Then_throwsIOException() throws Exception {
-                Firestation newFirestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation newFirestation = FirestationFactory.createFirestation();
 
                 doThrow(new IOException())
                         .when(spyFactory)
@@ -135,7 +135,7 @@ class JsonFileDatabaseTest {
         class updateTestMethods {
             @Test
             void Given_firestationParameters_When_updateFirestation_Then_returnTrue() throws Exception {
-                Firestation firestationToUpdate = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation firestationToUpdate = FirestationFactory.createFirestation();
 
                 firestations.add(firestationToUpdate);
 
@@ -145,7 +145,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_firestationParameters_When_updateFirestation_Then_firestationUpdated() throws Exception {
-                Firestation firestationToUpdate = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation firestationToUpdate = FirestationFactory.createFirestation();
                 Firestation updatedFirestation = new Firestation(firestationToUpdate.getAddress(), firestationToUpdate.getStation() + 1);
 
                 firestations.add(firestationToUpdate);
@@ -160,7 +160,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_dataToUpdateNotPresent_When_updateFirestation_Then_throwsNoSuchDataException() throws Exception {
-                Firestation firestationToUpdate = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation firestationToUpdate = FirestationFactory.createFirestation();
 
                 assertThrows(NoSuchDataException.class,
                         () -> jsonFileDatabase.updateFirestation(firestationToUpdate.getAddress(), firestationToUpdate.getStation() + 1));
@@ -168,7 +168,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_updateFirestation_Then_throwsIOException() throws Exception {
-                Firestation firestationToUpdate = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation firestationToUpdate = FirestationFactory.createFirestation();
 
                 firestations.add(firestationToUpdate);
 
@@ -188,7 +188,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_firestationParameters_When_deleteFirestationByAddress_Then_returnTrue() throws Exception {
-                Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation firestationToDelete = FirestationFactory.createFirestation();
                 firestations.add(firestationToDelete);
                 assertThat(jsonFileDatabase.deleteFirestation(firestationToDelete.getAddress()))
                         .isTrue();
@@ -196,7 +196,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_firestationParameters_When_deleteFirestationByNumber_Then_returnTrue() throws Exception {
-                Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation firestationToDelete = FirestationFactory.createFirestation();
                 firestations.add(firestationToDelete);
                 assertThat(jsonFileDatabase.deleteFirestation(firestationToDelete.getStation()))
                         .isTrue();
@@ -205,9 +205,9 @@ class JsonFileDatabaseTest {
             @Test
             void Given_firestationParameters_When_deleteFirestationByAddress_Then_allFirestationsDeleted() throws Exception {
                 Firestation firestationToDelete1 = FirestationFactory
-                        .getFirestation(Optional.empty(), Optional.empty());
+                        .createFirestation();
                 Firestation firestationToDelete2 = FirestationFactory
-                        .getFirestation(Optional.of(firestationToDelete1.getAddress()), Optional.empty());
+                        .createFirestation(Optional.of(firestationToDelete1.getAddress()), Optional.empty());
 
                 firestations.add(firestationToDelete1);
                 firestations.add(firestationToDelete2);
@@ -222,8 +222,8 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_firestationParameters_When_deleteFirestationByNumber_Then_noMoreFirestationWithNumber() throws Exception {
-                Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.of(4));
-                Firestation firestationToKeep = FirestationFactory.getFirestation(Optional.empty(), Optional.of(3));
+                Firestation firestationToDelete = FirestationFactory.createFirestation(Optional.empty(), Optional.of(4));
+                Firestation firestationToKeep = FirestationFactory.createFirestation(Optional.empty(), Optional.of(3));
 
                 firestations.add(firestationToDelete);
                 firestations.add(firestationToKeep);
@@ -238,7 +238,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_dataToDeleteNotPresent_When_deleteFirestation_Then_throwsNoSuchDataException() throws Exception {
-                Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation firestationToDelete = FirestationFactory.createFirestation();
 
                 assertThrows(NoSuchDataException.class,
                         () -> jsonFileDatabase.deleteFirestation(firestationToDelete.getAddress()));
@@ -248,7 +248,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_deleteFirestation_Then_throwsIOException() throws Exception {
-                Firestation firestationToDelete = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation firestationToDelete = FirestationFactory.createFirestation();
 
                 doThrow(new IOException())
                         .when(spyFactory)
@@ -277,7 +277,7 @@ class JsonFileDatabaseTest {
         class addTestMethods {
             @Test
             void Given_medicalRecordParameters_When_addMedicalRecord_Then_returnTrue() throws Exception {
-                MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);
@@ -293,7 +293,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_medicalRecordParameters_When_addMedicalRecord_Then_createNewMedicalRecord() throws Exception {
-                MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);
@@ -313,7 +313,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_identicalExistantData_When_addMedicalRecord_Then_throwsIllegalDataOverrideException() throws Exception {
-                MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);
@@ -332,7 +332,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_addMedicalRecord_Then_throwsIOException() throws Exception {
-                MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);
@@ -358,7 +358,7 @@ class JsonFileDatabaseTest {
         class updateTestMethods {
             @Test
             void Given_medicalRecordParameters_When_updateMedicalRecord_Then_returnTrue() throws Exception {
-                MedicalRecord newMedicalRecord = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);
@@ -376,12 +376,12 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_medicalRecordParameters_When_updateMedicalRecord_Then_updateOriginalMedicalRecord() throws Exception {
-                MedicalRecord originalMedicalRecord = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord originalMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);
 
-                MedicalRecord updatedMedicalRecord = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord updatedMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         Optional.of(originalMedicalRecord.getFirstName()),
                         Optional.of(originalMedicalRecord.getLastName()),
                         false);
@@ -407,7 +407,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_dataToUpdateNotPresent_When_updateMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
-                MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);
@@ -423,7 +423,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_updateMedicalRecord_Then_throwsIOException() throws Exception {
-                MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);
@@ -454,7 +454,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_returnTrue() throws Exception {
-                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);
@@ -466,7 +466,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_medicalRecordIsDeleted() throws Exception {
-                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false
@@ -483,7 +483,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_dataToDeleteNotPresent_When_deleteMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
-                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false
@@ -497,7 +497,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_deleteMedicalRecord_Then_throwsIOException() throws Exception {
-                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.getMedicalRecord(
+                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(
                         Optional.empty(),
                         Optional.empty(),
                         false);

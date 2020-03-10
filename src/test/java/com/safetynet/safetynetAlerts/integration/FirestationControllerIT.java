@@ -74,7 +74,7 @@ public class FirestationControllerIT {
     @Test
     @DisplayName("POST successful")
     void Given_dataAddedToDatabase_When_POSTFirestation_Then_correspondingDataCanBeRetrieved() throws Exception {
-        Firestation firestation = FirestationFactory.getFirestation(Optional.of(Addresses.CIRCLE.getName()), Optional.empty());
+        Firestation firestation = FirestationFactory.createFirestation(Optional.of(Addresses.CIRCLE.getName()), Optional.empty());
 
         // Checking that this specific firestation doesn't already exist in database.
         ResponseEntity<Firestation> response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, firestation.getAddress());
@@ -97,7 +97,7 @@ public class FirestationControllerIT {
     @Test
     @DisplayName("POST no partial data")
     void Given_wrongParameters_When_POSTFirestation_Then_noPartialDataSaved() throws Exception {
-        Firestation firestation = FirestationFactory.getFirestation(Optional.of(Addresses.BAYMEADOWS.getName()), Optional.empty());
+        Firestation firestation = FirestationFactory.createFirestation(Optional.of(Addresses.BAYMEADOWS.getName()), Optional.empty());
 
         // Checking that this specific firestation doesn't already exist in database.
         ResponseEntity<Firestation> response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, firestation.getAddress());
@@ -118,8 +118,8 @@ public class FirestationControllerIT {
     @Test
     @DisplayName("POST already exists")
     void Given_existingFirestation_When_POSTFirestation_Then_personNotReplaced() throws Exception {
-        Firestation existing = FirestationFactory.getFirestation(Optional.of(Addresses.FIFTHROAD.getName()), Optional.empty());
-        Firestation added = FirestationFactory.getFirestation(Optional.of(existing.getAddress()), Optional.of(existing.getStation() + 2));
+        Firestation existing = FirestationFactory.createFirestation(Optional.of(Addresses.FIFTHROAD.getName()), Optional.empty());
+        Firestation added = FirestationFactory.createFirestation(Optional.of(existing.getAddress()), Optional.of(existing.getStation() + 2));
 
         // Checking that existing firestation is not in database yet
         ResponseEntity<Firestation> response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, existing.getAddress());
@@ -156,8 +156,8 @@ public class FirestationControllerIT {
     @DisplayName("UPDATE successful")
     void Given_dataAddedToDatabase_When_UPDATEFirestation_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
         // Two firestations with same address but different station number
-        Firestation existing = FirestationFactory.getFirestation(Optional.of(Addresses.GOLFCOURT.getName()), Optional.empty());
-        Firestation updated = FirestationFactory.getFirestation(Optional.of(existing.getAddress()), Optional.of(existing.getStation() + 2));
+        Firestation existing = FirestationFactory.createFirestation(Optional.of(Addresses.GOLFCOURT.getName()), Optional.empty());
+        Firestation updated = FirestationFactory.createFirestation(Optional.of(existing.getAddress()), Optional.of(existing.getStation() + 2));
 
         // Preparation request
         params.add("address", existing.getAddress());
@@ -188,7 +188,7 @@ public class FirestationControllerIT {
     @DisplayName("UPDATE no partial data")
     void Given_noCorrespondingData_When_UPDATEFirestation_Then_noPartialDataSaved() throws Exception {
         // Two firestations with same address but different station number
-        Firestation updated = FirestationFactory.getFirestation(Optional.of(Addresses.OLDYORK.getName()), Optional.empty());
+        Firestation updated = FirestationFactory.createFirestation(Optional.of(Addresses.OLDYORK.getName()), Optional.empty());
 
 
         params.add("address", updated.getAddress());
@@ -212,7 +212,7 @@ public class FirestationControllerIT {
     @DisplayName("DELETE successful")
     void Given_dataAddedToDatabase_When_DELETEFirestation_Then_dataCantBeRetrievedAfterDeletion() {
         // Two firestations with same address but different station number
-        Firestation existing = FirestationFactory.getFirestation(Optional.of(Addresses.MECHANIC.getName()), Optional.empty());
+        Firestation existing = FirestationFactory.createFirestation(Optional.of(Addresses.MECHANIC.getName()), Optional.empty());
 
         // Preparation request
         params.add("address", existing.getAddress());

@@ -76,8 +76,8 @@ public class MedicalRecordFactory {
      * @param isChild birthDate will correspond to a less than 18 year old
      * @return new MedicalRecord
      */
-    public static MedicalRecord getMedicalRecord(boolean isChild) {
-        return getMedicalRecord(Optional.empty(), Optional.empty(), isChild);
+    public static MedicalRecord createMedicalRecord(boolean isChild) {
+        return createMedicalRecord(Optional.empty(), Optional.empty(), isChild);
     }
 
     /**
@@ -88,9 +88,9 @@ public class MedicalRecordFactory {
      * @param lastName  MedicalRecord attribute value (Optional)
      * @return new MedicalRecord
      */
-    public static MedicalRecord getMedicalRecord(Optional<String> firstName,
-                                                 Optional<String> lastName,
-                                                 boolean isChild) {
+    public static MedicalRecord createMedicalRecord(Optional<String> firstName,
+                                                    Optional<String> lastName,
+                                                    boolean isChild) {
         if (firstName.isEmpty()) {
             firstName = Optional.of(generateName());
         }
@@ -117,12 +117,12 @@ public class MedicalRecordFactory {
      * @param allergies   MedicalRecord attribute value (Optional)
      * @return new MedicalRecord
      */
-    public static MedicalRecord getMedicalRecord(Optional<String> firstName,
-                                                 Optional<String> lastName,
-                                                 Optional<String> birthDate,
-                                                 Optional<List<String>> medications,
-                                                 Optional<List<String>> allergies,
-                                                 boolean isChild) {
+    public static MedicalRecord createMedicalRecord(Optional<String> firstName,
+                                                    Optional<String> lastName,
+                                                    Optional<String> birthDate,
+                                                    Optional<List<String>> medications,
+                                                    Optional<List<String>> allergies,
+                                                    boolean isChild) {
         if (firstName.isEmpty()) {
             firstName = Optional.of(generateName());
         }

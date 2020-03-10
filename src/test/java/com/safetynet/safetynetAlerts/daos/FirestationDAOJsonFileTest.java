@@ -177,7 +177,7 @@ class FirestationDAOJsonFileTest {
         class getFirestationTestMethods {
             @Test
             void Given_validParameters_When_getFirestation_Then_returnFirestation() throws IOException, NoSuchDataException {
-                Firestation firestation = FirestationFactory.getFirestation(Optional.empty(), Optional.empty());
+                Firestation firestation = FirestationFactory.createFirestation();
 
                 doReturn(firestation).when(mockJsonFileDatabase)
                         .getFirestation(anyString());
@@ -204,7 +204,7 @@ class FirestationDAOJsonFileTest {
         class getFirestationsTestMethods {
             @Test
             void Given_validParameters_When_getFirestations_Then_returnFirestation() throws IOException, NoSuchDataException {
-                List<Firestation> firestations = FirestationFactory.getFirestations(2, Optional.empty());
+                List<Firestation> firestations = FirestationFactory.createFirestations(2, Optional.empty());
 
                 doReturn(firestations).when(mockJsonFileDatabase)
                         .getFirestations(anyInt());
