@@ -163,9 +163,9 @@ public class JsonFileDatabase {
 
     public boolean updateMedicalRecord(final String firstName,
                                        final String lastName,
-                                       final Optional<String> birthDate,
-                                       final Optional<List<String>> medications,
-                                       final Optional<List<String>> allergies) throws IOException, NoSuchDataException {
+                                       final String birthDate,
+                                       final List<String> medications,
+                                       final List<String> allergies) throws IOException, NoSuchDataException {
 
         MedicalRecord existantMedicalRecord = this.jsonFileDTO.getMedicalRecords().stream()
                 .filter(medicalRecord -> medicalRecord.getLastName().equals(lastName))
@@ -173,9 +173,12 @@ public class JsonFileDatabase {
                 .findFirst()
                 .orElseThrow(NoSuchDataException::new);
 
-        birthDate.ifPresent(existantMedicalRecord::setBirthDate);
-        medications.ifPresent(existantMedicalRecord::setMedications);
-        allergies.ifPresent(existantMedicalRecord::setAllergies);
+        if (birthDate != null)
+            existantMedicalRecord.setBirthDate(birthDate);
+        if (medications != null)
+            existantMedicalRecord.setMedications(medications);
+        if (allergies != null)
+            existantMedicalRecord.setAllergies(allergies);
 
         return writeDataToJsonFile();
     }

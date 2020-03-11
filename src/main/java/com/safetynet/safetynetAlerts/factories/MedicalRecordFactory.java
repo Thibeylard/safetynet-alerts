@@ -3,11 +3,11 @@ package com.safetynet.safetynetAlerts.factories;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.services.ClockService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.safetynet.safetynetAlerts.factories.UtilsFactory.*;
 
@@ -77,71 +77,71 @@ public class MedicalRecordFactory {
      * @return new MedicalRecord
      */
     public static MedicalRecord createMedicalRecord(boolean isChild) {
-        return createMedicalRecord(Optional.empty(), Optional.empty(), isChild);
+        return createMedicalRecord(null, null, isChild);
     }
 
     /**
      * Generates a MedicalRecord with randomly generated values for empty optional parameters.
      *
+     * @param firstName MedicalRecord attribute value
+     * @param lastName  MedicalRecord attribute value
      * @param isChild   birthDate will correspond to a less than 18 year old
-     * @param firstName MedicalRecord attribute value (Optional)
-     * @param lastName  MedicalRecord attribute value (Optional)
      * @return new MedicalRecord
      */
-    public static MedicalRecord createMedicalRecord(Optional<String> firstName,
-                                                    Optional<String> lastName,
+    public static MedicalRecord createMedicalRecord(@Nullable String firstName,
+                                                    @Nullable String lastName,
                                                     boolean isChild) {
-        if (firstName.isEmpty()) {
-            firstName = Optional.of(generateName());
+        if (firstName == null) {
+            firstName = generateName();
         }
 
-        if (lastName.isEmpty()) {
-            lastName = Optional.of(generateName());
+        if (lastName == null) {
+            lastName = generateName();
         }
 
         String birthDate = generateBirthDate(isChild);
         List<String> medications = generateMedications();
         List<String> allergies = generateAllergies();
 
-        return new MedicalRecord(firstName.get(), lastName.get(), birthDate, medications, allergies);
+        return new MedicalRecord(firstName, lastName, birthDate, medications, allergies);
     }
 
     /**
      * Generates a MedicalRecord with randomly generated values for empty optional parameters.
      *
+     * @param firstName   MedicalRecord attribute value
+     * @param lastName    MedicalRecord attribute value
+     * @param birthDate   MedicalRecord attribute value
+     * @param medications MedicalRecord attribute value
+     * @param allergies   MedicalRecord attribute value
      * @param isChild     birthDate will correspond to a less than 18 year old
-     * @param firstName   MedicalRecord attribute value (Optional)
-     * @param lastName    MedicalRecord attribute value (Optional)
-     * @param birthDate   MedicalRecord attribute value (Optional)
-     * @param medications MedicalRecord attribute value (Optional)
-     * @param allergies   MedicalRecord attribute value (Optional)
      * @return new MedicalRecord
      */
-    public static MedicalRecord createMedicalRecord(Optional<String> firstName,
-                                                    Optional<String> lastName,
-                                                    Optional<String> birthDate,
-                                                    Optional<List<String>> medications,
-                                                    Optional<List<String>> allergies,
+    public static MedicalRecord createMedicalRecord(@Nullable String firstName,
+                                                    @Nullable String lastName,
+                                                    @Nullable String birthDate,
+                                                    @Nullable List<String> medications,
+                                                    @Nullable List<String> allergies,
                                                     boolean isChild) {
-        if (firstName.isEmpty()) {
-            firstName = Optional.of(generateName());
+        if (firstName == null) {
+            firstName = generateName();
         }
 
-        if (lastName.isEmpty()) {
-            lastName = Optional.of(generateName());
+        if (lastName == null) {
+            lastName = generateName();
         }
 
-        if (birthDate.isEmpty()) {
-            birthDate = Optional.of(generateBirthDate(isChild));
+        if (birthDate == null) {
+            birthDate = generateBirthDate(isChild);
         }
 
-        if (medications.isEmpty()) {
-            medications = Optional.of(generateMedications());
+        if (medications == null) {
+            medications = generateMedications();
         }
-        if (allergies.isEmpty()) {
-            allergies = Optional.of(generateAllergies());
+        if (allergies == null) {
+            allergies = generateAllergies();
         }
 
-        return new MedicalRecord(firstName.get(), lastName.get(), birthDate.get(), medications.get(), allergies.get());
+        return new MedicalRecord(firstName, lastName, birthDate, medications, allergies);
     }
 }

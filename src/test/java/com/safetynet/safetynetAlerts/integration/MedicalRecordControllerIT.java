@@ -27,7 +27,6 @@ import org.springframework.util.MultiValueMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -126,7 +125,7 @@ public class MedicalRecordControllerIT {
     void Given_existingPerson_When_POSTMedicalRecord_Then_personNotReplaced() throws Exception {
         // Two medicalRecords with same name but different values
         MedicalRecord existing = MedicalRecordFactory.createMedicalRecord(false);
-        MedicalRecord added = MedicalRecordFactory.createMedicalRecord(Optional.of(existing.getFirstName()), Optional.ofNullable(existing.getLastName()), false);
+        MedicalRecord added = MedicalRecordFactory.createMedicalRecord(existing.getFirstName(), existing.getLastName(), false);
 
 
         params.add("firstName", existing.getFirstName());
@@ -164,11 +163,11 @@ public class MedicalRecordControllerIT {
         // Two medicalRecords with same name but different values
         MedicalRecord existing = MedicalRecordFactory.createMedicalRecord(false);
         MedicalRecord updated = MedicalRecordFactory.createMedicalRecord(
-                Optional.of(existing.getFirstName()),
-                Optional.of(existing.getLastName()),
-                Optional.of(existing.getBirthDate()),
-                Optional.of(List.of("test:250mg")),
-                Optional.of(Lists.emptyList()),
+                existing.getFirstName(),
+                existing.getLastName(),
+                existing.getBirthDate(),
+                List.of("test:250mg"),
+                Lists.emptyList(),
                 false);
         //TODO Optionals in parameters with list break method : Empty List is considered empty parameters, which is wrong.
 

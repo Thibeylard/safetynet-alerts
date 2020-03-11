@@ -37,6 +37,7 @@ public class FirestationController {
         }
     }
 
+    //TODO Remove Optionals from parameters
     @PutMapping("/firestation")
     public ResponseEntity<String> update(@RequestParam(name = "address") final String address,
                                          @RequestParam(name = "stationNumber") final int number) throws Exception {

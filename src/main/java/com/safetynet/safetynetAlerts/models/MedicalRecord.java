@@ -3,21 +3,14 @@ package com.safetynet.safetynetAlerts.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+// TODO La sérialisation de la liste ne fonctionne pas correctement. Se renseigner pour écrire chaque élément indépendamment et non pas la liste comme un unique objet
 @JsonPropertyOrder({"firstName", "lastName", "birthDate", "medications", "allergies"})
 public class MedicalRecord {
 
-    /**
-     * firstName used with lastName as identifier. Final attribute.
-     */
     @JsonProperty("firstName")
     private final String firstName;
-    /**
-     * lastName used with firstName as identifier. Final attribute.
-     */
     @JsonProperty("lastName")
     private final String lastName;
     @JsonProperty("birthdate")

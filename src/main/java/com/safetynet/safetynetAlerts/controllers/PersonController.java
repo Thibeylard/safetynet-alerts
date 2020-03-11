@@ -55,6 +55,7 @@ public class PersonController {
         }
     }
 
+    //TODO Remove Optionals from parameters
     @PutMapping("/person")
     public ResponseEntity<String> update(@RequestParam(name = "firstName") final String firstName,
                                          @RequestParam(name = "lastName") final String lastName,

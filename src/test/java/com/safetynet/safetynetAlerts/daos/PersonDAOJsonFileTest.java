@@ -231,7 +231,7 @@ class PersonDAOJsonFileTest {
                         .isEqualTo(person);
 
                 // Case with MedicalRecord asked
-                MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(Optional.empty(), Optional.empty(), false);
+                MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(null, null, false);
                 Person personWithMedicalRecord = PersonFactory.createPerson(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(medicalRecord));
 
                 doReturn(personWithMedicalRecord).when(mockJsonFileDatabase)
@@ -244,7 +244,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
-            void Given_NoMedicalRecordException_When_getFromName_Then_throwsNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            void Given_NoMedicalRecordException_When_getFromName_Then_throwsNoMedicalRecordException() throws NoSuchDataException, NoMedicalRecordException {
                 Person person = PersonFactory.createPerson();
 
                 doThrow(new NoMedicalRecordException(person.getFirstName(), person.getLastName()))
@@ -256,7 +256,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
-            void Given_NoSuchDataException_When_getFromName_Then_throwsNoSuchDataException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            void Given_NoSuchDataException_When_getFromName_Then_throwsNoSuchDataException() throws NoSuchDataException, NoMedicalRecordException {
                 Person person = PersonFactory.createPerson();
 
                 doThrow(new NoSuchDataException())

@@ -137,8 +137,8 @@ public class PersonFactory {
                     lastName,
                     completeAddress,
                     Optional.of(MedicalRecordFactory.createMedicalRecord(
-                            Optional.of(firstName),
-                            lastName,
+                            firstName,
+                            lastName.orElse(null),
                             false))));
         }
         return persons;
@@ -164,8 +164,8 @@ public class PersonFactory {
                     lastName,
                     completeAddress,
                     Optional.of(MedicalRecordFactory.createMedicalRecord(
-                            Optional.of(firstName),
-                            lastName,
+                            firstName,
+                            lastName.orElse(null),
                             true))));
         }
         return persons;

@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -99,15 +98,15 @@ class MedicalRecordDAOJsonFileTest {
                     .updateMedicalRecord(
                             "firstName",
                             "lastName",
-                            Optional.of("birthDate"),
-                            Optional.empty(),
-                            Optional.empty());
+                            "birthDate",
+                            null,
+                            null);
             assertTrue(medicalRecordDAO.update(
                     "firstName",
                     "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty()));
+                    "birthDate",
+                    null,
+                    null));
         }
 
         @Test
@@ -115,15 +114,15 @@ class MedicalRecordDAOJsonFileTest {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase).updateMedicalRecord(
                     "firstName",
                     "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty());
+                    "birthDate",
+                    null,
+                    null);
             assertThrows(NoSuchDataException.class, () -> medicalRecordDAO.update(
                     "firstName",
                     "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty()));
+                    "birthDate",
+                    null,
+                    null));
         }
 
         @Test
@@ -131,15 +130,15 @@ class MedicalRecordDAOJsonFileTest {
             doThrow(new IOException()).when(mockJsonFileDatabase).updateMedicalRecord(
                     "firstName",
                     "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty());
+                    "birthDate",
+                    null,
+                    null);
             assertThrows(IOException.class, () -> medicalRecordDAO.update(
                     "firstName",
                     "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty()));
+                    "birthDate",
+                    null,
+                    null));
         }
     }
 

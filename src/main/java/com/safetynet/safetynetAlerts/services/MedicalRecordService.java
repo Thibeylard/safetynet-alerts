@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public interface MedicalRecordService {
@@ -40,9 +39,9 @@ public interface MedicalRecordService {
      */
     boolean update(final String firstName,
                    final String lastName,
-                   final Optional<String> birthDate,
-                   final Optional<List<String>> medications,
-                   final Optional<List<String>> allergies) throws IOException, NoSuchDataException;
+                   final String birthDate,
+                   final List<String> medications,
+                   final List<String> allergies) throws IOException, NoSuchDataException;
 
     /**
      * Pass parameters from controllers to DAO to delete specific MedicalRecord from database.

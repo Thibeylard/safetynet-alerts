@@ -15,7 +15,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -99,31 +98,32 @@ class MedicalRecordServiceImplTest {
                     .update(
                             "firstName",
                             "lastName",
-                            Optional.of("birthDate"),
-                            Optional.empty(),
-                            Optional.empty());
+                            "birthDate",
+                            null,
+                            null);
             assertTrue(medicalRecordService.update(
                     "firstName",
                     "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty()));
+                    "birthDate",
+                    null,
+                    null));
         }
 
         @Test
         void Given_NoSuchDataException_When_update_Then_throwsNoSuchDataException() throws Exception {
-            doThrow(new NoSuchDataException()).when(mockMedicalRecordDAO).update(
-                    "firstName",
-                    "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty());
+            doThrow(new NoSuchDataException()).when(mockMedicalRecordDAO)
+                    .update(
+                            "firstName",
+                            "lastName",
+                            "birthDate",
+                            null,
+                            null);
             assertThrows(NoSuchDataException.class, () -> medicalRecordService.update(
                     "firstName",
                     "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty()));
+                    "birthDate",
+                    null,
+                    null));
         }
 
         @Test
@@ -131,15 +131,15 @@ class MedicalRecordServiceImplTest {
             doThrow(new IOException()).when(mockMedicalRecordDAO).update(
                     "firstName",
                     "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty());
+                    "birthDate",
+                    null,
+                    null);
             assertThrows(IOException.class, () -> medicalRecordService.update(
                     "firstName",
                     "lastName",
-                    Optional.of("birthDate"),
-                    Optional.empty(),
-                    Optional.empty()));
+                    "birthDate",
+                    null,
+                    null));
         }
     }
 

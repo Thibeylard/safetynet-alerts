@@ -10,7 +10,6 @@ import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MedicalRecordServiceImpl implements MedicalRecordService {
@@ -42,9 +41,9 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     @Override
     public boolean update(final String firstName,
                           final String lastName,
-                          final Optional<String> birthDate,
-                          final Optional<List<String>> medications,
-                          final Optional<List<String>> allergies) throws IOException, NoSuchDataException {
+                          final String birthDate,
+                          final List<String> medications,
+                          final List<String> allergies) throws IOException, NoSuchDataException {
         Logger.debug("MedicalRecord Service pass update request to DAO");
         return this.medicalRecordDAO.update(firstName, lastName, birthDate, medications, allergies);
     }

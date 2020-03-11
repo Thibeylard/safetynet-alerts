@@ -34,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-// TODO check tests and add new ones
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @DisplayName("JsonFileDatabase Tests on :")
@@ -277,10 +276,7 @@ class JsonFileDatabaseTest {
         class addTestMethods {
             @Test
             void Given_medicalRecordParameters_When_addMedicalRecord_Then_returnTrue() throws Exception {
-                MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
-                        false);
+                MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(false);
 
                 assertThat(jsonFileDatabase.addMedicalRecord(
                         newMedicalRecord.getFirstName(),
@@ -294,8 +290,6 @@ class JsonFileDatabaseTest {
             @Test
             void Given_medicalRecordParameters_When_addMedicalRecord_Then_createNewMedicalRecord() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
                         false);
 
                 jsonFileDatabase.addMedicalRecord(
@@ -314,8 +308,6 @@ class JsonFileDatabaseTest {
             @Test
             void Given_identicalExistantData_When_addMedicalRecord_Then_throwsIllegalDataOverrideException() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
                         false);
 
                 medicalRecords.add(newMedicalRecord);
@@ -333,8 +325,6 @@ class JsonFileDatabaseTest {
             @Test
             void Given_IOExceptionOnWrite_When_addMedicalRecord_Then_throwsIOException() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
                         false);
 
                 doThrow(new IOException())
@@ -359,8 +349,6 @@ class JsonFileDatabaseTest {
             @Test
             void Given_medicalRecordParameters_When_updateMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
                         false);
 
                 medicalRecords.add(newMedicalRecord);
@@ -368,22 +356,19 @@ class JsonFileDatabaseTest {
                 assertThat(jsonFileDatabase.updateMedicalRecord(
                         newMedicalRecord.getFirstName(),
                         newMedicalRecord.getLastName(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.of(List.of("peanuts", "wheat"))
+                        "",
+                        null,
+                        List.of("peanuts", "wheat")
                 )).isTrue();
             }
 
             @Test
             void Given_medicalRecordParameters_When_updateMedicalRecord_Then_updateOriginalMedicalRecord() throws Exception {
-                MedicalRecord originalMedicalRecord = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
-                        false);
+                MedicalRecord originalMedicalRecord = MedicalRecordFactory.createMedicalRecord(false);
 
                 MedicalRecord updatedMedicalRecord = MedicalRecordFactory.createMedicalRecord(
-                        Optional.of(originalMedicalRecord.getFirstName()),
-                        Optional.of(originalMedicalRecord.getLastName()),
+                        originalMedicalRecord.getFirstName(),
+                        originalMedicalRecord.getLastName(),
                         false);
 
                 originalMedicalRecord.setAllergies(List.of(""));
@@ -394,9 +379,9 @@ class JsonFileDatabaseTest {
                 jsonFileDatabase.updateMedicalRecord(
                         originalMedicalRecord.getFirstName(),
                         originalMedicalRecord.getLastName(),
-                        Optional.of(updatedMedicalRecord.getBirthDate()),
-                        Optional.of(updatedMedicalRecord.getMedications()),
-                        Optional.of(updatedMedicalRecord.getAllergies())
+                        updatedMedicalRecord.getBirthDate(),
+                        updatedMedicalRecord.getMedications(),
+                        updatedMedicalRecord.getAllergies()
                 );
 
                 assertThat(medicalRecords)
@@ -407,25 +392,20 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_dataToUpdateNotPresent_When_updateMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
-                MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
-                        false);
+                MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.createMedicalRecord(false);
 
                 assertThrows(NoSuchDataException.class,
                         () -> jsonFileDatabase.updateMedicalRecord(
                                 medicalRecordToUpdate.getFirstName(),
                                 medicalRecordToUpdate.getLastName(),
-                                Optional.of(medicalRecordToUpdate.getBirthDate()),
-                                Optional.of(medicalRecordToUpdate.getMedications()),
-                                Optional.of(List.of("peanuts", "wheat"))));
+                                medicalRecordToUpdate.getBirthDate(),
+                                medicalRecordToUpdate.getMedications(),
+                                List.of("peanuts", "wheat")));
             }
 
             @Test
             void Given_IOExceptionOnWrite_When_updateMedicalRecord_Then_throwsIOException() throws Exception {
                 MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
                         false);
 
                 medicalRecordToUpdate.setAllergies(List.of(""));
@@ -440,9 +420,9 @@ class JsonFileDatabaseTest {
                         () -> jsonFileDatabase.updateMedicalRecord(
                                 medicalRecordToUpdate.getFirstName(),
                                 medicalRecordToUpdate.getLastName(),
-                                Optional.of(medicalRecordToUpdate.getBirthDate()),
-                                Optional.of(medicalRecordToUpdate.getMedications()),
-                                Optional.of(List.of("peanuts", "wheat"))));
+                                medicalRecordToUpdate.getBirthDate(),
+                                medicalRecordToUpdate.getMedications(),
+                                List.of("peanuts", "wheat")));
             }
         }
 
@@ -454,10 +434,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_returnTrue() throws Exception {
-                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
-                        false);
+                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(false);
 
                 medicalRecords.add(medicalRecordToDelete);
                 assertThat(jsonFileDatabase.deleteMedicalRecord(medicalRecordToDelete.getFirstName(), medicalRecordToDelete.getLastName()))
@@ -466,11 +443,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_medicalRecordIsDeleted() throws Exception {
-                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
-                        false
-                );
+                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(false);
 
                 medicalRecords.add(medicalRecordToDelete);
 
@@ -483,11 +456,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_dataToDeleteNotPresent_When_deleteMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
-                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
-                        false
-                );
+                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(false);
 
                 assertThrows(NoSuchDataException.class,
                         () -> jsonFileDatabase.deleteMedicalRecord(
@@ -497,10 +466,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_deleteMedicalRecord_Then_throwsIOException() throws Exception {
-                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(
-                        Optional.empty(),
-                        Optional.empty(),
-                        false);
+                MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(false);
 
                 medicalRecords.add(medicalRecordToDelete);
 

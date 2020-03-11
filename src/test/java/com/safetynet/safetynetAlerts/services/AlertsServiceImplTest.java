@@ -384,8 +384,8 @@ class AlertsServiceImplTest {
                     Optional.of("Smith"),
                     Optional.empty(),
                     Optional.of(MedicalRecordFactory.createMedicalRecord(
-                            Optional.of("John"),
-                            Optional.of("Smith"),
+                            "John",
+                            "Smith",
                             false)));
 
             List<Person> persons = new ArrayList<>(PersonFactory.createAdults(5, Optional.empty(), Optional.empty()));
@@ -409,8 +409,8 @@ class AlertsServiceImplTest {
                     Optional.of("Smith"),
                     Optional.empty(),
                     Optional.of(MedicalRecordFactory.createMedicalRecord(
-                            Optional.of("John"),
-                            Optional.of("Smith"),
+                            "John",
+                            "Smith",
                             false)));
 
             doThrow(new NoSuchDataException()).when(mockPersonDAO).getFromName(target.getFirstName(), target.getLastName(), true);
@@ -426,8 +426,8 @@ class AlertsServiceImplTest {
                     Optional.of("Smith"),
                     Optional.empty(),
                     Optional.of(MedicalRecordFactory.createMedicalRecord(
-                            Optional.of("John"),
-                            Optional.of("Smith"),
+                            "John",
+                            "Smith",
                             false)));
 
             doThrow(new IOException()).when(mockPersonDAO).getFromName(target.getFirstName(), target.getLastName(), true);

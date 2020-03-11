@@ -15,7 +15,6 @@ import org.tinylog.Logger;
 import java.io.IOException;
 import java.util.List;
 
-// TODO AlertsController is supposed to handle differently NoMedicalRecordException that represents an inconsistency in data
 @RestController
 @ResponseBody
 public class AlertsController {

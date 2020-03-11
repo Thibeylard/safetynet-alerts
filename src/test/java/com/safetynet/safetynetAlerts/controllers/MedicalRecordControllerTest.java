@@ -16,7 +16,6 @@ import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
@@ -167,9 +166,9 @@ class MedicalRecordControllerTest {
             doReturn(true).when(mockMedicalRecordService).update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
-                    Optional.ofNullable(params.getFirst("birthDate")),
-                    Optional.empty(),
-                    Optional.empty());
+                    params.getFirst("birthDate"),
+                    null,
+                    null);
             try {
                 mvcMock.perform(put("/medicalRecord")
                         .params(params)
@@ -229,9 +228,9 @@ class MedicalRecordControllerTest {
             doThrow(new NoSuchDataException()).when(mockMedicalRecordService).update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
-                    Optional.ofNullable(params.getFirst("birthDate")),
-                    Optional.empty(),
-                    Optional.empty());
+                    params.getFirst("birthDate"),
+                    null,
+                    null);
             try {
                 mvcMock.perform(put("/medicalRecord")
                         .params(params)
@@ -254,9 +253,9 @@ class MedicalRecordControllerTest {
             doThrow(new IOException()).when(mockMedicalRecordService).update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
-                    Optional.ofNullable(params.getFirst("birthDate")),
-                    Optional.empty(),
-                    Optional.empty());
+                    params.getFirst("birthDate"),
+                    null,
+                    null);
             try {
                 mvcMock.perform(put("/medicalRecord")
                         .params(params)

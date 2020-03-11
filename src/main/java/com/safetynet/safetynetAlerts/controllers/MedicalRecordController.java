@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.tinylog.Logger;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class MedicalRecordController {
@@ -51,21 +49,21 @@ public class MedicalRecordController {
     @PutMapping("/medicalRecord")
     public ResponseEntity<String> update(@RequestParam(name = "firstName") final String firstName,
                                          @RequestParam(name = "lastName") final String lastName,
-                                         @RequestParam(name = "birthDate", required = false) final Optional<String> birthDate,
-                                         @RequestParam(name = "medications", required = false) final Optional<List<String>> medications,
-                                         @RequestParam(name = "allergies", required = false) final Optional<List<String>> allergies) {
+                                         @RequestParam(name = "birthDate", required = false) String birthDate,
+                                         @RequestParam(name = "medications", required = false) final List<String> medications,
+                                         @RequestParam(name = "allergies", required = false) final List<String> allergies) {
 
-        if (birthDate.isEmpty() && medications.isEmpty() && allergies.isEmpty()) {
+        if (birthDate == null && medications == null && allergies == null) {
             Logger.error("MedicalRecord PUT request error : No parameters to update.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Logger.debug("MedicalRecord PUT Request on {}, {} with parameters : {}, {}, {}",
+        Logger.debug("MedicalRecord PUT Request on {}, {} with parameters : birthdate : {}, medications : {}, allergies : {}",
                 firstName,
                 lastName,
-                birthDate.orElse("no birthdate"),
-                medications.orElse(Collections.singletonList("no medications")),
-                allergies.orElse(Collections.singletonList("no allergies")));
+                birthDate == null ? "not" : birthDate,
+                medications == null ? "not" : medications,
+                allergies == null ? "not" : medications);
 
         try {
             this.medicalRecordService.update(firstName, lastName, birthDate, medications, allergies);

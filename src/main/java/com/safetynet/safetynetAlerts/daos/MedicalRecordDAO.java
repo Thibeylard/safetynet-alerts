@@ -6,7 +6,6 @@ import com.safetynet.safetynetAlerts.models.MedicalRecord;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 public interface MedicalRecordDAO {
 
@@ -38,9 +37,9 @@ public interface MedicalRecordDAO {
      */
     boolean update(final String firstName,
                    final String lastName,
-                   final Optional<String> birthDate,
-                   final Optional<List<String>> medications,
-                   final Optional<List<String>> allergies) throws IOException, NoSuchDataException;
+                   final String birthDate,
+                   final List<String> medications,
+                   final List<String> allergies) throws IOException, NoSuchDataException;
 
     /**
      * Delete specific MedicalRecord from database.
