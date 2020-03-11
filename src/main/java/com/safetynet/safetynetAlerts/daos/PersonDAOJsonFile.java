@@ -12,7 +12,6 @@ import org.tinylog.Logger;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class PersonDAOJsonFile implements PersonDAO {
@@ -55,11 +54,11 @@ public class PersonDAOJsonFile implements PersonDAO {
     @Override
     public boolean update(final String firstName,
                           final String lastName,
-                          final Optional<String> address,
-                          final Optional<String> city,
-                          final Optional<String> zip,
-                          final Optional<String> phone,
-                          final Optional<String> email) throws IOException, NoSuchDataException {
+                          final String address,
+                          final String city,
+                          final String zip,
+                          final String phone,
+                          final String email) throws IOException, NoSuchDataException {
         Logger.debug("Person DAO pass update request to JsonFileDatabase");
         return jsonFileDatabase.updatePerson(firstName, lastName, address, city, zip, phone, email);
     }

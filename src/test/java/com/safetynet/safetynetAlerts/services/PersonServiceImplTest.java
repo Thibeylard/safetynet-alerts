@@ -14,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -111,19 +110,19 @@ class PersonServiceImplTest {
             doReturn(true).when(mockPersonDAO)
                     .update(anyString(),
                             anyString(),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class));
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString());
             assertTrue(personService.update(
                     "firstName",
                     "lastName",
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.of("phone"),
-                    Optional.empty()));
+                    null,
+                    null,
+                    null,
+                    "phone",
+                    null));
         }
 
         @Test
@@ -131,20 +130,20 @@ class PersonServiceImplTest {
             doThrow(new NoSuchDataException()).when(mockPersonDAO)
                     .update(anyString(),
                             anyString(),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class));
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString());
             assertThrows(NoSuchDataException.class,
                     () -> personService.update(
                             "firstName",
                             "lastName",
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.of("phone"),
-                            Optional.empty()));
+                            null,
+                            null,
+                            null,
+                            "phone",
+                            null));
         }
 
         @Test
@@ -152,20 +151,20 @@ class PersonServiceImplTest {
             doThrow(new IOException()).when(mockPersonDAO)
                     .update(anyString(),
                             anyString(),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class));
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString());
             assertThrows(IOException.class,
                     () -> personService.update(
                             "firstName",
                             "lastName",
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.of("phone"),
-                            Optional.empty()));
+                            null,
+                            null,
+                            null,
+                            "phone",
+                            null));
         }
     }
 

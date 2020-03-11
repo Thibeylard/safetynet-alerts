@@ -62,15 +62,15 @@ class AlertsServiceImplTest {
             List<Person> inhabitants = new ArrayList<>();
 
             // First address : 2 adults, 1 children
-            inhabitants.addAll(PersonFactory.createAdults(2, Optional.empty(), Optional.empty()));
-            inhabitants.addAll(PersonFactory.createChildren(1, Optional.empty(), Optional.empty()));
+            inhabitants.addAll(PersonFactory.createAdults(2, null, null));
+            inhabitants.addAll(PersonFactory.createChildren(1, null, null));
 
             // Second address : 1 adult
-            inhabitants.addAll(PersonFactory.createAdults(1, Optional.empty(), Optional.empty()));
+            inhabitants.addAll(PersonFactory.createAdults(1, null, null));
 
             //Third address : 2 adults, 3 children
-            inhabitants.addAll(PersonFactory.createAdults(2, Optional.empty(), Optional.empty()));
-            inhabitants.addAll(PersonFactory.createChildren(3, Optional.empty(), Optional.empty()));
+            inhabitants.addAll(PersonFactory.createAdults(2, null, null));
+            inhabitants.addAll(PersonFactory.createChildren(3, null, null));
 
             // Create list of persons formatted as dto
             List<PersonAddressPhoneDTO> inhabitantsFormatted = new ArrayList<>();
@@ -120,8 +120,8 @@ class AlertsServiceImplTest {
     class getURLChildAlertDTOTestMethods {
         @Test
         void Given_anyAddress_When_getURLChildAlertDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
-            List<Person> children = PersonFactory.createChildren(2, Optional.empty(), Optional.of(Addresses.APPLEGATE));
-            List<Person> familyMembers = PersonFactory.createAdults(3, Optional.empty(), Optional.of(Addresses.APPLEGATE));
+            List<Person> children = PersonFactory.createChildren(2, null, Addresses.APPLEGATE);
+            List<Person> familyMembers = PersonFactory.createAdults(3, null, Addresses.APPLEGATE);
             List<Person> inhabitants = new ArrayList<>();
 
             inhabitants.addAll(children);
@@ -156,7 +156,7 @@ class AlertsServiceImplTest {
 
         @Test
         void Given_noChildAtAddress_When_getURLChildAlertDTO_Then_emptyObject() throws IOException, NoSuchDataException, NoMedicalRecordException {
-            List<Person> familyMembers = PersonFactory.createAdults(3, Optional.empty(), Optional.of(Addresses.APPLEGATE));
+            List<Person> familyMembers = PersonFactory.createAdults(3, null, Addresses.APPLEGATE);
 
             doReturn(familyMembers).when(mockPersonDAO).getFromAddress(Addresses.APPLEGATE.getName(), true);
 
@@ -191,13 +191,13 @@ class AlertsServiceImplTest {
             List<Firestation> stations = FirestationFactory.createFirestations(3, Optional.of(1));
             List<Person> inhabitants = new ArrayList<>();
 
-            inhabitants.addAll(PersonFactory.createAdults(2, Optional.empty(), Optional.empty()));
-            inhabitants.addAll(PersonFactory.createChildren(1, Optional.empty(), Optional.empty()));
+            inhabitants.addAll(PersonFactory.createAdults(2, null, null));
+            inhabitants.addAll(PersonFactory.createChildren(1, null, null));
 
-            inhabitants.addAll(PersonFactory.createAdults(1, Optional.empty(), Optional.empty()));
+            inhabitants.addAll(PersonFactory.createAdults(1, null, null));
 
-            inhabitants.addAll(PersonFactory.createAdults(2, Optional.empty(), Optional.empty()));
-            inhabitants.addAll(PersonFactory.createChildren(3, Optional.empty(), Optional.empty()));
+            inhabitants.addAll(PersonFactory.createAdults(2, null, null));
+            inhabitants.addAll(PersonFactory.createChildren(3, null, null));
 
             // Create list of persons formatted as dto
             List<PersonPhoneDTO> inhabitantsFormatted = new ArrayList<>();
@@ -251,8 +251,8 @@ class AlertsServiceImplTest {
             Firestation firestation = FirestationFactory.createFirestation();
             List<Person> persons = new ArrayList<>();
 
-            persons.addAll(PersonFactory.createAdults(2, Optional.empty(), Optional.empty()));
-            persons.addAll(PersonFactory.createChildren(2, Optional.empty(), Optional.empty()));
+            persons.addAll(PersonFactory.createAdults(2, null, null));
+            persons.addAll(PersonFactory.createChildren(2, null, null));
 
             List<EndangeredPersonDTO> personsFormatted = new ArrayList<>();
             for (Person person : persons) {
@@ -306,8 +306,8 @@ class AlertsServiceImplTest {
             List<Firestation> firestations2 = FirestationFactory.createFirestations(1, Optional.of(2));
 
             List<Person> persons1 = new ArrayList<>();
-            persons1.addAll(PersonFactory.createAdults(2, Optional.empty(), Optional.empty()));
-            persons1.addAll(PersonFactory.createChildren(2, Optional.empty(), Optional.empty()));
+            persons1.addAll(PersonFactory.createAdults(2, null, null));
+            persons1.addAll(PersonFactory.createChildren(2, null, null));
             List<EndangeredPersonDTO> persons1DTO = new ArrayList<>();
 
             for (Person person : persons1) {
@@ -315,8 +315,8 @@ class AlertsServiceImplTest {
             }
 
             List<Person> persons2 = new ArrayList<>();
-            persons2.addAll(PersonFactory.createAdults(4, Optional.empty(), Optional.empty()));
-            persons2.addAll(PersonFactory.createChildren(1, Optional.empty(), Optional.empty()));
+            persons2.addAll(PersonFactory.createAdults(4, null, null));
+            persons2.addAll(PersonFactory.createChildren(1, null, null));
 
             List<EndangeredPersonDTO> persons2DTO = new ArrayList<>();
 
@@ -380,15 +380,15 @@ class AlertsServiceImplTest {
         @Test
         void Given_personFirstNameAndLastName_When_getURLPersonInfoDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             Person target = PersonFactory.createPerson(
-                    Optional.of("John"),
-                    Optional.of("Smith"),
-                    Optional.empty(),
-                    Optional.of(MedicalRecordFactory.createMedicalRecord(
+                    "John",
+                    "Smith",
+                    null,
+                    MedicalRecordFactory.createMedicalRecord(
                             "John",
                             "Smith",
-                            false)));
+                            false));
 
-            List<Person> persons = new ArrayList<>(PersonFactory.createAdults(5, Optional.empty(), Optional.empty()));
+            List<Person> persons = new ArrayList<>(PersonFactory.createAdults(5, null, null));
             persons.add(target);
 
             doReturn(target).when(mockPersonDAO).getFromName(target.getFirstName(), target.getLastName(), true);
@@ -405,13 +405,13 @@ class AlertsServiceImplTest {
         @Test
         void Given_NoSuchDataExceptionThrown_When_getURLPersonInfoDTO_Then_returnNull() throws IOException, NoSuchDataException, NoMedicalRecordException {
             Person target = PersonFactory.createPerson(
-                    Optional.of("John"),
-                    Optional.of("Smith"),
-                    Optional.empty(),
-                    Optional.of(MedicalRecordFactory.createMedicalRecord(
+                    "John",
+                    "Smith",
+                    null,
+                    MedicalRecordFactory.createMedicalRecord(
                             "John",
                             "Smith",
-                            false)));
+                            false));
 
             doThrow(new NoSuchDataException()).when(mockPersonDAO).getFromName(target.getFirstName(), target.getLastName(), true);
 
@@ -422,13 +422,13 @@ class AlertsServiceImplTest {
         @Test
         void Given_IOExceptionThrown_When_getURLPersonInfoDTO_Then_throwIOException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             Person target = PersonFactory.createPerson(
-                    Optional.of("John"),
-                    Optional.of("Smith"),
-                    Optional.empty(),
-                    Optional.of(MedicalRecordFactory.createMedicalRecord(
+                    "John",
+                    "Smith",
+                    null,
+                    MedicalRecordFactory.createMedicalRecord(
                             "John",
                             "Smith",
-                            false)));
+                            false));
 
             doThrow(new IOException()).when(mockPersonDAO).getFromName(target.getFirstName(), target.getLastName(), true);
 
@@ -444,7 +444,7 @@ class AlertsServiceImplTest {
         @Test
         void Given_personFirstNameAndLastName_When_getURLPersonInfoDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             String city = Addresses.GOLFCOURT.getCity().getName();
-            List<Person> citizens = new ArrayList<>(PersonFactory.createAdults(10, Optional.empty(), Optional.of(Addresses.GOLFCOURT)));
+            List<Person> citizens = new ArrayList<>(PersonFactory.createAdults(10, null, Addresses.GOLFCOURT));
 
             doReturn(citizens).when(mockPersonDAO).getCommunity(city, false);
 

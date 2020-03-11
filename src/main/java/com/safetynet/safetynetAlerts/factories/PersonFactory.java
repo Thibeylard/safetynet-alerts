@@ -5,11 +5,11 @@ import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.models.Person;
 import com.safetynet.safetynetAlerts.services.ClockService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.safetynet.safetynetAlerts.factories.UtilsFactory.*;
 
@@ -51,43 +51,48 @@ public class PersonFactory {
      * @return new Person
      */
     public static Person createPerson() {
-        return createPerson(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+        return createPerson(null, null, null, null);
     }
 
     /**
      * Generates a Person with randomly generated values for empty optional parameters.
      *
-     * @param firstName       Person attribute value (Optional)
-     * @param lastName        Person attribute value (Optional)
-     * @param completeAddress Addresses enum value value (Optional)
-     * @param medicalRecord   Person attribute value (Optional)
+     * @param firstName       Person attribute value (Nullable)
+     * @param lastName        Person attribute value (Nullable)
+     * @param completeAddress Addresses enum value value (Nullable)
+     * @param medicalRecord   Person attribute value (Nullable)
      * @return new Person
      */
-    public static Person createPerson(Optional<String> firstName,
-                                      Optional<String> lastName,
-                                      Optional<Addresses> completeAddress,
-                                      Optional<MedicalRecord> medicalRecord) {
+    public static Person createPerson(@Nullable String firstName,
+                                      @Nullable String lastName,
+                                      @Nullable Addresses completeAddress,
+                                      @Nullable MedicalRecord medicalRecord) {
+        if (firstName == null)
+            firstName = generateName();
+        if (lastName == null)
+            lastName = generateName();
+        if (completeAddress == null) {
+            completeAddress = assignAddress();
+        }
 
-        String firstNameStr = firstName.orElse(generateName());
-        String lastNameStr = lastName.orElse(generateName());
-        String email = firstNameStr + "." + lastNameStr + "@email.com";
+        String email = firstName + "." + lastName + "@email.com";
         Integer age;
 
-        try {
-            age = clock.getAgeFromBirthDate(medicalRecord.orElseThrow(NullPointerException::new).getBirthDate());
-        } catch (NullPointerException e) {
+        if (medicalRecord == null) {
             age = null;
+        } else {
+            age = clock.getAgeFromBirthDate(medicalRecord.getBirthDate());
         }
 
         return new Person(
-                firstNameStr,
-                lastNameStr,
-                completeAddress.orElse(assignAddress()).getName(),
-                completeAddress.orElse(assignAddress()).getCity().getName(),
-                completeAddress.orElse(assignAddress()).getCity().getZip(),
+                firstName,
+                lastName,
+                completeAddress.getName(),
+                completeAddress.getCity().getName(),
+                completeAddress.getCity().getZip(),
                 generatePhone(),
                 email,
-                medicalRecord.orElse(null),
+                medicalRecord,
                 age);
     }
 
@@ -101,17 +106,17 @@ public class PersonFactory {
      * @return new Person List.
      */
     public static List<Person> createPersons(final int count,
-                                             final Optional<String> lastName,
-                                             final Optional<Addresses> completeAddress) {
+                                             @Nullable final String lastName,
+                                             @Nullable final Addresses completeAddress) {
         List<Person> persons = new ArrayList<>();
         String firstName;
         for (int i = 0; i < count; i++) {
             firstName = generateName();
             persons.add(createPerson(
-                    Optional.of(firstName),
+                    firstName,
                     lastName,
                     completeAddress,
-                    Optional.empty()));
+                    null));
         }
         return persons;
     }
@@ -126,20 +131,20 @@ public class PersonFactory {
      * @return new Person List.
      */
     public static List<Person> createAdults(final int count,
-                                            final Optional<String> lastName,
-                                            final Optional<Addresses> completeAddress) {
+                                            @Nullable final String lastName,
+                                            @Nullable final Addresses completeAddress) {
         List<Person> persons = new ArrayList<>();
         String firstName;
         for (int i = 0; i < count; i++) {
             firstName = generateName();
             persons.add(createPerson(
-                    Optional.of(firstName),
+                    firstName,
                     lastName,
                     completeAddress,
-                    Optional.of(MedicalRecordFactory.createMedicalRecord(
+                    MedicalRecordFactory.createMedicalRecord(
                             firstName,
-                            lastName.orElse(null),
-                            false))));
+                            lastName,
+                            false)));
         }
         return persons;
     }
@@ -153,20 +158,20 @@ public class PersonFactory {
      * @return new Person List.
      */
     public static List<Person> createChildren(final int count,
-                                              final Optional<String> lastName,
-                                              final Optional<Addresses> completeAddress) {
+                                              @Nullable final String lastName,
+                                              @Nullable final Addresses completeAddress) {
         List<Person> persons = new ArrayList<>();
         String firstName;
         for (int i = 0; i < count; i++) {
             firstName = generateName();
             persons.add(createPerson(
-                    Optional.of(firstName),
+                    firstName,
                     lastName,
                     completeAddress,
-                    Optional.of(MedicalRecordFactory.createMedicalRecord(
+                    MedicalRecordFactory.createMedicalRecord(
                             firstName,
-                            lastName.orElse(null),
-                            true))));
+                            lastName,
+                            true)));
         }
         return persons;
     }

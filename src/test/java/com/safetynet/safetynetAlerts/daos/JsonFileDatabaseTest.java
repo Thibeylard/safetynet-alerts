@@ -494,12 +494,7 @@ class JsonFileDatabaseTest {
         class addTestMethods {
             @Test
             void Given_personParameters_When_addPerson_Then_returnTrue() throws Exception {
-                Person newPerson = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty()
-                );
+                Person newPerson = PersonFactory.createPerson();
 
 
                 assertThat(jsonFileDatabase.addPerson(
@@ -515,12 +510,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_personParameters_When_addPerson_Then_createNewPerson() throws Exception {
-                Person newPerson = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty()
-                );
+                Person newPerson = PersonFactory.createPerson();
 
                 jsonFileDatabase.addPerson(
                         newPerson.getFirstName(),
@@ -540,12 +530,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_identicalExistantData_When_addPerson_Then_throwsIllegalDataOverrideException() throws Exception {
-                Person newPerson = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty()
-                );
+                Person newPerson = PersonFactory.createPerson();
 
                 persons.add(newPerson);
 
@@ -562,12 +547,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_addPerson_Then_throwsIOException() throws Exception {
-                Person newPerson = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty()
-                );
+                Person newPerson = PersonFactory.createPerson();
 
                 doThrow(new IOException())
                         .when(spyFactory)
@@ -593,47 +573,43 @@ class JsonFileDatabaseTest {
             @Test
             void Given_personParameters_When_updatePerson_Then_returnTrue() throws Exception {
                 Person originalPerson = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.of(Addresses.APPLEGATE),
-                        Optional.empty()
-                );
+                        null,
+                        null,
+                        Addresses.APPLEGATE,
+                        null);
 
                 Person updatedPerson = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.of(Addresses.CIRCLE),
-                        Optional.empty()
-                );
+                        null,
+                        null,
+                        Addresses.CIRCLE,
+                        null);
 
                 persons.add(originalPerson);
 
                 assertThat(jsonFileDatabase.updatePerson(
                         originalPerson.getFirstName(),
                         originalPerson.getLastName(),
-                        Optional.of(updatedPerson.getAddress()),
-                        Optional.of(updatedPerson.getCity()),
-                        Optional.of(updatedPerson.getZip()),
-                        Optional.empty(),
-                        Optional.empty()
-                )).isTrue();
+                        updatedPerson.getAddress(),
+                        updatedPerson.getCity(),
+                        updatedPerson.getZip(),
+                        null,
+                        null))
+                        .isTrue();
             }
 
             @Test
             void Given_personParameters_When_updatePerson_Then_updateOriginalPerson() throws Exception {
                 Person originalPerson = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.of(Addresses.APPLEGATE),
-                        Optional.empty()
-                );
+                        null,
+                        null,
+                        Addresses.APPLEGATE,
+                        null);
 
                 Person updatedPerson = PersonFactory.createPerson(
-                        Optional.of(originalPerson.getFirstName()),
-                        Optional.of(originalPerson.getLastName()),
-                        Optional.of(Addresses.CIRCLE),
-                        originalPerson.getMedicalRecord()
-                );
+                        null,
+                        null,
+                        Addresses.CIRCLE,
+                        null);
 
                 updatedPerson.setPhone(originalPerson.getPhone()); // Must access phone attribute by setter to make it equivalent.
 
@@ -642,11 +618,11 @@ class JsonFileDatabaseTest {
                 jsonFileDatabase.updatePerson(
                         originalPerson.getFirstName(),
                         originalPerson.getLastName(),
-                        Optional.of(updatedPerson.getAddress()),
-                        Optional.of(updatedPerson.getCity()),
-                        Optional.of(updatedPerson.getZip()),
-                        Optional.empty(),
-                        Optional.empty());
+                        updatedPerson.getAddress(),
+                        updatedPerson.getCity(),
+                        updatedPerson.getZip(),
+                        null,
+                        null);
 
                 assertThat(persons)
                         .isNotNull()
@@ -657,31 +633,29 @@ class JsonFileDatabaseTest {
             @Test
             void Given_dataToUpdateNotPresent_When_updatePerson_Then_throwsNoSuchDataException() throws Exception {
                 Person originalPerson = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.of(Addresses.APPLEGATE),
-                        Optional.empty()
-                );
+                        null,
+                        null,
+                        Addresses.APPLEGATE,
+                        null);
 
                 assertThrows(NoSuchDataException.class,
                         () -> jsonFileDatabase.updatePerson(
                                 originalPerson.getFirstName(),
                                 originalPerson.getLastName(),
-                                Optional.of(Addresses.CIRCLE.getName()),
-                                Optional.of(Addresses.CIRCLE.getCity().getName()),
-                                Optional.of(Addresses.CIRCLE.getCity().getZip()),
-                                Optional.empty(),
-                                Optional.empty()));
+                                Addresses.CIRCLE.getName(),
+                                Addresses.CIRCLE.getCity().getName(),
+                                Addresses.CIRCLE.getCity().getZip(),
+                                null,
+                                null));
             }
 
             @Test
             void Given_IOExceptionOnWrite_When_updatePerson_Then_throwsIOException() throws Exception {
                 Person originalPerson = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.of(Addresses.APPLEGATE),
-                        Optional.empty()
-                );
+                        null,
+                        null,
+                        Addresses.APPLEGATE,
+                        null);
 
                 persons.add(originalPerson);
 
@@ -693,11 +667,11 @@ class JsonFileDatabaseTest {
                         () -> jsonFileDatabase.updatePerson(
                                 originalPerson.getFirstName(),
                                 originalPerson.getLastName(),
-                                Optional.of(Addresses.CIRCLE.getName()),
-                                Optional.of(Addresses.CIRCLE.getCity().getName()),
-                                Optional.of(Addresses.CIRCLE.getCity().getZip()),
-                                Optional.empty(),
-                                Optional.empty()));
+                                Addresses.CIRCLE.getName(),
+                                Addresses.CIRCLE.getCity().getName(),
+                                Addresses.CIRCLE.getCity().getZip(),
+                                null,
+                                null));
             }
         }
 
@@ -709,12 +683,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_personParameters_When_deletePerson_Then_returnTrue() throws Exception {
-                Person personToDelete = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty()
-                );
+                Person personToDelete = PersonFactory.createPerson();
 
                 persons.add(personToDelete);
                 assertThat(jsonFileDatabase.deletePerson(personToDelete.getFirstName(), personToDelete.getLastName()))
@@ -723,12 +692,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_personParameters_When_deletePerson_Then_personIsDeleted() throws Exception {
-                Person personToDelete = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty()
-                );
+                Person personToDelete = PersonFactory.createPerson();
 
                 persons.add(personToDelete);
 
@@ -741,12 +705,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_dataToDeleteNotPresent_When_deletePerson_Then_throwsNoSuchDataException() throws Exception {
-                Person personToDelete = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty()
-                );
+                Person personToDelete = PersonFactory.createPerson();
 
                 persons.add(personToDelete);
 
@@ -762,12 +721,7 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_IOExceptionOnWrite_When_deletePerson_Then_throwsIOException() throws Exception {
-                Person personToDelete = PersonFactory.createPerson(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty()
-                );
+                Person personToDelete = PersonFactory.createPerson();
 
                 persons.add(personToDelete);
 

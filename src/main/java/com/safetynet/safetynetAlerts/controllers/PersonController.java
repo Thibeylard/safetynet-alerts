@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.tinylog.Logger;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @RestController
 public class PersonController {
@@ -59,25 +58,25 @@ public class PersonController {
     @PutMapping("/person")
     public ResponseEntity<String> update(@RequestParam(name = "firstName") final String firstName,
                                          @RequestParam(name = "lastName") final String lastName,
-                                         @RequestParam(name = "address", required = false) final Optional<String> address,
-                                         @RequestParam(name = "city", required = false) final Optional<String> city,
-                                         @RequestParam(name = "zip", required = false) final Optional<String> zip,
-                                         @RequestParam(name = "phone", required = false) final Optional<String> phone,
-                                         @RequestParam(name = "email", required = false) final Optional<String> email) {
+                                         @RequestParam(name = "address", required = false) final String address,
+                                         @RequestParam(name = "city", required = false) final String city,
+                                         @RequestParam(name = "zip", required = false) final String zip,
+                                         @RequestParam(name = "phone", required = false) final String phone,
+                                         @RequestParam(name = "email", required = false) final String email) {
 
-        if (address.isEmpty() && city.isEmpty() && zip.isEmpty() & phone.isEmpty() && email.isEmpty()) {
+        if (address == null && city == null && zip == null & phone == null && email == null) {
             Logger.error("Person PUT request error : No parameters to update.");
             return new ResponseEntity<>("At least one optional parameter is needed.", HttpStatus.BAD_REQUEST);
         }
 
-        Logger.debug("Person PUT Request on {}, {} with parameters : {}, {}, {}, {}, {}.",
+        Logger.debug("Person PUT Request on {}, {} with parameters : address : {}, city : {}, zip : {}, phone : {}, email : {}.",
                 firstName,
                 lastName,
-                address.orElse("no address"),
-                city.orElse("no city"),
-                zip.orElse("no zip"),
-                phone.orElse("no phone"),
-                email.orElse("no email"));
+                address == null ? "not" : address,
+                city == null ? "not" : city,
+                zip == null ? "not" : zip,
+                phone == null ? "not" : phone,
+                email == null ? "not" : email);
 
         try {
             this.personService.update(firstName, lastName, address, city, zip, phone, email);

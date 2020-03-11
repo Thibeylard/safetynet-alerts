@@ -20,12 +20,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -121,19 +119,19 @@ class PersonDAOJsonFileTest {
             doReturn(true).when(mockJsonFileDatabase)
                     .updatePerson(anyString(),
                             anyString(),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class));
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString());
             assertTrue(personDAO.update(
                     "firstName",
                     "lastName",
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.of("phone"),
-                    Optional.empty()));
+                    null,
+                    null,
+                    null,
+                    "phone",
+                    null));
         }
 
         @Test
@@ -141,20 +139,20 @@ class PersonDAOJsonFileTest {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
                     .updatePerson(anyString(),
                             anyString(),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class));
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString());
             assertThrows(NoSuchDataException.class,
                     () -> personDAO.update(
                             "firstName",
                             "lastName",
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.of("phone"),
-                            Optional.empty()));
+                            null,
+                            null,
+                            null,
+                            "phone",
+                            null));
         }
 
         @Test
@@ -162,20 +160,20 @@ class PersonDAOJsonFileTest {
             doThrow(new IOException()).when(mockJsonFileDatabase)
                     .updatePerson(anyString(),
                             anyString(),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class),
-                            any(Optional.class));
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString(),
+                            anyString());
             assertThrows(IOException.class,
                     () -> personDAO.update(
                             "firstName",
                             "lastName",
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.of("phone"),
-                            Optional.empty()));
+                            null,
+                            null,
+                            null,
+                            "phone",
+                            null));
         }
     }
 
@@ -232,7 +230,7 @@ class PersonDAOJsonFileTest {
 
                 // Case with MedicalRecord asked
                 MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(null, null, false);
-                Person personWithMedicalRecord = PersonFactory.createPerson(Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(medicalRecord));
+                Person personWithMedicalRecord = PersonFactory.createPerson(null, null, null, medicalRecord);
 
                 doReturn(personWithMedicalRecord).when(mockJsonFileDatabase)
                         .getPerson(personWithMedicalRecord.getFirstName(), personWithMedicalRecord.getLastName(), true);
@@ -275,7 +273,7 @@ class PersonDAOJsonFileTest {
             @Test
             void Given_validParameters_When_getFromAddress_Then_returnPersonList() throws IOException, NoSuchDataException, NoMedicalRecordException {
                 // Case with MedicalRecord not asked
-                List<Person> persons = PersonFactory.createPersons(3, Optional.empty(), Optional.of(Addresses.THOMASROAD));
+                List<Person> persons = PersonFactory.createPersons(3, null, Addresses.THOMASROAD);
                 doReturn(persons)
                         .when(mockJsonFileDatabase)
                         .getPersonFromAddress(Addresses.THOMASROAD.getName(), false);
@@ -286,7 +284,7 @@ class PersonDAOJsonFileTest {
                         .isEqualTo(persons);
 
                 // Case with MedicalRecord asked
-                List<Person> adults = PersonFactory.createAdults(4, Optional.empty(), Optional.of(Addresses.ELMDRIVE));
+                List<Person> adults = PersonFactory.createAdults(4, null, Addresses.ELMDRIVE);
 
                 doReturn(adults).when(mockJsonFileDatabase)
                         .getPersonFromAddress(Addresses.ELMDRIVE.getName(), true);
@@ -298,7 +296,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
-            void Given_NoMedicalRecordException_When_getFromAddress_Then_throwsNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            void Given_NoMedicalRecordException_When_getFromAddress_Then_throwsNoMedicalRecordException() throws NoSuchDataException, NoMedicalRecordException {
                 Person person = PersonFactory.createPerson();
 
                 doThrow(new NoMedicalRecordException(person.getFirstName(), person.getLastName()))
@@ -310,7 +308,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
-            void Given_NoSuchDataException_When_getFromAddress_Then_throwsNoSuchDataException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            void Given_NoSuchDataException_When_getFromAddress_Then_throwsNoSuchDataException() throws NoSuchDataException, NoMedicalRecordException {
                 doThrow(new NoSuchDataException())
                         .when(mockJsonFileDatabase)
                         .getPersonFromAddress(Addresses.ELMDRIVE.getName(), true);
@@ -327,7 +325,7 @@ class PersonDAOJsonFileTest {
             @Test
             void Given_validParameters_When_getCommunity_Then_returnPersonList() throws IOException, NoSuchDataException, NoMedicalRecordException {
                 // Case with MedicalRecord not asked
-                List<Person> persons = PersonFactory.createPersons(3, Optional.empty(), Optional.of(Addresses.MARCONI));
+                List<Person> persons = PersonFactory.createPersons(3, null, Addresses.MARCONI);
                 doReturn(persons)
                         .when(mockJsonFileDatabase)
                         .getPersonFromCity(Addresses.MARCONI.getCity().getName(), false);
@@ -338,7 +336,7 @@ class PersonDAOJsonFileTest {
                         .isEqualTo(persons);
 
                 // Case with MedicalRecord asked
-                List<Person> adults = PersonFactory.createAdults(4, Optional.empty(), Optional.of(Addresses.CIRCLE));
+                List<Person> adults = PersonFactory.createAdults(4, null, Addresses.CIRCLE);
 
                 doReturn(adults).when(mockJsonFileDatabase)
                         .getPersonFromCity(Addresses.CIRCLE.getCity().getName(), true);
@@ -350,7 +348,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
-            void Given_NoMedicalRecordException_When_getCommunity_Then_throwsNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            void Given_NoMedicalRecordException_When_getCommunity_Then_throwsNoMedicalRecordException() throws NoSuchDataException, NoMedicalRecordException {
                 Person person = PersonFactory.createPerson();
 
                 doThrow(new NoMedicalRecordException(person.getFirstName(), person.getLastName()))
@@ -362,7 +360,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
-            void Given_NoSuchDataException_When_getCommunity_Then_throwsNoSuchDataException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            void Given_NoSuchDataException_When_getCommunity_Then_throwsNoSuchDataException() throws NoSuchDataException, NoMedicalRecordException {
                 doThrow(new NoSuchDataException())
                         .when(mockJsonFileDatabase)
                         .getPersonFromCity(Addresses.MARCONI.getName(), true);

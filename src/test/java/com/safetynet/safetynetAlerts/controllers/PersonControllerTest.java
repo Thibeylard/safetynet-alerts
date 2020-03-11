@@ -15,7 +15,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doReturn;
@@ -177,11 +176,11 @@ class PersonControllerTest {
                     .update(
                             params.getFirst("firstName"),
                             params.getFirst("lastName"),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.empty(),
-                            Optional.ofNullable(params.getFirst("phone")),
-                            Optional.empty());
+                            null,
+                            null,
+                            null,
+                            params.getFirst("phone"),
+                            null);
             try {
                 mvcMock.perform(put("/person")
                         .params(params)
@@ -244,11 +243,11 @@ class PersonControllerTest {
             doThrow(new NoSuchDataException()).when(mockPersonService).update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.ofNullable(params.getFirst("phone")),
-                    Optional.empty());
+                    null,
+                    null,
+                    null,
+                    params.getFirst("phone"),
+                    null);
             try {
                 mvcMock.perform(put("/person")
                         .params(params)
@@ -274,11 +273,11 @@ class PersonControllerTest {
             doThrow(new IOException()).when(mockPersonService).update(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.empty(),
-                    Optional.ofNullable(params.getFirst("phone")),
-                    Optional.empty());
+                    null,
+                    null,
+                    null,
+                    params.getFirst("phone"),
+                    null);
             try {
                 mvcMock.perform(put("/person")
                         .params(params)

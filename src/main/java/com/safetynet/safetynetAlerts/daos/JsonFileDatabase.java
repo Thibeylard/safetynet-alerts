@@ -294,11 +294,11 @@ public class JsonFileDatabase {
 
     public boolean updatePerson(final String firstName,
                                 final String lastName,
-                                final Optional<String> address,
-                                final Optional<String> city,
-                                final Optional<String> zip,
-                                final Optional<String> phone,
-                                final Optional<String> email) throws IOException, NoSuchDataException {
+                                final String address,
+                                final String city,
+                                final String zip,
+                                final String phone,
+                                final String email) throws IOException, NoSuchDataException {
 
         Person existantPerson = this.jsonFileDTO.getPersons().stream()
                 .filter(person -> person.getLastName().equals(lastName))
@@ -307,11 +307,16 @@ public class JsonFileDatabase {
                 .orElseThrow(NoSuchDataException::new);
 
 
-        address.ifPresent(existantPerson::setAddress);
-        city.ifPresent(existantPerson::setCity);
-        zip.ifPresent(existantPerson::setZip);
-        phone.ifPresent(existantPerson::setPhone);
-        email.ifPresent(existantPerson::setEmail);
+        if (address != null)
+            existantPerson.setAddress(address);
+        if (city != null)
+            existantPerson.setAddress(city);
+        if (zip != null)
+            existantPerson.setAddress(zip);
+        if (phone != null)
+            existantPerson.setAddress(phone);
+        if (email != null)
+            existantPerson.setAddress(email);
 
         return writeDataToJsonFile();
     }

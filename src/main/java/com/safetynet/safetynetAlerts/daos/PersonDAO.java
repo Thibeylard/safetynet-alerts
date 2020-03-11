@@ -7,7 +7,6 @@ import com.safetynet.safetynetAlerts.models.Person;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 public interface PersonDAO {
 
@@ -45,11 +44,11 @@ public interface PersonDAO {
      */
     boolean update(final String firstName,
                    final String lastName,
-                   final Optional<String> address,
-                   final Optional<String> city,
-                   final Optional<String> zip,
-                   final Optional<String> phone,
-                   final Optional<String> email) throws IOException, NoSuchDataException;
+                   final String address,
+                   final String city,
+                   final String zip,
+                   final String phone,
+                   final String email) throws IOException, NoSuchDataException;
 
     /**
      * Delete specific Person from database.

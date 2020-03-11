@@ -26,7 +26,6 @@ import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -132,7 +131,7 @@ public class PersonControllerIT {
     void Given_existingPerson_When_POSTPerson_Then_personNotReplaced() throws Exception {
         // Two persons with same name but different addresses
         Person existing = PersonFactory.createPerson();
-        Person added = PersonFactory.createPerson(Optional.of(existing.getFirstName()), Optional.of(existing.getLastName()), Optional.empty(), Optional.empty());
+        Person added = PersonFactory.createPerson(existing.getFirstName(), existing.getLastName(), null, null);
 
 
         params.add("firstName", existing.getFirstName());
@@ -175,8 +174,8 @@ public class PersonControllerIT {
     @DisplayName("UPDATE successful")
     void Given_dataAddedToDatabase_When_UPDATEPerson_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
         // Two persons with same name but different addresses
-        Person existing = PersonFactory.createPerson(Optional.empty(), Optional.empty(), Optional.of(Addresses.APPLEGATE), Optional.empty());
-        Person update = PersonFactory.createPerson(Optional.of(existing.getFirstName()), Optional.of(existing.getLastName()), Optional.of(Addresses.BAYMEADOWS), Optional.empty());
+        Person existing = PersonFactory.createPerson(null, null, Addresses.APPLEGATE, null);
+        Person update = PersonFactory.createPerson(existing.getFirstName(), existing.getLastName(), Addresses.BAYMEADOWS, null);
 
         params.add("firstName", existing.getFirstName());
         params.add("lastName", existing.getLastName());

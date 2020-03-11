@@ -83,8 +83,8 @@ public class MedicalRecordFactory {
     /**
      * Generates a MedicalRecord with randomly generated values for empty optional parameters.
      *
-     * @param firstName MedicalRecord attribute value
-     * @param lastName  MedicalRecord attribute value
+     * @param firstName MedicalRecord attribute value (Nullable)
+     * @param lastName  MedicalRecord attribute value (Nullable)
      * @param isChild   birthDate will correspond to a less than 18 year old
      * @return new MedicalRecord
      */
@@ -109,11 +109,11 @@ public class MedicalRecordFactory {
     /**
      * Generates a MedicalRecord with randomly generated values for empty optional parameters.
      *
-     * @param firstName   MedicalRecord attribute value
-     * @param lastName    MedicalRecord attribute value
-     * @param birthDate   MedicalRecord attribute value
-     * @param medications MedicalRecord attribute value
-     * @param allergies   MedicalRecord attribute value
+     * @param firstName   MedicalRecord attribute value (Nullable)
+     * @param lastName    MedicalRecord attribute value (Nullable)
+     * @param birthDate   MedicalRecord attribute value (Nullable)
+     * @param medications MedicalRecord attribute value (Nullable)
+     * @param allergies   MedicalRecord attribute value (Nullable)
      * @param isChild     birthDate will correspond to a less than 18 year old
      * @return new MedicalRecord
      */

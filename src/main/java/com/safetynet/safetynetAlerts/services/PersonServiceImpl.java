@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.tinylog.Logger;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Service
 public class PersonServiceImpl implements PersonService {
@@ -44,11 +43,11 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public boolean update(final String firstName,
                           final String lastName,
-                          final Optional<String> address,
-                          final Optional<String> city,
-                          final Optional<String> zip,
-                          final Optional<String> phone,
-                          final Optional<String> email) throws IOException, NoSuchDataException {
+                          final String address,
+                          final String city,
+                          final String zip,
+                          final String phone,
+                          final String email) throws IOException, NoSuchDataException {
         Logger.debug("Person Service pass update request to DAO");
         return this.personDAO.update(firstName, lastName, address, city, zip, phone, email);
     }
