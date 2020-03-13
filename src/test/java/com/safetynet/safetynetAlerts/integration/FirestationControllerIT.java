@@ -37,14 +37,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FirestationControllerIT {
 
 
-    private final static String firestationNumberURL = "/firestation?stationNumber={stationNumber}";
-    private final static String firestationAddressURL = "/firestation?address={address}";
+    // URLS
+    private final static String firestationPostPutURL = "/firestation?address={address}&stationNumber={stationNumber}";
     private static File data;
     private static JsonFactory factory;
     private static JsonFileDatabaseDTO jsonFileDTO;
     @Autowired
     private TestRestTemplate restTemplate;
     private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    private final static String firestationAddressURL = "/firestation?address={address}";
 
     @BeforeAll
     public static void saveData(@Value("${jsondatabase.src}") String src) throws IOException {
@@ -81,11 +82,10 @@ public class FirestationControllerIT {
         assertThat(response.getBody())
                 .isNull();
 
-        params.add("address", firestation.getAddress());
-        params.add("stationNumber", String.valueOf(firestation.getStation()));
-
         // Actual request
-        restTemplate.postForEntity("/firestation", params, String.class);
+        restTemplate.postForEntity(firestationPostPutURL, null, String.class,
+                firestation.getAddress(),
+                String.valueOf(firestation.getStation()));
 
         response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, firestation.getAddress());
         assertThat(response.getBody())
@@ -104,11 +104,11 @@ public class FirestationControllerIT {
         assertThat(response.getBody())
                 .isNull();
 
-        params.add("address", firestation.getAddress());
-        // No stationNumber provided
 
         // Actual request
-        restTemplate.postForEntity("/firestation", params, String.class);
+        restTemplate.postForEntity(firestationAddressURL, null, String.class,
+                firestation.getAddress());
+        // No stationNumber provided
 
         response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, firestation.getAddress());
         assertThat(response.getBody())
@@ -127,10 +127,9 @@ public class FirestationControllerIT {
                 .isNull();
 
         // Preparation request
-        params.add("address", existing.getAddress());
-        params.add("stationNumber", String.valueOf(existing.getStation()));
-
-        restTemplate.postForEntity("/firestation", params, String.class);
+        restTemplate.postForEntity(firestationPostPutURL, null, String.class,
+                existing.getAddress(),
+                String.valueOf(existing.getStation()));
 
         // Checking that existing firestation is actually in database
         response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, existing.getAddress());
@@ -140,10 +139,9 @@ public class FirestationControllerIT {
         params.clear();
 
         // Actual request
-        params.add("address", added.getAddress());
-        params.add("stationNumber", String.valueOf(added.getStation()));
-
-        restTemplate.postForEntity("/firestation", params, String.class);
+        restTemplate.postForEntity(firestationPostPutURL, null, String.class,
+                added.getAddress(),
+                String.valueOf(added.getStation()));
 
         // Checking that existing firestation is unmodified after post
         response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, added.getAddress());
@@ -160,22 +158,19 @@ public class FirestationControllerIT {
         Firestation updated = FirestationFactory.createFirestation(Optional.of(existing.getAddress()), Optional.of(existing.getStation() + 2));
 
         // Preparation request
-        params.add("address", existing.getAddress());
-        params.add("stationNumber", String.valueOf(existing.getStation()));
-        restTemplate.postForEntity("/firestation", params, String.class);
+        restTemplate.postForEntity(firestationPostPutURL, null, String.class,
+                existing.getAddress(),
+                String.valueOf(existing.getStation()));
 
         // Checking that existing firestation is actually in database
         ResponseEntity<Firestation> response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, existing.getAddress());
         assertThat(response.getBody())
                 .isNotNull();
 
-        params.clear();
-
-        params.add("address", existing.getAddress());
-        params.add("stationNumber", String.valueOf(updated.getStation()));
-
-        // Person update
-        restTemplate.put("/firestation", params);
+        // Firestation update
+        restTemplate.put(firestationPostPutURL, String.class,
+                updated.getAddress(),
+                String.valueOf(updated.getStation()));
 
         // Checking that existing firestation is correctly modified after put
         response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, existing.getAddress());
@@ -190,17 +185,15 @@ public class FirestationControllerIT {
         // Two firestations with same address but different station number
         Firestation updated = FirestationFactory.createFirestation(Optional.of(Addresses.OLDYORK.getName()), Optional.empty());
 
-
-        params.add("address", updated.getAddress());
-        params.add("stationNumber", String.valueOf(updated.getStation()));
-
         // Checking that firestation does not exist in database
         ResponseEntity<Firestation> response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, updated.getAddress());
         assertThat(response.getBody())
                 .isNull();
 
-        // Person update
-        restTemplate.put("/firestation", params);
+        // Firestation update
+        restTemplate.put(firestationPostPutURL, String.class,
+                updated.getAddress(),
+                String.valueOf(updated.getStation()));
 
         // Checking that existing firestation is not modified after put
         response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, updated.getAddress());
@@ -215,21 +208,16 @@ public class FirestationControllerIT {
         Firestation existing = FirestationFactory.createFirestation(Optional.of(Addresses.MECHANIC.getName()), Optional.empty());
 
         // Preparation request
-        params.add("address", existing.getAddress());
-        params.add("stationNumber", String.valueOf(existing.getStation()));
-        restTemplate.postForEntity("/firestation", params, String.class);
+        restTemplate.postForEntity(firestationPostPutURL, null, String.class,
+                existing.getAddress(),
+                String.valueOf(existing.getStation()));
 
         // Checking that existing firestation is actually in database
         ResponseEntity<Firestation> response = restTemplate.getForEntity(firestationAddressURL, Firestation.class, existing.getAddress());
         assertThat(response.getBody())
                 .isNotNull();
 
-        params.clear();
-
-        params.add("address", existing.getAddress());
-        params.add("stationNumber", String.valueOf(existing.getStation()));
-
-        // Person deletion
+        // Firestation deletion
         restTemplate.delete(firestationAddressURL, existing.getAddress());
 
         // Checking that existing firestation is correctly modified after put

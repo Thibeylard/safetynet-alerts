@@ -63,7 +63,7 @@ public class MedicalRecordController {
                 lastName,
                 birthDate == null ? "not" : birthDate,
                 medications == null ? "not" : medications,
-                allergies == null ? "not" : medications);
+                allergies == null ? "not" : allergies);
 
         try {
             this.medicalRecordService.update(firstName, lastName, birthDate, medications, allergies);
