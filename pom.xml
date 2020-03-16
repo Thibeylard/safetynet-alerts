@@ -10,7 +10,8 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<name>safetynet-alerts</name>
-	<description>An application design to help emergency services interventions using centralized civilians data.</description>
+	<description>An application design to help emergency services interventions using centralized civilians data.
+	</description>
 	<developers>
 		<developer>
 			<name>Thibaut BEYLARD</name>
@@ -19,6 +20,12 @@
 		</developer>
 	</developers>
 
+	<distributionManagement>
+		<site>
+			<id>site-projet</id>
+			<url>scp://localhost/tmp</url>
+		</site>
+	</distributionManagement>
 
 	<!-- =================== POM properties =================== -->
 	<properties>
@@ -114,6 +121,34 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${surefire.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>*IT</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>surefire-integration-test</id>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<phase>integration-test</phase>
+						<configuration>
+							<excludes>
+								<exclude>none</exclude>
+							</excludes>
+							<includes>
+								<include>*IT</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- =================== JaCoCo plugin executions =================== -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -128,17 +163,17 @@
 					</execution>
 					<execution>
 						<id>unit-tests-report</id>
+						<phase>test</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>
-						<phase>test</phase>
-                    </execution>
+					</execution>
 					<execution>
 						<id>it-tests-report</id>
+						<phase>integration-test</phase>
 						<goals>
 							<goal>report-integration</goal>
 						</goals>
-						<phase>integration-test</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -179,12 +214,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>3.0.0-M4</version>
+				<version>${surefire.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version>
+				<version>${jacoco.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
