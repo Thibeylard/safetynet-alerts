@@ -21,8 +21,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +34,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("FirestationController integration tests :")
 public class FirestationControllerIT {
 
-
-    // URLS
-    private final static String firestationPostPutURL = "/firestation?address={address}&stationNumber={stationNumber}";
     private static File data;
     private static JsonFactory factory;
     private static JsonFileDatabaseDTO jsonFileDTO;
     @Autowired
     private TestRestTemplate restTemplate;
-    private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+    // URLS
+    private final static String firestationPostPutURL = "/firestation?address={address}&stationNumber={stationNumber}";
     private final static String firestationAddressURL = "/firestation?address={address}";
 
     @BeforeAll
@@ -74,7 +71,7 @@ public class FirestationControllerIT {
 
     @Test
     @DisplayName("POST successful")
-    void Given_dataAddedToDatabase_When_POSTFirestation_Then_correspondingDataCanBeRetrieved() throws Exception {
+    void Given_dataAddedToDatabase_When_POSTFirestation_Then_correspondingDataCanBeRetrieved() {
         Firestation firestation = FirestationFactory.createFirestation(Optional.of(Addresses.CIRCLE.getName()), Optional.empty());
 
         // Checking that this specific firestation doesn't already exist in database.
@@ -96,7 +93,7 @@ public class FirestationControllerIT {
 
     @Test
     @DisplayName("POST no partial data")
-    void Given_wrongParameters_When_POSTFirestation_Then_noPartialDataSaved() throws Exception {
+    void Given_wrongParameters_When_POSTFirestation_Then_noPartialDataSaved() {
         Firestation firestation = FirestationFactory.createFirestation(Optional.of(Addresses.BAYMEADOWS.getName()), Optional.empty());
 
         // Checking that this specific firestation doesn't already exist in database.
@@ -117,7 +114,7 @@ public class FirestationControllerIT {
 
     @Test
     @DisplayName("POST already exists")
-    void Given_existingFirestation_When_POSTFirestation_Then_personNotReplaced() throws Exception {
+    void Given_existingFirestation_When_POSTFirestation_Then_personNotReplaced() {
         Firestation existing = FirestationFactory.createFirestation(Optional.of(Addresses.FIFTHROAD.getName()), Optional.empty());
         Firestation added = FirestationFactory.createFirestation(Optional.of(existing.getAddress()), Optional.of(existing.getStation() + 2));
 
@@ -136,8 +133,6 @@ public class FirestationControllerIT {
         assertThat(response.getBody())
                 .isNotNull();
 
-        params.clear();
-
         // Actual request
         restTemplate.postForEntity(firestationPostPutURL, null, String.class,
                 added.getAddress(),
@@ -152,7 +147,7 @@ public class FirestationControllerIT {
 
     @Test
     @DisplayName("UPDATE successful")
-    void Given_dataAddedToDatabase_When_UPDATEFirestation_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
+    void Given_dataAddedToDatabase_When_UPDATEFirestation_Then_retrievedDataIsAccordinglyUpdated() {
         // Two firestations with same address but different station number
         Firestation existing = FirestationFactory.createFirestation(Optional.of(Addresses.GOLFCOURT.getName()), Optional.empty());
         Firestation updated = FirestationFactory.createFirestation(Optional.of(existing.getAddress()), Optional.of(existing.getStation() + 2));
@@ -181,7 +176,7 @@ public class FirestationControllerIT {
 
     @Test
     @DisplayName("UPDATE no partial data")
-    void Given_noCorrespondingData_When_UPDATEFirestation_Then_noPartialDataSaved() throws Exception {
+    void Given_noCorrespondingData_When_UPDATEFirestation_Then_noPartialDataSaved() {
         // Two firestations with same address but different station number
         Firestation updated = FirestationFactory.createFirestation(Optional.of(Addresses.OLDYORK.getName()), Optional.empty());
 

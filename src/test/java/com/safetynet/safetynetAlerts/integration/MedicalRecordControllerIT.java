@@ -20,8 +20,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,13 +34,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("MedicalRecordController integration tests :")
 public class MedicalRecordControllerIT {
 
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     private static File data;
     private static JsonFactory factory;
     private static JsonFileDatabaseDTO jsonFileDTO;
-    @Autowired
-    private TestRestTemplate restTemplate;
-    private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
     // URLS
     private final static String medicalRecordIDURL = "/medicalRecord?firstName={firstName}&lastName={lastName}";
@@ -77,7 +74,7 @@ public class MedicalRecordControllerIT {
 
     @Test
     @DisplayName("POST successful")
-    void Given_dataAddedToDatabase_When_POSTMedicalRecord_Then_correspondingDataCanBeRetrieved() throws Exception {
+    void Given_dataAddedToDatabase_When_POSTMedicalRecord_Then_correspondingDataCanBeRetrieved() {
         MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(
                 null,
                 null,
@@ -109,7 +106,7 @@ public class MedicalRecordControllerIT {
 
     @Test
     @DisplayName("POST no partial data")
-    void Given_wrongParameters_When_POSTMedicalRecord_Then_noPartialDataSaved() throws Exception {
+    void Given_wrongParameters_When_POSTMedicalRecord_Then_noPartialDataSaved() {
         MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(
                 null,
                 null,
@@ -138,7 +135,7 @@ public class MedicalRecordControllerIT {
 
     @Test
     @DisplayName("POST already exists")
-    void Given_existingPerson_When_POSTMedicalRecord_Then_personNotReplaced() throws Exception {
+    void Given_existingPerson_When_POSTMedicalRecord_Then_personNotReplaced() {
         // Two medicalRecords with same name but different allergies and birthDate
         MedicalRecord existing = MedicalRecordFactory.createMedicalRecord(
                 null,
@@ -188,7 +185,7 @@ public class MedicalRecordControllerIT {
 
     @Test
     @DisplayName("UPDATE successful")
-    void Given_dataAddedToDatabase_When_UPDATEMedicalRecord_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
+    void Given_dataAddedToDatabase_When_UPDATEMedicalRecord_Then_retrievedDataIsAccordinglyUpdated() {
         // Two medicalRecords with same name but different medications
         MedicalRecord existing = MedicalRecordFactory.createMedicalRecord(
                 null,
@@ -235,7 +232,7 @@ public class MedicalRecordControllerIT {
 
     @Test
     @DisplayName("UPDATE no partial data")
-    void Given_noCorrespondingData_When_UPDATEMedicalRecord_Then_noPartialDataSaved() throws Exception {
+    void Given_noCorrespondingData_When_UPDATEMedicalRecord_Then_noPartialDataSaved() {
         MedicalRecord updated = MedicalRecordFactory.createMedicalRecord(false);
 
         // Checking that MedicalRecord is not in database

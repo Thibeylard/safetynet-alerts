@@ -21,8 +21,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,22 +33,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("PersonController integration tests :")
 public class PersonControllerIT {
 
-
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-
+    //URLS
     private final static String personIDURL = "/person?firstName={firstName}&lastName={lastName}";
+    private static File data;
+    private static JsonFactory factory;
+    private static JsonFileDatabaseDTO jsonFileDTO;
     private final static String addressURL = "&address={address}";
     private final static String cityURL = "&city={city}";
     private final static String zipURL = "&zip={zip}";
     private final static String phoneURL = "&phone={phone}";
     private final static String emailURL = "&email={email}";
-
-    private static File data;
-    private static JsonFactory factory;
-    private static JsonFileDatabaseDTO jsonFileDTO;
 
     @BeforeAll
     public static void saveData(@Value("${jsondatabase.src}") String src) throws IOException {
@@ -79,7 +74,7 @@ public class PersonControllerIT {
 
     @Test
     @DisplayName("POST successful")
-    void Given_dataAddedToDatabase_When_POSTPerson_Then_correspondingDataCanBeRetrieved() throws Exception {
+    void Given_dataAddedToDatabase_When_POSTPerson_Then_correspondingDataCanBeRetrieved() {
         Person person = PersonFactory.createPerson();
 
         // Checking that this specific person doesn't already exist in database.
@@ -106,7 +101,7 @@ public class PersonControllerIT {
 
     @Test
     @DisplayName("POST no partial data")
-    void Given_wrongParameters_When_POSTPerson_Then_noPartialDataSaved() throws Exception {
+    void Given_wrongParameters_When_POSTPerson_Then_noPartialDataSaved() {
         Person person = PersonFactory.createPerson();
 
         // Checking that this specific person doesn't already exist in database.
@@ -130,7 +125,7 @@ public class PersonControllerIT {
 
     @Test
     @DisplayName("POST already exists")
-    void Given_existingPerson_When_POSTPerson_Then_personNotReplaced() throws Exception {
+    void Given_existingPerson_When_POSTPerson_Then_personNotReplaced() {
         // Two persons with same name but different addresses
         Person existing = PersonFactory.createPerson();
         Person added = PersonFactory.createPerson(existing.getFirstName(), existing.getLastName(), null, null);
@@ -169,7 +164,7 @@ public class PersonControllerIT {
 
     @Test
     @DisplayName("UPDATE successful")
-    void Given_dataAddedToDatabase_When_UPDATEPerson_Then_retrievedDataIsAccordinglyUpdated() throws Exception {
+    void Given_dataAddedToDatabase_When_UPDATEPerson_Then_retrievedDataIsAccordinglyUpdated() {
         // Two persons with same name but different addresses
         Person existing = PersonFactory.createPerson(null, null, Addresses.APPLEGATE, null);
         Person update = PersonFactory.createPerson(existing.getFirstName(), existing.getLastName(), Addresses.BAYMEADOWS, null);
@@ -202,7 +197,7 @@ public class PersonControllerIT {
 
     @Test
     @DisplayName("UPDATE no partial data")
-    void Given_noCorrespondingData_When_UPDATEPerson_Then_noPartialDataSaved() throws Exception {
+    void Given_noCorrespondingData_When_UPDATEPerson_Then_noPartialDataSaved() {
         Person update = PersonFactory.createPerson();
 
         // Checking that this specific persons don't already exist in database.
