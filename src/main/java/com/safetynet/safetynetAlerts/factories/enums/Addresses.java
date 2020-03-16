@@ -10,13 +10,13 @@ public enum Addresses {
     FIFTHROAD("479 Fifth Road", Cities.OAKPARK),
     THOMASROAD("8490 W. Thomas Rd.", Cities.OAKPARK),
 
-    HERITAGE("938 Heritage St. ", Cities.WALTHAM),
-    OLDYORK("570 Old York Ave. ", Cities.WALTHAM),
-    ELMDRIVE("3 Elm Drive ", Cities.WALTHAM),
+    HERITAGE("938 Heritage St.", Cities.WALTHAM),
+    OLDYORK("570 Old York Ave.", Cities.WALTHAM),
+    ELMDRIVE("3 Elm Drive", Cities.WALTHAM),
 
-    BAYMEADOWS("39 Bay Meadows St. ", Cities.WILLOUGHBY),
-    KIRKLAND("7054 Kirkland Lane ", Cities.WILLOUGHBY),
-    MARCONI("7981 Marconi Street ", Cities.WILLOUGHBY);
+    BAYMEADOWS("39 Bay Meadows St.", Cities.WILLOUGHBY),
+    KIRKLAND("7054 Kirkland Lane", Cities.WILLOUGHBY),
+    MARCONI("7981 Marconi Street", Cities.WILLOUGHBY);
 
     private final String name;
     private final Cities city;

@@ -306,17 +306,16 @@ public class JsonFileDatabase {
                 .findFirst()
                 .orElseThrow(NoSuchDataException::new);
 
-
         if (address != null)
             existantPerson.setAddress(address);
         if (city != null)
-            existantPerson.setAddress(city);
+            existantPerson.setCity(city);
         if (zip != null)
-            existantPerson.setAddress(zip);
+            existantPerson.setZip(zip);
         if (phone != null)
-            existantPerson.setAddress(phone);
+            existantPerson.setPhone(phone);
         if (email != null)
-            existantPerson.setAddress(email);
+            existantPerson.setEmail(email);
 
         return writeDataToJsonFile();
     }

@@ -42,6 +42,11 @@ public class PersonControllerIT {
     private MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
     private final static String personIDURL = "/person?firstName={firstName}&lastName={lastName}";
+    private final static String addressURL = "&address={address}";
+    private final static String cityURL = "&city={city}";
+    private final static String zipURL = "&zip={zip}";
+    private final static String phoneURL = "&phone={phone}";
+    private final static String emailURL = "&email={email}";
 
     private static File data;
     private static JsonFactory factory;
@@ -82,16 +87,15 @@ public class PersonControllerIT {
         assertThat(response.getBody())
                 .isNull();
 
-        params.add("firstName", person.getFirstName());
-        params.add("lastName", person.getLastName());
-        params.add("address", person.getAddress());
-        params.add("city", person.getCity());
-        params.add("zip", person.getZip());
-        params.add("phone", person.getPhone());
-        params.add("email", person.getEmail());
-
         // Actual request
-        restTemplate.postForEntity("/person", params, String.class);
+        restTemplate.postForEntity(personIDURL + addressURL + cityURL + zipURL + phoneURL + emailURL, null, String.class,
+                person.getFirstName(),
+                person.getLastName(),
+                person.getAddress(),
+                person.getCity(),
+                person.getZip(),
+                person.getPhone(),
+                person.getEmail());
 
         response = restTemplate.getForEntity(personIDURL, Person.class, person.getFirstName(), person.getLastName());
         assertThat(response.getBody())
@@ -110,16 +114,14 @@ public class PersonControllerIT {
         assertThat(response.getBody())
                 .isNull();
 
-        params.add("firstName", person.getFirstName());
-        params.add("lastName", person.getLastName());
-        params.add("address", person.getAddress());
-        params.add("city", person.getCity());
-        params.add("zip", person.getZip());
-        // No phone number provided
-        params.add("email", person.getEmail());
-
         // Actual request
-        restTemplate.postForEntity("/person", params, String.class);
+        restTemplate.postForEntity(personIDURL + addressURL + cityURL + zipURL + emailURL, null, String.class,
+                person.getFirstName(),
+                person.getLastName(),
+                person.getAddress(),
+                person.getCity(),
+                person.getZip(),
+                person.getEmail());
 
         response = restTemplate.getForEntity(personIDURL, Person.class, person.getFirstName(), person.getLastName());
         assertThat(response.getBody())
@@ -133,35 +135,30 @@ public class PersonControllerIT {
         Person existing = PersonFactory.createPerson();
         Person added = PersonFactory.createPerson(existing.getFirstName(), existing.getLastName(), null, null);
 
-
-        params.add("firstName", existing.getFirstName());
-        params.add("lastName", existing.getLastName());
-        params.add("address", existing.getAddress());
-        params.add("city", existing.getCity());
-        params.add("zip", existing.getZip());
-        params.add("phone", existing.getPhone());
-        params.add("email", existing.getEmail());
-
         // Preparation request
-        restTemplate.postForEntity("/person", params, String.class);
+        restTemplate.postForEntity(personIDURL + addressURL + cityURL + zipURL + phoneURL + emailURL, null, String.class,
+                existing.getFirstName(),
+                existing.getLastName(),
+                existing.getAddress(),
+                existing.getCity(),
+                existing.getZip(),
+                existing.getPhone(),
+                existing.getEmail());
 
         // Checking that existing Person is actually in database
         ResponseEntity<Person> response = restTemplate.getForEntity(personIDURL, Person.class, existing.getFirstName(), existing.getLastName());
         assertThat(response.getBody())
                 .isNotNull();
 
-        params.clear();
-
-        params.add("firstName", added.getFirstName());
-        params.add("lastName", added.getLastName());
-        params.add("address", added.getAddress());
-        params.add("city", added.getCity());
-        params.add("zip", added.getZip());
-        params.add("phone", added.getPhone());
-        params.add("email", added.getEmail());
-
         // Actual request
-        restTemplate.postForEntity("/person", params, String.class);
+        restTemplate.postForEntity(personIDURL + addressURL + cityURL + zipURL + phoneURL + emailURL, null, String.class,
+                added.getFirstName(),
+                added.getLastName(),
+                added.getAddress(),
+                added.getCity(),
+                added.getZip(),
+                added.getPhone(),
+                added.getEmail());
 
         // Checking that existing person is unmodified after post
         response = restTemplate.getForEntity(personIDURL, Person.class, existing.getFirstName(), existing.getLastName());
@@ -176,30 +173,25 @@ public class PersonControllerIT {
         // Two persons with same name but different addresses
         Person existing = PersonFactory.createPerson(null, null, Addresses.APPLEGATE, null);
         Person update = PersonFactory.createPerson(existing.getFirstName(), existing.getLastName(), Addresses.BAYMEADOWS, null);
-
-        params.add("firstName", existing.getFirstName());
-        params.add("lastName", existing.getLastName());
-        params.add("address", existing.getAddress());
-        params.add("city", existing.getCity());
-        params.add("zip", existing.getZip());
-        params.add("phone", existing.getPhone());
-        params.add("email", existing.getEmail());
+        update.setPhone(existing.getPhone());
 
         // Person added
-        restTemplate.postForEntity("/person", params, String.class);
-
-        params.clear();
-
-        params.add("firstName", update.getFirstName());
-        params.add("lastName", update.getLastName());
-        params.add("address", update.getAddress());
-        params.add("city", update.getCity());
-        params.add("zip", update.getZip());
-        params.add("phone", update.getPhone());
-        params.add("email", update.getEmail());
+        restTemplate.postForEntity(personIDURL + addressURL + cityURL + zipURL + phoneURL + emailURL, null, String.class,
+                existing.getFirstName(),
+                existing.getLastName(),
+                existing.getAddress(),
+                existing.getCity(),
+                existing.getZip(),
+                existing.getPhone(),
+                existing.getEmail());
 
         // Person updated
-        restTemplate.put("/person", params);
+        restTemplate.put(personIDURL + addressURL + cityURL + zipURL, null,
+                update.getFirstName(),
+                update.getLastName(),
+                update.getAddress(),
+                update.getCity(),
+                update.getZip());
 
         // Checking that existing person has been modified
         ResponseEntity<Person> response = restTemplate.getForEntity(personIDURL, Person.class, existing.getFirstName(), existing.getLastName());
@@ -218,16 +210,15 @@ public class PersonControllerIT {
         assertThat(response.getBody())
                 .isNull();
 
-        params.add("firstName", update.getFirstName());
-        params.add("lastName", update.getLastName());
-        params.add("address", update.getAddress());
-        params.add("city", update.getCity());
-        params.add("zip", update.getZip());
-        params.add("phone", update.getPhone());
-        params.add("email", update.getEmail());
-
         // Actual request
-        restTemplate.put("/person", params);
+        restTemplate.put(personIDURL + addressURL + cityURL + zipURL + phoneURL + emailURL, null,
+                update.getFirstName(),
+                update.getLastName(),
+                update.getAddress(),
+                update.getCity(),
+                update.getZip(),
+                update.getPhone(),
+                update.getEmail());
 
         // Checking that no data has been created
         response = restTemplate.getForEntity(personIDURL, Person.class, update.getFirstName(), update.getLastName());
@@ -240,25 +231,20 @@ public class PersonControllerIT {
     void Given_dataAddedToDatabase_When_DELETEPerson_Then_dataCantBeRetrievedAfterDeletion() {
         Person existing = PersonFactory.createPerson();
 
-        params.add("firstName", existing.getFirstName());
-        params.add("lastName", existing.getLastName());
-        params.add("address", existing.getAddress());
-        params.add("city", existing.getCity());
-        params.add("zip", existing.getZip());
-        params.add("phone", existing.getPhone());
-        params.add("email", existing.getEmail());
-
         // Preparation request
-        restTemplate.postForEntity("/person", params, String.class);
+        restTemplate.postForEntity(personIDURL + addressURL + cityURL + zipURL + phoneURL + emailURL, null, String.class,
+                existing.getFirstName(),
+                existing.getLastName(),
+                existing.getAddress(),
+                existing.getCity(),
+                existing.getZip(),
+                existing.getPhone(),
+                existing.getEmail());
+
 
         ResponseEntity<Person> response = restTemplate.getForEntity(personIDURL, Person.class, existing.getFirstName(), existing.getLastName());
         assertThat(response.getBody())
                 .isNotNull();
-
-        params.clear();
-
-        params.add("firstName", existing.getFirstName());
-        params.add("lastName", existing.getLastName());
 
         // Actual request
         restTemplate.delete(personIDURL, existing.getFirstName(), existing.getLastName());
