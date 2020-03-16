@@ -110,11 +110,11 @@ class PersonServiceImplTest {
             doReturn(true).when(mockPersonDAO)
                     .update(anyString(),
                             anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString());
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class));
             assertTrue(personService.update(
                     "firstName",
                     "lastName",
@@ -130,11 +130,11 @@ class PersonServiceImplTest {
             doThrow(new NoSuchDataException()).when(mockPersonDAO)
                     .update(anyString(),
                             anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString());
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class));
             assertThrows(NoSuchDataException.class,
                     () -> personService.update(
                             "firstName",
@@ -151,11 +151,11 @@ class PersonServiceImplTest {
             doThrow(new IOException()).when(mockPersonDAO)
                     .update(anyString(),
                             anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString());
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class));
             assertThrows(IOException.class,
                     () -> personService.update(
                             "firstName",

@@ -606,12 +606,12 @@ class JsonFileDatabaseTest {
                         null);
 
                 Person updatedPerson = PersonFactory.createPerson(
-                        null,
-                        null,
+                        originalPerson.getFirstName(),
+                        originalPerson.getLastName(),
                         Addresses.CIRCLE,
                         null);
 
-                updatedPerson.setPhone(originalPerson.getPhone()); // Must access phone attribute by setter to make it equivalent.
+                updatedPerson.setPhone(originalPerson.getPhone());
 
                 persons.add(originalPerson);
 

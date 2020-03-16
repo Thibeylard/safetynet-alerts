@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -117,13 +118,15 @@ class PersonDAOJsonFileTest {
         @Test
         void Given_validParameters_When_update_Then_returnTrue() throws Exception {
             doReturn(true).when(mockJsonFileDatabase)
-                    .updatePerson(anyString(),
+                    .updatePerson(
                             anyString(),
                             anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString());
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class));
+
             assertTrue(personDAO.update(
                     "firstName",
                     "lastName",
@@ -137,13 +140,15 @@ class PersonDAOJsonFileTest {
         @Test
         void Given_NoSuchDataException_When_update_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
-                    .updatePerson(anyString(),
+                    .updatePerson(
                             anyString(),
                             anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString());
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class));
+
             assertThrows(NoSuchDataException.class,
                     () -> personDAO.update(
                             "firstName",
@@ -158,13 +163,14 @@ class PersonDAOJsonFileTest {
         @Test
         void Given_IOException_When_update_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase)
-                    .updatePerson(anyString(),
+                    .updatePerson(
                             anyString(),
                             anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString(),
-                            anyString());
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class),
+                            nullable(String.class));
             assertThrows(IOException.class,
                     () -> personDAO.update(
                             "firstName",
@@ -192,7 +198,9 @@ class PersonDAOJsonFileTest {
         @Test
         void Given_NoSuchDataException_When_delete_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
-                    .deletePerson(anyString(), anyString());
+                    .deletePerson(
+                            anyString(),
+                            anyString());
             assertThrows(NoSuchDataException.class,
                     () -> personDAO.delete("firstName", "lastName"));
         }
@@ -200,7 +208,9 @@ class PersonDAOJsonFileTest {
         @Test
         void Given_IOException_When_delete_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase)
-                    .deletePerson(anyString(), anyString());
+                    .deletePerson(
+                            anyString(),
+                            anyString());
             assertThrows(IOException.class,
                     () -> personDAO.delete("firstName", "lastName"));
         }
