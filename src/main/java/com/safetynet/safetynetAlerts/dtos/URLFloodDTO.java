@@ -11,7 +11,7 @@ public class URLFloodDTO {
     @JsonProperty("addressResidentsMap")
     private Map<String, List<EndangeredPersonDTO>> addressResidentsMap;
 
-    public URLFloodDTO(Map<String, List<EndangeredPersonDTO>> addressResidentsMap) {
+    public URLFloodDTO(@JsonProperty("addressResidentsMap") Map<String, List<EndangeredPersonDTO>> addressResidentsMap) {
         this.addressResidentsMap = addressResidentsMap;
     }
 }

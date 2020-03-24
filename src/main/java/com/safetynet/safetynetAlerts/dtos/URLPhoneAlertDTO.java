@@ -10,7 +10,7 @@ public class URLPhoneAlertDTO {
     @JsonProperty("phoneNumbers")
     private List<PersonPhoneDTO> phoneNumberList;
 
-    public URLPhoneAlertDTO(List<PersonPhoneDTO> pPhoneNumberList) {
+    public URLPhoneAlertDTO(@JsonProperty("phoneNumbers") List<PersonPhoneDTO> pPhoneNumberList) {
         this.phoneNumberList = pPhoneNumberList;
     }
 }

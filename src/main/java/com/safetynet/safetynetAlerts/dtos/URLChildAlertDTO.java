@@ -12,17 +12,9 @@ public class URLChildAlertDTO {
     @JsonProperty("familyMembers")
     private List<ChildFamilyMemberDTO> childFamilyMemberDTOS;
 
-    public URLChildAlertDTO(List<ChildDTO> pChildDTOList,
-                            List<ChildFamilyMemberDTO> pChildFamilyMemberDTOS) {
+    public URLChildAlertDTO(@JsonProperty("children") List<ChildDTO> pChildDTOList,
+                            @JsonProperty("familyMembers") List<ChildFamilyMemberDTO> pChildFamilyMemberDTOS) {
         this.childDTOList = pChildDTOList;
         this.childFamilyMemberDTOS = pChildFamilyMemberDTOS;
-    }
-
-    public List<ChildDTO> getChildDTOList() {
-        return childDTOList;
-    }
-
-    public List<ChildFamilyMemberDTO> getChildFamilyMemberDTOS() {
-        return childFamilyMemberDTOS;
     }
 }

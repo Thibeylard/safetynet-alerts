@@ -15,9 +15,9 @@ public class URLFirestationDTO {
     @JsonProperty("inhabitants")
     private List<PersonAddressPhoneDTO> inhabitants;
 
-    public URLFirestationDTO(int adults,
-                             int children,
-                             List<PersonAddressPhoneDTO> inhabitants) {
+    public URLFirestationDTO(@JsonProperty("adults") int adults,
+                             @JsonProperty("children") int children,
+                             @JsonProperty("inhabitants") List<PersonAddressPhoneDTO> inhabitants) {
         this.adults = adults;
         this.children = children;
         this.inhabitants = inhabitants;

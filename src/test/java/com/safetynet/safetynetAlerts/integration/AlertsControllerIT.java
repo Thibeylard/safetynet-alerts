@@ -1,26 +1,15 @@
 package com.safetynet.safetynetAlerts.integration;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.safetynetAlerts.dtos.*;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,36 +28,8 @@ public class AlertsControllerIT {
     private final static String floodParamURL = "&stations={stations}";
     private final static String personInfoURL = "/personInfo?firstName={firstName}&lastName={lastName}";
     private final static String communityEmailURL = "/communityEmail?city={city}";
-    private static File data;
-    private static JsonFactory factory;
-    private static JsonFileDatabaseDTO jsonFileDTO;
     @Autowired
     private TestRestTemplate restTemplate;
-
-    @BeforeAll
-    public static void saveData(@Value("${jsondatabase.src}") String src) throws IOException {
-        data = new File(src);
-        factory = new JsonFactory().setCodec(new ObjectMapper());
-        JsonParser parser = factory.createParser(AlertsControllerIT.data);
-        jsonFileDTO = parser.readValueAs(JsonFileDatabaseDTO.class);
-    }
-
-
-    @AfterAll
-    public static void resetData() {
-        try {
-            JsonGenerator generator = factory.createGenerator(data, JsonEncoding.UTF8);
-            generator.writeStartObject();
-            generator.writeObjectField("persons", jsonFileDTO.getPersons());
-            generator.writeObjectField("firestations", jsonFileDTO.getFirestations());
-            generator.writeObjectField("medicalrecords", jsonFileDTO.getMedicalRecords());
-            generator.writeEndObject();
-            generator.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Test
     @DisplayName("Firestation successful")
@@ -98,7 +59,7 @@ public class AlertsControllerIT {
 
     @Test
     @DisplayName("PhoneAlert successful")
-    void Given_firestationNumber_When_phoneAlertURL_Then_getDTO() {
+    void Given_firestationNumber_When_phoneAlertURL_Then_getAccordingDTO() {
         ResponseEntity<URLPhoneAlertDTO> response = restTemplate.getForEntity(phoneAlertURL, URLPhoneAlertDTO.class, 2);
         assertThat(response.getBody())
                 .isNotNull();

@@ -12,8 +12,8 @@ public class URLFireDTO {
     @JsonProperty("endangeredPersonDTOList")
     private List<EndangeredPersonDTO> endangeredPersonDTOList;
 
-    public URLFireDTO(int stationNumber,
-                      List<EndangeredPersonDTO> endangeredPersonDTOList) {
+    public URLFireDTO(@JsonProperty("stationNumber") int stationNumber,
+                      @JsonProperty("endangeredPersonDTOList") List<EndangeredPersonDTO> endangeredPersonDTOList) {
         this.stationNumber = stationNumber;
         this.endangeredPersonDTOList = endangeredPersonDTOList;
     }

@@ -26,13 +26,13 @@ public class URLPersonInfoDTO {
     @JsonProperty("allergies")
     private final List<String> allergies;
 
-    public URLPersonInfoDTO(final String firstName,
-                            final String lastName,
-                            final String address,
-                            final String age,
-                            final String email,
-                            final List<String> medications,
-                            final List<String> allergies) {
+    public URLPersonInfoDTO(@JsonProperty("firstName") final String firstName,
+                            @JsonProperty("lastName") final String lastName,
+                            @JsonProperty("address") final String address,
+                            @JsonProperty("age") final String age,
+                            @JsonProperty("email") final String email,
+                            @JsonProperty("medications") final List<String> medications,
+                            @JsonProperty("allergies") final List<String> allergies) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;

@@ -525,7 +525,7 @@ class AlertsControllerTest {
         void Given_validRequest_When_getURLCommunityEmailDTO_Then_statusIsOK() throws Exception {
             params.add("city", "someCity");
 
-            doReturn(new URLCommunityEmailDTO(new ArrayList<Person>()))
+            doReturn(new URLCommunityEmailDTO().withPersonsEmails(new ArrayList<Person>()))
                     .when(mockAlertsService).getURLCommunityEmailDTO(params.getFirst("city"));
 
             mvcMock.perform(get("/communityEmail")
@@ -551,7 +551,7 @@ class AlertsControllerTest {
         @Test
         void Given_missingParameter_When_getURLCommunityEmailDTO_Then_statusIsBadRequest() throws Exception {
             // no params
-            doReturn(new URLCommunityEmailDTO(new ArrayList<Person>()))
+            doReturn(new URLCommunityEmailDTO().withPersonsEmails(new ArrayList<Person>()))
                     .when(mockAlertsService).getURLCommunityEmailDTO(params.getFirst("city"));
 
             mvcMock.perform(get("/communityEmail")

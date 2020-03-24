@@ -9,11 +9,21 @@ import java.util.List;
 
 @JsonPropertyOrder({"citizenEmails"})
 public class URLCommunityEmailDTO {
-    @JsonProperty("citizenEmails")
-    private final List<String> citizenEmails;
 
-    public URLCommunityEmailDTO(List<Person> citizens) {
+    @JsonProperty("citizenEmails")
+    private List<String> citizenEmails;
+
+    public URLCommunityEmailDTO(@JsonProperty("citizenEmails") List<String> citizensEmails) {
+        this.citizenEmails = citizensEmails;
+    }
+
+    public URLCommunityEmailDTO() {
+        this.citizenEmails = null;
+    }
+
+    public URLCommunityEmailDTO withPersonsEmails(List<Person> citizens) {
         this.citizenEmails = new ArrayList<>();
         citizens.forEach(citizen -> this.citizenEmails.add(citizen.getEmail()));
+        return this;
     }
 }

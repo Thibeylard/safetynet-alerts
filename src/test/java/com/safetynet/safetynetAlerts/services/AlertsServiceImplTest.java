@@ -448,7 +448,7 @@ class AlertsServiceImplTest {
 
             doReturn(citizens).when(mockPersonDAO).getCommunity(city, false);
 
-            URLCommunityEmailDTO responseDTO = new URLCommunityEmailDTO(citizens);
+            URLCommunityEmailDTO responseDTO = new URLCommunityEmailDTO().withPersonsEmails(citizens);
 
             assertThat(alertsService.getURLCommunityEmailDTO(city))
                     .isNotNull()

@@ -188,7 +188,7 @@ public class AlertsServiceImpl implements AlertsService {
     @Override
     public URLCommunityEmailDTO getURLCommunityEmailDTO(String city) throws IOException {
         try {
-            return new URLCommunityEmailDTO(personDAO.getCommunity(city, false));
+            return new URLCommunityEmailDTO().withPersonsEmails(personDAO.getCommunity(city, false));
         } catch (NoSuchDataException | NoMedicalRecordException e) {
             return null;
         }
