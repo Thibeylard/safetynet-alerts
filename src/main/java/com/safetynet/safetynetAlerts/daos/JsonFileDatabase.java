@@ -70,19 +70,35 @@ public class JsonFileDatabase {
 //    ---------------------------------------------------------------------------------------- FIRESTATION
 
     public Firestation getFirestation(final String address) throws NoSuchDataException {
-        return this.jsonFileDTO.getFirestations().stream()
-                .filter(firestation -> firestation.getAddress().equals(address))
-                .findFirst()
-                .orElseThrow(NoSuchDataException::new);
+        Logger.debug("Search JsonDatabase for Firestation with address : {}.", address);
+        Firestation firestation;
+        try {
+            firestation = this.jsonFileDTO.getFirestations().stream()
+                    .filter(f -> f.getAddress().equals(address))
+                    .findFirst()
+                    .orElseThrow(NoSuchDataException::new);
+        } catch (NoSuchDataException e) {
+            Logger.debug("No matched result.");
+            throw e;
+        }
+
+        Logger.debug("Matched Firestation");
+        return firestation;
     }
 
     public List<Firestation> getFirestations(final int number) throws NoSuchDataException {
+        Logger.debug("Search JsonDatabase for Firestations with station number : {}.", number);
         List<Firestation> firestations = this.jsonFileDTO.getFirestations().stream()
                 .filter(firestation -> firestation.getStation() == number)
                 .collect(Collectors.toList());
+
         if (firestations.isEmpty()) {
+            Logger.debug("No matched result.");
             throw new NoSuchDataException();
         }
+
+        Logger.debug("Matched {} Firestation(s)", firestations.size());
+
         return firestations;
     }
 
@@ -127,12 +143,23 @@ public class JsonFileDatabase {
 
     //    ---------------------------------------------------------------------------------------- MEDICALRECORD
 
-    public MedicalRecord getMedicalRecord(final String firstName, final String lastName) throws IOException, NoSuchDataException {
-        return this.jsonFileDTO.getMedicalRecords().stream()
-                .filter(medicalRecord -> medicalRecord.getLastName().equals(lastName))
-                .filter(medicalRecord -> medicalRecord.getFirstName().equals(firstName))
-                .findFirst()
-                .orElseThrow(NoSuchDataException::new);
+    public MedicalRecord getMedicalRecord(final String firstName, final String lastName) throws NoSuchDataException {
+        Logger.debug("Search JsonDatabase for MedicalRecord with name : {} {}.", firstName, lastName);
+        MedicalRecord medicalRecord;
+
+        try {
+            medicalRecord = this.jsonFileDTO.getMedicalRecords().stream()
+                    .filter(mr -> mr.getLastName().equals(lastName))
+                    .filter(mr -> mr.getFirstName().equals(firstName))
+                    .findFirst()
+                    .orElseThrow(NoSuchDataException::new);
+        } catch (NoSuchDataException e) {
+            Logger.debug("No matched result.");
+            throw e;
+        }
+
+        Logger.debug("Matched MedicalRecord");
+        return medicalRecord;
     }
 
 
@@ -197,11 +224,19 @@ public class JsonFileDatabase {
 
     public Person getPerson(final String firstName,
                             final String lastName, boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
-        Person person = this.jsonFileDTO.getPersons().stream()
-                .filter(p -> p.getLastName().equals(lastName))
-                .filter(p -> p.getFirstName().equals(firstName))
-                .findFirst()
-                .orElseThrow(NoSuchDataException::new);
+        Logger.debug("Search JsonDatabase for Person with name : {} {}.", firstName, lastName);
+        Person person;
+        try {
+            person = this.jsonFileDTO.getPersons().stream()
+                    .filter(p -> p.getLastName().equals(lastName))
+                    .filter(p -> p.getFirstName().equals(firstName))
+                    .findFirst()
+                    .orElseThrow(NoSuchDataException::new);
+        } catch (NoSuchDataException e) {
+            Logger.debug("No matched result.");
+            throw e;
+        }
+
         MedicalRecord medicalRecord;
         if (withMedicalRecord) {
             medicalRecord = this.jsonFileDTO.getMedicalRecords().stream()
@@ -213,41 +248,56 @@ public class JsonFileDatabase {
             person = PersonFactory.buildPerson(person, medicalRecord);
         }
 
+        Logger.debug("Matched Person.");
+
         return person;
     }
 
 
     public List<Person> getPersonFromAddress(final String address,
                                              boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
+        Logger.debug("Search JsonDatabase for Person with address : {}.", address);
+
         List<Person> persons = this.jsonFileDTO.getPersons().stream()
                 .filter(p -> p.getAddress().equals(address))
                 .collect(Collectors.toList());
 
-        if (withMedicalRecord) {
-            return getPersonsWithMedicalRecords(persons);
-        } else {
-            return persons;
+        if (persons.isEmpty()) {
+            Logger.debug("No matched result.");
+            throw new NoSuchDataException();
         }
+
+        if (withMedicalRecord) {
+            persons = getPersonsWithMedicalRecords(persons);
+        }
+
+        Logger.debug("Matched {} Person(s)", persons.size());
+        return persons;
     }
 
     public List<Person> getPersonFromCity(final String city,
                                           boolean withMedicalRecord) throws NoSuchDataException, NoMedicalRecordException {
+        Logger.debug("Search JsonDatabase for Person with city : {}.", city);
+
         List<Person> persons = this.jsonFileDTO.getPersons().stream()
                 .filter(p -> p.getCity().equals(city))
                 .collect(Collectors.toList());
 
-        if (withMedicalRecord) {
-            return getPersonsWithMedicalRecords(persons);
-        } else {
-            return persons;
-        }
-    }
-
-    private List<Person> getPersonsWithMedicalRecords(List<Person> persons) throws NoSuchDataException, NoMedicalRecordException {
-
         if (persons.isEmpty()) {
+            Logger.debug("No matched result.");
             throw new NoSuchDataException();
         }
+
+        if (withMedicalRecord) {
+            persons = getPersonsWithMedicalRecords(persons);
+        }
+
+        Logger.debug("Matched {} Person(s)", persons.size());
+
+        return persons;
+    }
+
+    private List<Person> getPersonsWithMedicalRecords(List<Person> persons) throws NoMedicalRecordException {
 
         List<Person> personsWithMedicalRecord = new ArrayList<>();
         for (Person person : persons) {

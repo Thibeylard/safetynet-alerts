@@ -54,7 +54,6 @@ public class PersonController {
         }
     }
 
-    //TODO Remove Optionals from parameters
     @PutMapping("/person")
     public ResponseEntity<String> update(@RequestParam(name = "firstName") final String firstName,
                                          @RequestParam(name = "lastName") final String lastName,
@@ -80,11 +79,14 @@ public class PersonController {
 
         try {
             this.personService.update(firstName, lastName, address, city, zip, phone, email);
-            return new ResponseEntity<String>("Person PUT Request succeed", HttpStatus.OK);
+            Logger.info("Person PUT Request succeed");
+            return new ResponseEntity<String>(HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<String>("Person PUT Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("Person PUT Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
-            return new ResponseEntity<String>("Person PUT Request failed : Data could not be modified because it doesnt exist", HttpStatus.NOT_FOUND);
+            Logger.error("Person PUT Request failed : Data could not be modified because it doesnt exist");
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -113,11 +115,15 @@ public class PersonController {
         Logger.debug("Person GET Request on : {} {}", firstName, lastName);
 
         try {
-            return new ResponseEntity<Person>(this.personService.get(firstName, lastName), HttpStatus.OK);
-        } catch (NoSuchDataException | NoMedicalRecordException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Person response = this.personService.get(firstName, lastName);
+            Logger.info("Person GET Request succeed");
+            return new ResponseEntity<Person>(response, HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("Person GET Request failed : Database could not be accessed");
+            return new ResponseEntity<Person>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NoSuchDataException | NoMedicalRecordException e) {
+            Logger.error("Person GET Request failed : Data could not be accessed because it doesnt exist");
+            return new ResponseEntity<Person>(HttpStatus.NOT_FOUND);
         }
     }
 

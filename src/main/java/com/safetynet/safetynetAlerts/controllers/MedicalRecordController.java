@@ -38,11 +38,14 @@ public class MedicalRecordController {
 
         try {
             this.medicalRecordService.add(firstName, lastName, birthDate, medications, allergies);
-            return new ResponseEntity<String>("MedicalRecord POST Request succeed", HttpStatus.CREATED);
+            Logger.info("MedicalRecord POST Request for succeed!");
+            return new ResponseEntity<String>(HttpStatus.CREATED);
         } catch (IOException e) {
-            return new ResponseEntity<String>("MedicalRecord POST Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("MedicalRecord POST Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalDataOverrideException e) {
-            return new ResponseEntity<String>("MedicalRecord POST Request failed : Data could not be created because identifiers already exist in database", HttpStatus.FORBIDDEN);
+            Logger.error("MedicalRecord POST Request failed : Data could not be created because identifiers already exist in database");
+            return new ResponseEntity<String>(HttpStatus.FORBIDDEN);
         }
     }
 
@@ -67,11 +70,14 @@ public class MedicalRecordController {
 
         try {
             this.medicalRecordService.update(firstName, lastName, birthDate, medications, allergies);
-            return new ResponseEntity<String>("MedicalRecord PUT Request succeed", HttpStatus.OK);
+            Logger.info("MedicalRecord PUT Request succeed");
+            return new ResponseEntity<String>(HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<String>("MedicalRecord PUT Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("MedicalRecord PUT Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
-            return new ResponseEntity<String>("MedicalRecord PUT Request failed : Data could not be modified because it doesnt exist", HttpStatus.NOT_FOUND);
+            Logger.error("MedicalRecord PUT Request failed : Data could not be modified because it doesnt exist");
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -82,11 +88,14 @@ public class MedicalRecordController {
 
         try {
             this.medicalRecordService.delete(firstName, lastName);
-            return new ResponseEntity<String>("MedicalRecord DELETE Request succeed", HttpStatus.OK);
+            Logger.info("MedicalRecord DELETE Request succeed");
+            return new ResponseEntity<String>(HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<String>("MedicalRecord DELETE Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("MedicalRecord DELETE Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
-            return new ResponseEntity<String>("MedicalRecord DELETE Request failed : Data could not be deleted because it doesnt exist", HttpStatus.NOT_FOUND);
+            Logger.error("MedicalRecord DELETE Request failed : Data could not be deleted because it doesnt exist");
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -96,10 +105,14 @@ public class MedicalRecordController {
         Logger.debug("MedicalRecord GET Request on : {} {}", firstName, lastName);
 
         try {
-            return new ResponseEntity<MedicalRecord>(this.medicalRecordService.get(firstName, lastName), HttpStatus.OK);
+            MedicalRecord response = this.medicalRecordService.get(firstName, lastName);
+            Logger.info("MedicalRecord GET Request succeed");
+            return new ResponseEntity<MedicalRecord>(response, HttpStatus.OK);
         } catch (IOException e) {
+            Logger.error("MedicalRecord GET Request failed : Database could not be accessed");
             return new ResponseEntity<MedicalRecord>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
+            Logger.error("MedicalRecord GET Request failed : Data could not be accessed because it doesnt exist");
             return new ResponseEntity<MedicalRecord>(HttpStatus.NOT_FOUND);
         }
     }

@@ -29,15 +29,17 @@ public class FirestationController {
 
         try {
             this.firestationService.add(address, number);
-            return new ResponseEntity<String>("Firestation POST Request succeed", HttpStatus.CREATED);
+            Logger.info("Firestation POST Request succeed");
+            return new ResponseEntity<String>(HttpStatus.CREATED);
         } catch (IOException e) {
-            return new ResponseEntity<String>("Firestation POST Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("Firestation POST Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalDataOverrideException e) {
-            return new ResponseEntity<String>("Firestation POST Request failed : Data could not be created because identifiers already exist in database", HttpStatus.FORBIDDEN);
+            Logger.error("Firestation POST Request failed : Data could not be created because identifiers already exist in database");
+            return new ResponseEntity<String>(HttpStatus.FORBIDDEN);
         }
     }
 
-    //TODO Remove Optionals from parameters
     @PutMapping("/firestation")
     public ResponseEntity<String> update(@RequestParam(name = "address") final String address,
                                          @RequestParam(name = "stationNumber") final int number) throws Exception {
@@ -45,11 +47,14 @@ public class FirestationController {
 
         try {
             this.firestationService.update(address, number);
-            return new ResponseEntity<String>("Firestation PUT Request succeed", HttpStatus.OK);
+            Logger.info("Firestation PUT Request succeed");
+            return new ResponseEntity<String>(HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<String>("Firestation PUT Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("Firestation PUT Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
-            return new ResponseEntity<String>("Firestation PUT Request failed : Data could not be modified because it doesnt exist", HttpStatus.NOT_FOUND);
+            Logger.error("Firestation PUT Request failed : Data could not be modified because it doesnt exist");
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
 
     }
@@ -60,11 +65,14 @@ public class FirestationController {
 
         try {
             this.firestationService.delete(number);
-            return new ResponseEntity<String>("Firestation DELETE Request succeed", HttpStatus.OK);
+            Logger.info("Firestation DELETE Request succeed");
+            return new ResponseEntity<String>(HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<String>("Firestation DELETE Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("Firestation DELETE Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
-            return new ResponseEntity<String>("Firestation DELETE Request failed : Data could not be deleted because it doesnt exist", HttpStatus.NOT_FOUND);
+            Logger.error("Firestation DELETE Request failed : Data could not be deleted because it doesnt exist");
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
 
     }
@@ -74,11 +82,14 @@ public class FirestationController {
         Logger.debug("Firestation DELETE Request by address : {}", address);
         try {
             this.firestationService.delete(address);
-            return new ResponseEntity<String>("Firestation DELETE Request succeed", HttpStatus.OK);
+            Logger.info("Firestation DELETE Request succeed");
+            return new ResponseEntity<String>(HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<String>("Firestation DELETE Request failed : Database could not be accessed", HttpStatus.INTERNAL_SERVER_ERROR);
+            Logger.error("Firestation DELETE Request failed : Database could not be accessed");
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
-            return new ResponseEntity<String>("Firestation DELETE Request failed : Data could not be deleted because it doesnt exist", HttpStatus.NOT_FOUND);
+            Logger.error("Firestation DELETE Request failed : Data could not be deleted because it doesnt exist");
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -87,10 +98,14 @@ public class FirestationController {
         Logger.debug("Firestation GET Request by address : {}", address);
 
         try {
-            return new ResponseEntity<Firestation>(this.firestationService.get(address), HttpStatus.OK);
+            Firestation response = this.firestationService.get(address);
+            Logger.info("Firestation GET Request succeed");
+            return new ResponseEntity<Firestation>(response, HttpStatus.OK);
         } catch (IOException e) {
+            Logger.error("Firestation GET Request failed : Database could not be accessed");
             return new ResponseEntity<Firestation>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchDataException e) {
+            Logger.error("Firestation GET Request failed : Data could not be accessed because it doesnt exist");
             return new ResponseEntity<Firestation>(HttpStatus.NOT_FOUND);
         }
     }
