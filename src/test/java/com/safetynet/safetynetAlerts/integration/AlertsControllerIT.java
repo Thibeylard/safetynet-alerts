@@ -58,11 +58,37 @@ public class AlertsControllerIT {
     }
 
     @Test
+    @DisplayName("ChildAlert no child")
+    void Given_noChildAtAddress_When_childAlertURL_Then_getEmptyDTO() {
+        ResponseEntity<URLChildAlertDTO> response = restTemplate.getForEntity(childAlertURL, URLChildAlertDTO.class, "908 73rd St");
+        assertThat(response.getBody())
+                .isNotNull();
+        assertThat(response.getBody().getChildDTOList())
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("ChildAlert not found")
+    void Given_wrongAddress_When_childAlertURL_Then_getNull() {
+        ResponseEntity<URLChildAlertDTO> response = restTemplate.getForEntity(childAlertURL, URLChildAlertDTO.class, "Inexistant Address");
+        assertThat(response.getBody())
+                .isNull();
+    }
+
+    @Test
     @DisplayName("PhoneAlert successful")
     void Given_firestationNumber_When_phoneAlertURL_Then_getAccordingDTO() {
         ResponseEntity<URLPhoneAlertDTO> response = restTemplate.getForEntity(phoneAlertURL, URLPhoneAlertDTO.class, 2);
         assertThat(response.getBody())
                 .isNotNull();
+    }
+
+    @Test
+    @DisplayName("PhoneAlert not found")
+    void Given_absentFirestationNumber_When_phoneAlertURL_Then_getNull() {
+        ResponseEntity<URLPhoneAlertDTO> response = restTemplate.getForEntity(phoneAlertURL, URLPhoneAlertDTO.class, 0);
+        assertThat(response.getBody())
+                .isNull();
     }
 
     @Test
@@ -74,11 +100,27 @@ public class AlertsControllerIT {
     }
 
     @Test
+    @DisplayName("Fire not found")
+    void Given_wrongAddress_When_fireURL_Then_getNull() {
+        ResponseEntity<URLFireDTO> response = restTemplate.getForEntity(fireURL, URLFireDTO.class, "Inexistant Address");
+        assertThat(response.getBody())
+                .isNull();
+    }
+
+    @Test
     @DisplayName("Flood successful")
     void Given_firestationNumbers_When_floodURL_Then_getAccordingDTO() {
         ResponseEntity<URLFloodDTO> response = restTemplate.getForEntity(floodURL + floodParamURL, URLFloodDTO.class, 2, 3);
         assertThat(response.getBody())
                 .isNotNull();
+    }
+
+    @Test
+    @DisplayName("Flood not found")
+    void Given_absentFirestationNumbers_When_floodURL_Then_getNull() {
+        ResponseEntity<URLFloodDTO> response = restTemplate.getForEntity(floodURL + floodParamURL, URLFloodDTO.class, 0, 9);
+        assertThat(response.getBody())
+                .isNull();
     }
 
     @Test
@@ -90,10 +132,26 @@ public class AlertsControllerIT {
     }
 
     @Test
+    @DisplayName("Person Info not found")
+    void Given_inexistantPersonName_When_personInfoURL_Then_getNull() {
+        ResponseEntity<URLPersonInfoDTO> response = restTemplate.getForEntity(personInfoURL, URLPersonInfoDTO.class, "Inexistant", "Person");
+        assertThat(response.getBody())
+                .isNull();
+    }
+
+    @Test
     @DisplayName("Community Email successful")
     void Given_city_When_communityEmailURL_Then_getAccordingDTO() {
         ResponseEntity<URLCommunityEmailDTO> response = restTemplate.getForEntity(communityEmailURL, URLCommunityEmailDTO.class, "Culver");
         assertThat(response.getBody())
                 .isNotNull();
+    }
+
+    @Test
+    @DisplayName("Community Email not found")
+    void Given_wrongCity_When_communityEmailURL_Then_getNull() {
+        ResponseEntity<URLCommunityEmailDTO> response = restTemplate.getForEntity(communityEmailURL, URLCommunityEmailDTO.class, "InexistantCity");
+        assertThat(response.getBody())
+                .isNull();
     }
 }

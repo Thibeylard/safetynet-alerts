@@ -17,4 +17,12 @@ public class URLChildAlertDTO {
         this.childDTOList = pChildDTOList;
         this.childFamilyMemberDTOS = pChildFamilyMemberDTOS;
     }
+
+    public List<ChildDTO> getChildDTOList() {
+        return childDTOList;
+    }
+
+    public List<ChildFamilyMemberDTO> getChildFamilyMemberDTOS() {
+        return childFamilyMemberDTOS;
+    }
 }
