@@ -21,7 +21,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,7 +57,7 @@ class AlertsServiceImplTest {
         @Test
         void Given_stationNumber1_When_getURLFirestationDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             //Three different addresses under Station 1
-            List<Firestation> stations = FirestationFactory.createFirestations(3, Optional.of(1));
+            List<Firestation> stations = FirestationFactory.createFirestations(3, 1);
             List<Person> inhabitants = new ArrayList<>();
 
             // First address : 2 adults, 1 children
@@ -92,7 +95,7 @@ class AlertsServiceImplTest {
                     .isNull();
 
             //Four different addresses under Station 1
-            List<Firestation> stations = FirestationFactory.createFirestations(4, Optional.of(1));
+            List<Firestation> stations = FirestationFactory.createFirestations(4, 1);
 
             doReturn(stations).when(mockFirestationDAO).getFirestations(1);
             doThrow(new NoSuchDataException()).when(mockPersonDAO).getFromAddress(any(List.class), anyBoolean());
@@ -104,7 +107,7 @@ class AlertsServiceImplTest {
         @Test
         void Given_NoMedicalRecordExceptionThrown_When_getURLFirestationDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             //Four different addresses under Station 1
-            List<Firestation> stations = FirestationFactory.createFirestations(4, Optional.of(1));
+            List<Firestation> stations = FirestationFactory.createFirestations(4, 1);
 
             doReturn(stations).when(mockFirestationDAO).getFirestations(1);
             doThrow(new NoMedicalRecordException("John", "Smith")).when(mockPersonDAO).getFromAddress(any(List.class), anyBoolean());
@@ -202,7 +205,7 @@ class AlertsServiceImplTest {
         @Test
         void Given_stationNumber1_When_getURLPhoneAlertDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             //Three different addresses under Station 1
-            List<Firestation> stations = FirestationFactory.createFirestations(3, Optional.of(1));
+            List<Firestation> stations = FirestationFactory.createFirestations(3, 1);
             List<Person> inhabitants = new ArrayList<>();
 
             inhabitants.addAll(PersonFactory.createAdults(2, null, null));
@@ -236,7 +239,7 @@ class AlertsServiceImplTest {
             assertThat(alertsService.getURLPhoneAlertDTO(1)) // NoSuchDataException on Firestation request
                     .isNull();
 
-            List<Firestation> stations = FirestationFactory.createFirestations(1, Optional.of(1));
+            List<Firestation> stations = FirestationFactory.createFirestations(1, 1);
 
             doReturn(stations).when(mockFirestationDAO).getFirestations(1);
             doThrow(new NoSuchDataException()).when(mockPersonDAO).getFromAddress(any(List.class), anyBoolean());
@@ -326,8 +329,8 @@ class AlertsServiceImplTest {
         @Test
         void Given_stationNumberList_When_getURLFloodDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
 
-            List<Firestation> firestations1 = FirestationFactory.createFirestations(1, Optional.of(1));
-            List<Firestation> firestations2 = FirestationFactory.createFirestations(1, Optional.of(2));
+            List<Firestation> firestations1 = FirestationFactory.createFirestations(1, 1);
+            List<Firestation> firestations2 = FirestationFactory.createFirestations(1, 2);
 
             List<Person> persons1 = new ArrayList<>();
             persons1.addAll(PersonFactory.createAdults(2, null, null));
@@ -376,8 +379,8 @@ class AlertsServiceImplTest {
             assertThat(alertsService.getURLFloodDTO(List.of(1, 2))) // NoSuchDataException on Firestation request
                     .isNull();
 
-            List<Firestation> firestations1 = FirestationFactory.createFirestations(1, Optional.of(1));
-            List<Firestation> firestations2 = FirestationFactory.createFirestations(1, Optional.of(2));
+            List<Firestation> firestations1 = FirestationFactory.createFirestations(1, 1);
+            List<Firestation> firestations2 = FirestationFactory.createFirestations(1, 2);
 
             doReturn(firestations1).when(mockFirestationDAO).getFirestations(1);
             doReturn(firestations2).when(mockFirestationDAO).getFirestations(2);
@@ -390,8 +393,8 @@ class AlertsServiceImplTest {
 
         @Test
         void Given_NoMedicalRecordExceptionThrown_When_getURLFloodDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
-            List<Firestation> firestations1 = FirestationFactory.createFirestations(1, Optional.of(1));
-            List<Firestation> firestations2 = FirestationFactory.createFirestations(1, Optional.of(2));
+            List<Firestation> firestations1 = FirestationFactory.createFirestations(1, 1);
+            List<Firestation> firestations2 = FirestationFactory.createFirestations(1, 2);
 
             doReturn(firestations1).when(mockFirestationDAO).getFirestations(1);
             doReturn(firestations2).when(mockFirestationDAO).getFirestations(2);

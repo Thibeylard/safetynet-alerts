@@ -1,11 +1,11 @@
 package com.safetynet.safetynetAlerts.factories;
 
 import com.safetynet.safetynetAlerts.models.Firestation;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.safetynet.safetynetAlerts.factories.UtilsFactory.assignAddress;
 import static com.safetynet.safetynetAlerts.factories.UtilsFactory.getRandom;
@@ -19,7 +19,7 @@ public class FirestationFactory {
      * @return new Firestation
      */
     public static Firestation createFirestation() {
-        return createFirestation(Optional.empty(), Optional.empty());
+        return createFirestation(null, null);
     }
 
     /**
@@ -29,17 +29,17 @@ public class FirestationFactory {
      * @param station Firestation attribute value (Optional)
      * @return new Firestation
      */
-    public static Firestation createFirestation(Optional<String> address,
-                                                Optional<Integer> station) {
-        if (address.isEmpty()) {
-            address = Optional.of(assignAddress().getName());
+    public static Firestation createFirestation(@Nullable String address,
+                                                @Nullable Integer station) {
+        if (address == null) {
+            address = assignAddress().getName();
         }
 
-        if (station.isEmpty()) {
-            station = Optional.of(getRandom().nextInt(10) + 1);
+        if (station == null) {
+            station = getRandom().nextInt(10) + 1;
         }
 
-        return new Firestation(address.get(), station.get());
+        return new Firestation(address, station);
     }
 
     /**
@@ -49,11 +49,11 @@ public class FirestationFactory {
      * @param station Firestation attribute value for all Firestations (Optional)
      * @return new Firestation List
      */
-    public static List<Firestation> createFirestations(int count, Optional<Integer> station) {
+    public static List<Firestation> createFirestations(int count, @Nullable Integer station) {
         List<Firestation> firestations = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            firestations.add(createFirestation(Optional.empty(), station));
+            firestations.add(createFirestation(null, station));
         }
 
         return firestations;

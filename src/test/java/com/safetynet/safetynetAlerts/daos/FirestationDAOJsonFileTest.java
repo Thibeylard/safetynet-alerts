@@ -17,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -204,7 +203,7 @@ class FirestationDAOJsonFileTest {
         class getFirestationsTestMethods {
             @Test
             void Given_validParameters_When_getFirestations_Then_returnFirestation() throws IOException, NoSuchDataException {
-                List<Firestation> firestations = FirestationFactory.createFirestations(2, Optional.empty());
+                List<Firestation> firestations = FirestationFactory.createFirestations(2, null);
 
                 doReturn(firestations).when(mockJsonFileDatabase)
                         .getFirestations(anyInt());

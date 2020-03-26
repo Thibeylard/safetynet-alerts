@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -206,7 +205,7 @@ class JsonFileDatabaseTest {
                 Firestation firestationToDelete1 = FirestationFactory
                         .createFirestation();
                 Firestation firestationToDelete2 = FirestationFactory
-                        .createFirestation(Optional.of(firestationToDelete1.getAddress()), Optional.empty());
+                        .createFirestation(firestationToDelete1.getAddress(), null);
 
                 firestations.add(firestationToDelete1);
                 firestations.add(firestationToDelete2);
@@ -221,8 +220,8 @@ class JsonFileDatabaseTest {
 
             @Test
             void Given_firestationParameters_When_deleteFirestationByNumber_Then_noMoreFirestationWithNumber() throws Exception {
-                Firestation firestationToDelete = FirestationFactory.createFirestation(Optional.empty(), Optional.of(4));
-                Firestation firestationToKeep = FirestationFactory.createFirestation(Optional.empty(), Optional.of(3));
+                Firestation firestationToDelete = FirestationFactory.createFirestation(null, 4);
+                Firestation firestationToKeep = FirestationFactory.createFirestation(null, 3);
 
                 firestations.add(firestationToDelete);
                 firestations.add(firestationToKeep);
@@ -260,6 +259,60 @@ class JsonFileDatabaseTest {
                 firestations.add(firestationToDelete);
                 assertThrows(IOException.class,
                         () -> jsonFileDatabase.deleteFirestation(firestationToDelete.getStation()));
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ GET
+        //    -------------------------------------------------------------------------------------
+        @Nested
+        @DisplayName("get()")
+        class getTestMethods {
+
+            @Test
+            void Given_matchingFirestationParams_When_getFirestationByAddress_Then_returnFirestation() throws Exception {
+                Firestation firestation = FirestationFactory.createFirestation();
+                Firestation firestation2 = FirestationFactory.createFirestation();
+                firestations.add(firestation);
+                firestations.add(firestation2);
+
+                assertThat(jsonFileDatabase.getFirestation(firestation.getAddress()))
+                        .isNotNull()
+                        .isEqualToComparingFieldByField(firestation);
+            }
+
+            @Test
+            void Given_noMatchingFirestationParams_When_getFirestationByAddress_Then_throwNoSuchDataException() throws Exception {
+                Firestation firestation = FirestationFactory.createFirestation();
+                Firestation firestation2 = FirestationFactory.createFirestation();
+                firestations.add(firestation);
+                firestations.add(firestation2);
+
+                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getFirestation("unreferenced address"));
+            }
+
+            @Test
+            void Given_matchingFirestationParams_When_getFirestationsByNumber_Then_returnFirestations() throws Exception {
+                Firestation firestation = FirestationFactory.createFirestation(null, 2);
+                Firestation firestation2 = FirestationFactory.createFirestation(null, 2);
+                Firestation firestation3 = FirestationFactory.createFirestation(null, 3);
+                Firestation firestation4 = FirestationFactory.createFirestation(null, 4);
+                firestations.addAll(List.of(firestation, firestation2, firestation3, firestation4));
+
+                assertThat(jsonFileDatabase.getFirestations(2))
+                        .isNotNull()
+                        .usingRecursiveFieldByFieldElementComparator()
+                        .contains(firestation, firestation2);
+            }
+
+            @Test
+            void Given_noMatchingFirestationParams_When_getFirestationsByNumber_Then_throwNoSuchDataException() throws Exception {
+                Firestation firestation = FirestationFactory.createFirestation(null, 2);
+                Firestation firestation2 = FirestationFactory.createFirestation(null, 2);
+                Firestation firestation3 = FirestationFactory.createFirestation(null, 3);
+                Firestation firestation4 = FirestationFactory.createFirestation(null, 4);
+                firestations.addAll(List.of(firestation, firestation2, firestation3, firestation4));
+
+                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getFirestations(1));
             }
         }
     }
