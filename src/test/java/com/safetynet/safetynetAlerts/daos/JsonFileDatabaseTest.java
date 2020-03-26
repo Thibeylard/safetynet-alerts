@@ -269,7 +269,7 @@ class JsonFileDatabaseTest {
         class getTestMethods {
 
             @Test
-            void Given_matchingFirestationParams_When_getFirestationByAddress_Then_returnFirestation() throws Exception {
+            void Given_matchingAddress_When_getFirestation_Then_returnFirestation() throws Exception {
                 Firestation firestation = FirestationFactory.createFirestation();
                 Firestation firestation2 = FirestationFactory.createFirestation();
                 firestations.add(firestation);
@@ -281,7 +281,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_noMatchingFirestationParams_When_getFirestationByAddress_Then_throwNoSuchDataException() throws Exception {
+            void Given_notMatchingAddress_When_getFirestation_Then_throwNoSuchDataException() throws Exception {
                 Firestation firestation = FirestationFactory.createFirestation();
                 Firestation firestation2 = FirestationFactory.createFirestation();
                 firestations.add(firestation);
@@ -291,7 +291,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_matchingFirestationParams_When_getFirestationsByNumber_Then_returnFirestations() throws Exception {
+            void Given_matchingStationNumber_When_getFirestations_Then_returnFirestationList() throws Exception {
                 Firestation firestation = FirestationFactory.createFirestation(null, 2);
                 Firestation firestation2 = FirestationFactory.createFirestation(null, 2);
                 Firestation firestation3 = FirestationFactory.createFirestation(null, 3);
@@ -305,7 +305,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_noMatchingFirestationParams_When_getFirestationsByNumber_Then_throwNoSuchDataException() throws Exception {
+            void Given_notMatchingStationNumber_When_getFirestations_Then_throwNoSuchDataException() throws Exception {
                 Firestation firestation = FirestationFactory.createFirestation(null, 2);
                 Firestation firestation2 = FirestationFactory.createFirestation(null, 2);
                 Firestation firestation3 = FirestationFactory.createFirestation(null, 3);
@@ -531,6 +531,41 @@ class JsonFileDatabaseTest {
                         () -> jsonFileDatabase.deleteMedicalRecord(
                                 medicalRecordToDelete.getFirstName(),
                                 medicalRecordToDelete.getLastName()));
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ GET
+        //    -------------------------------------------------------------------------------------
+        @Nested
+        @DisplayName("get()")
+        class getTestMethods {
+
+            @Test
+            void Given_matchingName_When_getMedicalRecord_Then_returnMedicalRecord() throws Exception {
+                MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(false);
+                MedicalRecord medicalRecord2 = MedicalRecordFactory.createMedicalRecord(false);
+                MedicalRecord medicalRecord3 = MedicalRecordFactory.createMedicalRecord(true);
+
+                medicalRecords.addAll(List.of(medicalRecord, medicalRecord2, medicalRecord3));
+
+                assertThat(jsonFileDatabase.getMedicalRecord(medicalRecord.getFirstName(), medicalRecord.getLastName()))
+                        .isNotNull()
+                        .isEqualToComparingFieldByField(medicalRecord);
+
+                assertThat(jsonFileDatabase.getMedicalRecord(medicalRecord3.getFirstName(), medicalRecord3.getLastName()))
+                        .isNotNull()
+                        .isEqualToComparingFieldByField(medicalRecord3);
+            }
+
+            @Test
+            void Given_notMatchingName_When_getMedicalRecord_Then_throwNoSuchDataException() throws Exception {
+                MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(false);
+                MedicalRecord medicalRecord2 = MedicalRecordFactory.createMedicalRecord(false);
+                MedicalRecord medicalRecord3 = MedicalRecordFactory.createMedicalRecord(true);
+
+                medicalRecords.addAll(List.of(medicalRecord, medicalRecord3));
+
+                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getMedicalRecord(medicalRecord2.getFirstName(), medicalRecord2.getLastName()));
             }
         }
     }
