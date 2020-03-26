@@ -1,7 +1,6 @@
 package com.safetynet.safetynetAlerts.services;
 
 import com.safetynet.safetynetAlerts.daos.FirestationDAO;
-import com.safetynet.safetynetAlerts.daos.MedicalRecordDAO;
 import com.safetynet.safetynetAlerts.daos.PersonDAO;
 import com.safetynet.safetynetAlerts.dtos.*;
 import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
@@ -38,9 +37,6 @@ class AlertsServiceImplTest {
 
     @MockBean
     private FirestationDAO mockFirestationDAO;
-
-    @MockBean
-    private MedicalRecordDAO mockMedicalRecordDAO;
 
     @MockBean
     private PersonDAO mockPersonDAO;
@@ -103,6 +99,17 @@ class AlertsServiceImplTest {
 
             assertThat(alertsService.getURLFirestationDTO(1)) // NoSuchDataException on Person request
                     .isNull();
+        }
+
+        @Test
+        void Given_NoMedicalRecordExceptionThrown_When_getURLFirestationDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            //Four different addresses under Station 1
+            List<Firestation> stations = FirestationFactory.createFirestations(4, Optional.of(1));
+
+            doReturn(stations).when(mockFirestationDAO).getFirestations(1);
+            doThrow(new NoMedicalRecordException("John", "Smith")).when(mockPersonDAO).getFromAddress(any(List.class), anyBoolean());
+
+            assertThrows(NoMedicalRecordException.class, () -> alertsService.getURLFirestationDTO(1));
         }
 
         @Test
@@ -169,6 +176,13 @@ class AlertsServiceImplTest {
                     .isNotNull()
                     .usingRecursiveComparison()
                     .isEqualTo(responseDTO);
+        }
+
+        @Test
+        void Given_NoMedicalRecordExceptionThrown_When_getURLChildAlertDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            doThrow(new NoMedicalRecordException("John", "Smith")).when(mockPersonDAO).getFromAddress(Addresses.APPLEGATE.getName(), true);
+
+            assertThrows(NoMedicalRecordException.class, () -> alertsService.getURLChildAlertDTO(Addresses.APPLEGATE.getName()));
         }
 
         @Test
@@ -276,13 +290,23 @@ class AlertsServiceImplTest {
             assertThat(alertsService.getURLFireDTO(Addresses.BRICKYARD.getName())) // NoSuchDataException on Firestation request
                     .isNull();
 
-            List<Firestation> stations = FirestationFactory.createFirestations(1, Optional.of(1));
+            Firestation station = FirestationFactory.createFirestation();
 
-            doReturn(stations).when(mockFirestationDAO).getFirestations(1);
+            doReturn(station).when(mockFirestationDAO).getFirestation(anyString());
             doThrow(new NoSuchDataException()).when(mockPersonDAO).getFromAddress(anyString(), anyBoolean());
 
             assertThat(alertsService.getURLFireDTO(Addresses.BRICKYARD.getName())) // NoSuchDataException on Person request
                     .isNull();
+        }
+
+        @Test
+        void Given_NoMedicalRecordExceptionThrown_When_getURLFireDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            Firestation station = FirestationFactory.createFirestation();
+
+            doReturn(station).when(mockFirestationDAO).getFirestation(anyString());
+            doThrow(new NoMedicalRecordException("John", "Smith")).when(mockPersonDAO).getFromAddress(anyString(), anyBoolean());
+
+            assertThrows(NoMedicalRecordException.class, () -> alertsService.getURLFireDTO(Addresses.BRICKYARD.getName()));
         }
 
         @Test
@@ -365,6 +389,19 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        void Given_NoMedicalRecordExceptionThrown_When_getURLFloodDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            List<Firestation> firestations1 = FirestationFactory.createFirestations(1, Optional.of(1));
+            List<Firestation> firestations2 = FirestationFactory.createFirestations(1, Optional.of(2));
+
+            doReturn(firestations1).when(mockFirestationDAO).getFirestations(1);
+            doReturn(firestations2).when(mockFirestationDAO).getFirestations(2);
+
+            doThrow(new NoMedicalRecordException("John", "Smith")).when(mockPersonDAO).getFromAddress(anyString(), anyBoolean());
+
+            assertThrows(NoMedicalRecordException.class, () -> alertsService.getURLFloodDTO(List.of(1, 2)));
+        }
+
+        @Test
         void Given_IOExceptionThrown_When_getURLFloodDTO_Then_throwIOException() throws IOException, NoSuchDataException {
             doThrow(new IOException()).when(mockFirestationDAO).getFirestations(anyInt());
 
@@ -417,6 +454,19 @@ class AlertsServiceImplTest {
 
             assertThat(alertsService.getURLPersonInfoDTO(target.getFirstName(), target.getLastName()))
                     .isNull();
+        }
+
+        @Test
+        void Given_NoMedicalRecordExceptionThrown_When_getURLPersonInfoDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
+            Person target = PersonFactory.createPerson(
+                    "John",
+                    "Smith",
+                    null,
+                    null);
+
+            doThrow(new NoMedicalRecordException(target.getFirstName(), target.getLastName())).when(mockPersonDAO).getFromName(target.getFirstName(), target.getLastName(), true);
+
+            assertThrows(NoMedicalRecordException.class, () -> alertsService.getURLPersonInfoDTO(target.getFirstName(), target.getLastName()));
         }
 
         @Test
