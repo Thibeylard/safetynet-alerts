@@ -126,15 +126,24 @@ public class PersonFactory {
      * Return a list of randomly generated Persons with MedicalRecord with adult birthdate.
      *
      * @param count           number of Person to generate
-     * @param lastName        common name String for all Persons
-     * @param completeAddress common Addresses enum value for all Persons
+     * @param lastName        common name String for all Persons.
+     * @param completeAddress common Addresses enum value for all Persons.
      * @return new Person List.
      */
     public static List<Person> createAdults(final int count,
-                                            @Nullable final String lastName,
-                                            @Nullable final Addresses completeAddress) {
+                                            @Nullable String lastName,
+                                            @Nullable Addresses completeAddress) {
         List<Person> persons = new ArrayList<>();
         String firstName;
+
+        if (lastName == null) {
+            lastName = generateName();
+        }
+
+        if (completeAddress == null) {
+            completeAddress = assignAddress();
+        }
+
         for (int i = 0; i < count; i++) {
             firstName = generateName();
             persons.add(createPerson(

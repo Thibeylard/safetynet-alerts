@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.safetynetAlerts.dtos.JsonFileDatabaseDTO;
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
+import com.safetynet.safetynetAlerts.exceptions.NoMedicalRecordException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.factories.FirestationFactory;
 import com.safetynet.safetynetAlerts.factories.MedicalRecordFactory;
@@ -821,6 +822,189 @@ class JsonFileDatabaseTest {
                         () -> jsonFileDatabase.deletePerson(
                                 personToDelete.getFirstName(),
                                 personToDelete.getLastName()));
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ GET
+        //    -------------------------------------------------------------------------------------
+        @Nested
+        @DisplayName("get()")
+        class getTestMethods {
+
+            @Test
+            void Given_matchingName_When_getPerson_Then_returnPerson() throws Exception {
+                Person person = PersonFactory.createPerson();
+                Person person2 = PersonFactory.createPerson();
+                Person person3 = PersonFactory.createPerson();
+
+                persons.addAll(List.of(person, person2, person3));
+
+                assertThat(jsonFileDatabase.getPerson(person.getFirstName(), person.getLastName(), false))
+                        .isNotNull()
+                        .isEqualToComparingFieldByField(person);
+
+                assertThat(jsonFileDatabase.getPerson(person3.getFirstName(), person3.getLastName(), false))
+                        .isNotNull()
+                        .isEqualToComparingFieldByField(person3);
+            }
+
+            @Test
+            void Given_notMatchingName_When_getPerson_Then_throwNoSuchDataException() throws Exception {
+                Person person = PersonFactory.createPerson();
+                Person person2 = PersonFactory.createPerson();
+                Person person3 = PersonFactory.createPerson();
+
+                persons.addAll(List.of(person, person3));
+
+                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPerson(person2.getFirstName(), person2.getLastName(), false));
+            }
+
+            @Test
+            void Given_matchingNameWithMedicalRecord_When_getPerson_Then_returnPerson() throws Exception {
+                Person person = PersonFactory.createAdults(1, null, null).get(0);
+                Person person2 = PersonFactory.createPerson();
+                Person person3 = PersonFactory.createPerson();
+
+                persons.addAll(List.of(person, person3));
+                medicalRecords.add(person.getMedicalRecord()
+                        .orElseThrow(() -> new NoMedicalRecordException(person.getFirstName(), person.getLastName())));
+
+                assertThat(jsonFileDatabase.getPerson(person.getFirstName(), person.getLastName(), true))
+                        .isNotNull()
+                        .isEqualToComparingFieldByField(person);
+            }
+
+            @Test
+            void Given_matchingNameButNoMedicalRecord_When_getPerson_Then_throwNoMedicalRecordException() throws Exception {
+                Person person = PersonFactory.createPerson();
+                Person person2 = PersonFactory.createPerson();
+                Person person3 = PersonFactory.createPerson();
+
+                persons.addAll(List.of(person, person3));
+
+                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPerson(person2.getFirstName(), person2.getLastName(), true));
+
+            }
+
+            @Test
+            void Given_matchingAddress_When_getPersons_Then_returnPersonList() throws Exception {
+                List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE);
+                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
+
+                persons.addAll(persons1);
+                persons.addAll(persons2);
+
+                assertThat(jsonFileDatabase.getPersonFromAddress(Addresses.APPLEGATE.getName(), false))
+                        .isNotNull()
+                        .usingRecursiveFieldByFieldElementComparator()
+                        .containsAll(persons1);
+            }
+
+            @Test
+            void Given_notMatchingAddress_When_getPersons_Then_throwNoSuchDataException() throws Exception {
+                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
+                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE);
+
+                persons.addAll(persons2);
+                persons.addAll(persons3);
+
+                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPersonFromAddress(Addresses.MARCONI.getName(), false));
+
+            }
+
+            @Test
+            void Given_matchingAddressWithMedicalRecord_When_getPersons_Then_returnPersonList() throws Exception {
+                List<Person> persons1 = PersonFactory.createAdults(2, null, Addresses.APPLEGATE);
+                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
+                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE);
+
+                persons.addAll(persons1);
+                persons.addAll(persons2);
+                persons.addAll(persons3);
+
+                medicalRecords.add(persons1.get(0).getMedicalRecord()
+                        .orElseThrow(() -> new NoMedicalRecordException(persons1.get(0).getFirstName(), persons1.get(0).getLastName())));
+                medicalRecords.add(persons1.get(1).getMedicalRecord()
+                        .orElseThrow(() -> new NoMedicalRecordException(persons1.get(1).getFirstName(), persons1.get(1).getLastName())));
+
+                assertThat(jsonFileDatabase.getPersonFromAddress(Addresses.APPLEGATE.getName(), true))
+                        .isNotNull()
+                        .usingRecursiveFieldByFieldElementComparator()
+                        .containsAll(persons1);
+            }
+
+            @Test
+            void Given_matchingAddressButNoMedicalRecord_When_getPersons_Then_throwNoMedicalRecordException() throws Exception {
+                List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE);
+                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
+                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE);
+
+                persons.addAll(persons1);
+                persons.addAll(persons2);
+                persons.addAll(persons3);
+
+                assertThrows(NoMedicalRecordException.class, () -> jsonFileDatabase.getPersonFromAddress(Addresses.APPLEGATE.getName(), true));
+            }
+
+            @Test
+            void Given_matchingCity_When_getPersons_Then_returnPersonList() throws Exception {
+                List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE); // OakPark City
+                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE); // OakPark City
+
+                persons.addAll(persons1);
+                persons.addAll(persons2);
+
+                assertThat(jsonFileDatabase.getPersonFromCity(Addresses.APPLEGATE.getCity().getName(), false))
+                        .isNotNull()
+                        .usingRecursiveFieldByFieldElementComparator()
+                        .containsAll(persons);
+            }
+
+            @Test
+            void Given_notMatchingCity_When_getPersons_Then_throwNoSuchDataException() throws Exception {
+                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE); // OakPark City
+                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE); // Waltham City
+
+                persons.addAll(persons2);
+                persons.addAll(persons3);
+
+                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPersonFromCity(Addresses.MARCONI.getCity().getName(), false));
+
+            }
+
+            @Test
+            void Given_matchingCityWithMedicalRecord_When_getPersons_Then_returnPersonList() throws Exception {
+                List<Person> persons1 = PersonFactory.createAdults(2, null, Addresses.APPLEGATE); // OakPark City
+                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.HERITAGE); // Waltham City
+                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE); // Waltham City
+
+                persons.addAll(persons1);
+                persons.addAll(persons2);
+                persons.addAll(persons3);
+
+                medicalRecords.add(persons1.get(0).getMedicalRecord()
+                        .orElseThrow(() -> new NoMedicalRecordException(persons1.get(0).getFirstName(), persons1.get(0).getLastName())));
+                medicalRecords.add(persons1.get(1).getMedicalRecord()
+                        .orElseThrow(() -> new NoMedicalRecordException(persons1.get(1).getFirstName(), persons1.get(1).getLastName())));
+
+                assertThat(jsonFileDatabase.getPersonFromCity(Addresses.APPLEGATE.getCity().getName(), true))
+                        .isNotNull()
+                        .usingRecursiveFieldByFieldElementComparator()
+                        .containsAll(persons1);
+            }
+
+            @Test
+            void Given_matchingCityButNoMedicalRecord_When_getPersons_Then_throwNoMedicalRecordException() throws Exception {
+                List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE); // OakPark City
+                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.HERITAGE); // Waltham City
+                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE); // Waltham City
+
+                persons.addAll(persons1);
+                persons.addAll(persons2);
+                persons.addAll(persons3);
+
+                assertThrows(NoMedicalRecordException.class, () -> jsonFileDatabase.getPersonFromCity(Addresses.APPLEGATE.getCity().getName(), true));
+
             }
         }
     }

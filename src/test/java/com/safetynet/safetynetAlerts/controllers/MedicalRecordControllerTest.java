@@ -350,4 +350,5 @@ class MedicalRecordControllerTest {
         }
     }
 
+    //TODO GetMethod tests
 }

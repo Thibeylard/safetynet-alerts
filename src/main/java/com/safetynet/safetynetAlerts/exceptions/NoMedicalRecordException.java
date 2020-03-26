@@ -12,7 +12,8 @@ public class NoMedicalRecordException extends Exception {
 
     @Override
     public String toString() {
-        return "NoMedicalRecordException : Person has no assigned medical record to be accessed";
+        return "NoMedicalRecordException :" + this.personFirstName +
+                " " + this.personLastName + " Person has no assigned medical record to be accessed";
     }
 
     public String getPersonFirstName() {
