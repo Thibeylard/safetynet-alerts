@@ -20,11 +20,9 @@ import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -70,33 +68,6 @@ class AlertsControllerTest {
                     .params(params)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNoContent());
-        }
-
-        @Test
-        void Given_missingParameter_When_getURLFirestationDTO_Then_statusIsBadRequest() throws Exception {
-            params.add("statioNumber", "2"); // mistyped parameter
-
-            doReturn(null)
-                    .when(mockAlertsService).getURLFirestationDTO(2);
-
-            mvcMock.perform(get("/firestation")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-        }
-
-        @Test
-        void Given_mismatchParameter_When_getURLFirestationDTO_Then_statusIsBadRequest() throws Exception {
-            params.add("stationNumber", "someString"); // String instead of int
-
-            doReturn(null)
-                    .when(mockAlertsService).getURLFirestationDTO(2);
-
-            mvcMock.perform(get("/firestation")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
         }
 
         @Test
@@ -160,19 +131,6 @@ class AlertsControllerTest {
         }
 
         @Test
-        void Given_missingParameter_When_getURLChildAlertDTO_Then_statusIsBadRequest() throws Exception {
-            params.add("addres", "someAddress"); // mistyped parameter
-
-            doReturn(null)
-                    .when(mockAlertsService).getURLChildAlertDTO(params.getFirst("addres"));
-
-            mvcMock.perform(get("/childAlert")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-        }
-
-        @Test
         void Given_NoMedicalRecordExceptionThrown_When_getURLChildAlertDTO_Then_statusIsNotFound() throws Exception {
             params.add("address", "someAddress");
 
@@ -231,30 +189,6 @@ class AlertsControllerTest {
                     .andExpect(status().isNoContent());
         }
 
-        @Test
-        void Given_missingParameter_When_getURLPhoneAlertDTO_Then_statusIsBadRequest() throws Exception {
-            params.add("firestatio", "2"); // mistyped parameter
-
-            doReturn(null)
-                    .when(mockAlertsService).getURLPhoneAlertDTO(2);
-
-            mvcMock.perform(get("/phoneAlert")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-        }
-
-        @Test
-        void Given_mismatchParameter_When_getURLPhoneAlertDTO_Then_statusIsBadRequest() throws Exception {
-            params.add("firestation", "someString"); // String instead of int
-
-            doReturn(null)
-                    .when(mockAlertsService).getURLPhoneAlertDTO(2);
-            mvcMock.perform(get("/phoneAlert")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-        }
 
         @Test
         void Given_IOExceptionThrown_When_getURLPhoneAlertDTO_Then_statusIsServerError() throws Exception {
@@ -298,19 +232,6 @@ class AlertsControllerTest {
                     .params(params)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNoContent());
-        }
-
-        @Test
-        void Given_missingParameter_When_getURLFireDTO_Then_statusIsBadRequest() throws Exception {
-            params.add("addres", "someAddress"); // mistyped parameter
-
-            doReturn(null)
-                    .when(mockAlertsService).getURLFireDTO(params.getFirst("addres"));
-
-            mvcMock.perform(get("/fire")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -372,32 +293,6 @@ class AlertsControllerTest {
                     .params(params)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNoContent());
-        }
-
-        @Test
-        void Given_missingParameter_When_getURLFloodDTO_Then_statusIsBadRequest() throws Exception {
-            params.add("station", "2"); // mistyped parameter
-
-            doReturn(null)
-                    .when(mockAlertsService).getURLFloodDTO(Collections.singletonList(2));
-
-            mvcMock.perform(get("/flood/stations")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-        }
-
-        @Test
-        void Given_mismatchParameter_When_getURLFloodDTO_Then_statusIsBadRequest() throws Exception {
-            params.add("stations", "someString"); // String instead of int
-
-            doReturn(null)
-                    .when(mockAlertsService).getURLFloodDTO(Collections.singletonList(anyInt()));
-
-            mvcMock.perform(get("/flood/stations")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -472,21 +367,6 @@ class AlertsControllerTest {
         }
 
         @Test
-        void Given_missingParameter_When_getURLPersonInfoDTO_Then_statusIsBadRequest() throws Exception {
-            params.add("firstName", "someFirstName");
-            // lastName parameter is missing
-
-            doReturn(null)
-                    .when(mockAlertsService)
-                    .getURLPersonInfoDTO(params.getFirst("firstName"), params.getFirst("lastName"));
-
-            mvcMock.perform(get("/personInfo")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-        }
-
-        @Test
         void Given_NoMedicalRecordExceptionThrown_When_getURLPersonInfoDTO_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -545,19 +425,6 @@ class AlertsControllerTest {
                     .params(params)
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNoContent());
-        }
-
-
-        @Test
-        void Given_missingParameter_When_getURLCommunityEmailDTO_Then_statusIsBadRequest() throws Exception {
-            // no params
-            doReturn(new URLCommunityEmailDTO().withPersonsEmails(new ArrayList<Person>()))
-                    .when(mockAlertsService).getURLCommunityEmailDTO(params.getFirst("city"));
-
-            mvcMock.perform(get("/communityEmail")
-                    .params(params)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
         }
 
         @Test

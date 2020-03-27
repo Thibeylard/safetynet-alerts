@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-// TODO La sérialisation de la liste ne fonctionne pas correctement. Se renseigner pour écrire chaque élément indépendamment et non pas la liste comme un unique objet
 @JsonPropertyOrder({"firstName", "lastName", "birthDate", "medications", "allergies"})
 public class MedicalRecord {
 

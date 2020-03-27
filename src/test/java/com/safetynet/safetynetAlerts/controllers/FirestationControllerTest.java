@@ -2,6 +2,8 @@ package com.safetynet.safetynetAlerts.controllers;
 
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
+import com.safetynet.safetynetAlerts.factories.FirestationFactory;
+import com.safetynet.safetynetAlerts.models.Firestation;
 import com.safetynet.safetynetAlerts.services.FirestationService;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
@@ -65,39 +67,6 @@ class FirestationControllerTest {
             }
         }
 
-        //    ------------------------------------------------------------------------------ bad request
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("add_MissingParameter")
-        void Given_missingParameter_When_add_Then_statusIsBadRequest() {
-            params.add("stationNumber", "2");
-            // No required parameter address
-            try {
-                mvcMock.perform(post("/firestation")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("add_MismatchParameter")
-        void Given_mismatchParameter_When_add_Then_statusIsBadRequest() {
-            params.add("stationNumber", "someString");
-            params.add("address", "someAddress");
-            try {
-                mvcMock.perform(post("/firestation")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
         //    ------------------------------------------------------------------------------ forbidden
         @Test
         @Tag("ErrorStatus")
@@ -148,7 +117,7 @@ class FirestationControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("update_Success")
-        void Given_validRequest_When_update_Then_statusIsNoContent() throws Exception {
+        void Given_validRequest_When_update_Then_statusIsOK() throws Exception {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
             doReturn(true).when(mockFirestationService)
@@ -158,38 +127,6 @@ class FirestationControllerTest {
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-        //    ------------------------------------------------------------------------------ bad request
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("update_MissingParameter")
-        void Given_missingParameter_When_update_Then_statusIsBadRequest() {
-            params.add("stationNumber", "2");
-            try {
-                mvcMock.perform(put("/firestation")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("update_MismatchParameter")
-        void Given_mismatchParameter_When_update_Then_statusIsBadRequest() {
-            params.add("stationNumber", "someString");
-            params.add("address", "someAddress");
-            try {
-                mvcMock.perform(put("/firestation")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -245,7 +182,7 @@ class FirestationControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("deleteByName_Success")
-        void Given_validRequest_When_deleteByNumber_Then_statusIsNoContent() throws Exception {
+        void Given_validRequest_When_deleteByNumber_Then_statusIsOK() throws Exception {
             params.add("stationNumber", "2");
             doReturn(true).when(mockFirestationService)
                     .delete(anyInt());
@@ -262,7 +199,7 @@ class FirestationControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("deleteByAddress_Success")
-        void Given_validRequest_When_deleteByAddress_Then_statusIsNoContent() throws Exception {
+        void Given_validRequest_When_deleteByAddress_Then_statusIsOK() throws Exception {
             params.add("address", "someAddress");
             doReturn(true).when(mockFirestationService)
                     .delete(anyString());
@@ -271,38 +208,6 @@ class FirestationControllerTest {
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-
-        //    ------------------------------------------------------------------------------ bad request
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("delete_MissingParameter")
-        void Given_missingParameter_When_deleteByNumber_Then_statusIsBadRequest() {
-            // No params
-            try {
-                mvcMock.perform(delete("/firestation")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("deleteByNumber_MismatchParameter")
-        void Given_mismatchParameter_When_deleteByNumber_Then_statusIsBadRequest() {
-            params.add("stationNumber", "someString"); // stationNumber requires int
-            try {
-                mvcMock.perform(delete("/firestation")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -383,5 +288,67 @@ class FirestationControllerTest {
         }
     }
 
-    //TODO GetMethod tests
+    //    ------------------------------------------------------------------------------ GET
+    //    -------------------------------------------------------------------------------------
+    @Nested
+    @DisplayName("get()")
+    class FirestationGetMethodTests {
+        //    ------------------------------------------------------------------------------ success
+        @Test
+        @Tag("SuccessStatus")
+        @DisplayName("get_Success")
+        void Given_validRequest_When_get_Then_statusIsOk() throws Exception {
+            Firestation response = FirestationFactory.createFirestation();
+            params.add("address", "someAddress");
+            doReturn(response).when(mockFirestationService)
+                    .get(anyString());
+            try {
+                mvcMock.perform(get("/firestation")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ not found
+        @Test
+        @Tag("ErrorStatus")
+        @DisplayName("get_NotFound")
+        void Given_NoSuchDataException_When_get_Then_statusIsNotFound() throws Exception {
+            params.add("address", "someAddress");
+            doThrow(new NoSuchDataException())
+                    .when(mockFirestationService)
+                    .get(anyString());
+            try {
+                mvcMock.perform(get("/firestation")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ErrorStatus")
+        @DisplayName("get_ServerError")
+        void Given_IOException_When_get_Then_statusIsInternalServerError() throws Exception {
+            params.add("address", "someAddress");
+            doThrow(new IOException())
+                    .when(mockFirestationService)
+                    .get(anyString());
+            try {
+                mvcMock.perform(get("/firestation")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isInternalServerError());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+    }
 }

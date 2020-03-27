@@ -2,6 +2,8 @@ package com.safetynet.safetynetAlerts.controllers;
 
 import com.safetynet.safetynetAlerts.exceptions.IllegalDataOverrideException;
 import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
+import com.safetynet.safetynetAlerts.factories.PersonFactory;
+import com.safetynet.safetynetAlerts.models.Person;
 import com.safetynet.safetynetAlerts.services.PersonService;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
@@ -69,28 +71,6 @@ class PersonControllerTest {
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isCreated());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-        //    ------------------------------------------------------------------------------ bad request
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("add_MissingParameter")
-        void Given_missingParameter_When_add_Then_statusIsBadRequest() throws Exception {
-            params.add("firstName", "someFirstName");
-            params.add("lastName", "someLastName");
-            params.add("address", "someAddress");
-            params.add("city", "someCity");
-            params.add("zip", "someZip");
-            params.add("phone", "somePhone");
-            // email parameter missing
-            try {
-                mvcMock.perform(post("/person")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -166,7 +146,7 @@ class PersonControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("update_Success")
-        void Given_validRequest_When_update_Then_statusIsNoContent() throws Exception {
+        void Given_validRequest_When_update_Then_statusIsOK() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("phone", "somePhone");
@@ -186,43 +166,6 @@ class PersonControllerTest {
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-        //    ------------------------------------------------------------------------------ bad request
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("update_MissingRequired")
-        void Given_missingRequiredParameter_When_update_Then_statusIsBadRequest() {
-            params.add("firstName", "someFirstName");
-            // No required parameter lastName
-            params.add("address", "someAddress");
-            params.add("city", "someCity");
-            params.add("zip", "someZip");
-            try {
-                mvcMock.perform(put("/person")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
-            } catch (Exception e) {
-                fail("An exception was thrown");
-            }
-        }
-
-        @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("update_NoParameterToUpdate")
-        void Given_missingParameterToUpdate_When_update_Then_statusIsBadRequest() {
-            params.add("firstName", "someFirstName");
-            params.add("lastName", "someLastName");
-            // Only required and immutable parameters were given.
-            try {
-                mvcMock.perform(put("/person")
-                        .params(params)
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest());
             } catch (Exception e) {
                 fail("An exception was thrown");
             }
@@ -298,7 +241,7 @@ class PersonControllerTest {
         @Test
         @Tag("SuccessStatus")
         @DisplayName("delete_Success")
-        void Given_validRequest_When_delete_Then_statusIsNoContent() throws Exception {
+        void Given_validRequest_When_delete_Then_statusIsOK() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             doReturn(true).when(mockPersonService).delete(
@@ -314,15 +257,16 @@ class PersonControllerTest {
             }
         }
 
-        //    ------------------------------------------------------------------------------ bad request
+        //    ------------------------------------------------------------------------------ badRequest
         @Test
         @Tag("BadRequestStatus")
-        @DisplayName("delete_MissingParameter")
-        void Given_missingParameter_When_delete_Then_statusIsBadRequest() {
-            // Required parameter firstName is missing
+        @DisplayName("update_NoParameterToUpdate")
+        void Given_missingParameterToUpdate_When_update_Then_statusIsBadRequest() {
+            params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
+            // Only required and immutable parameters were given.
             try {
-                mvcMock.perform(delete("/person")
+                mvcMock.perform(put("/person")
                         .params(params)
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest());
@@ -372,5 +316,71 @@ class PersonControllerTest {
         }
     }
 
-    //TODO GetMethod tests
+    //    ------------------------------------------------------------------------------ DELETE
+    //    -------------------------------------------------------------------------------------
+    @Nested
+    @DisplayName("delete()")
+    class PersonGetMethodTests {
+        //    ------------------------------------------------------------------------------ success
+        @Test
+        @Tag("SuccessStatus")
+        @DisplayName("get_Success")
+        void Given_validRequest_When_get_Then_statusIsOK() throws Exception {
+            Person person = PersonFactory.createPerson();
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+
+            doReturn(person).when(mockPersonService).get(
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"));
+            try {
+                mvcMock.perform(get("/person")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ErrorStatus")
+        @DisplayName("get_NoSuchDataException")
+        void Given_noSuchDataException_When_get_Then_statusIsNotFound() throws Exception {
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+            doThrow(new NoSuchDataException()).when(mockPersonService).get(
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"));
+            try {
+                mvcMock.perform(get("/person")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+
+        //    ------------------------------------------------------------------------------ server error
+        @Test
+        @Tag("ServerErrorStatus")
+        @DisplayName("get_ServerError")
+        void Given_IOException_When_get_Then_statusIsInternalServerError() throws Exception {
+            params.add("firstName", "someFirstName");
+            params.add("lastName", "someLastName");
+            doThrow(new IOException()).when(mockPersonService).get(
+                    params.getFirst("firstName"),
+                    params.getFirst("lastName"));
+            try {
+                mvcMock.perform(get("/person")
+                        .params(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isInternalServerError());
+            } catch (Exception e) {
+                fail("An exception was thrown");
+            }
+        }
+    }
 }
