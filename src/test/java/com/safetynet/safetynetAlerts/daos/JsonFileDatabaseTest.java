@@ -697,21 +697,22 @@ class JsonFileDatabaseTest {
                 Person updatedPerson = PersonFactory.createPerson(
                         originalPerson.getFirstName(),
                         originalPerson.getLastName(),
-                        Addresses.CIRCLE,
+                        Addresses.APPLEGATE,
                         null);
 
                 updatedPerson.setPhone(originalPerson.getPhone());
+                updatedPerson.setEmail("anotherMail@mail.com");
 
                 persons.add(originalPerson);
 
                 jsonFileDatabase.updatePerson(
                         originalPerson.getFirstName(),
                         originalPerson.getLastName(),
-                        updatedPerson.getAddress(),
-                        updatedPerson.getCity(),
-                        updatedPerson.getZip(),
                         null,
-                        null);
+                        null,
+                        null,
+                        updatedPerson.getPhone(),
+                        updatedPerson.getEmail());
 
                 assertThat(persons)
                         .isNotNull()
