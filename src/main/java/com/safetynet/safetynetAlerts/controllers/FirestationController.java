@@ -22,9 +22,16 @@ public class FirestationController {
         this.firestationService = firestationService;
     }
 
+    /**
+     * Add Firestation in database.
+     *
+     * @param address Firestation address (no duplication)
+     * @param number  Firestation stationNumber
+     * @return ResponseEntity of String
+     */
     @PostMapping("/firestation")
     public ResponseEntity<String> add(@RequestParam(name = "address") final String address,
-                                      @RequestParam(name = "stationNumber") final int number) throws Exception {
+                                      @RequestParam(name = "stationNumber") final int number) {
         Logger.debug("Firestation POST Request with address : {} and station number : {}", address, number);
 
         try {
@@ -40,9 +47,16 @@ public class FirestationController {
         }
     }
 
+    /**
+     * Modify Firestation stationNumber in database.
+     *
+     * @param address Firestation address to search for
+     * @param number  Firestation stationNumber new value
+     * @return ResponseEntity of String
+     */
     @PutMapping("/firestation")
     public ResponseEntity<String> update(@RequestParam(name = "address") final String address,
-                                         @RequestParam(name = "stationNumber") final int number) throws Exception {
+                                         @RequestParam(name = "stationNumber") final int number) {
         Logger.debug("Firestation PUT Request for address : {} with station number : {}", address, number);
 
         try {
@@ -59,8 +73,14 @@ public class FirestationController {
 
     }
 
+    /**
+     * Delete Firestation based on stationNumber in database.
+     *
+     * @param number stationNumber to search for among all Firestations
+     * @return ResponseEntity of String
+     */
     @DeleteMapping(value = "/firestation", params = {"stationNumber"})
-    public ResponseEntity<String> delete(@RequestParam(name = "stationNumber") final int number) throws Exception {
+    public ResponseEntity<String> delete(@RequestParam(name = "stationNumber") final int number) {
         Logger.debug("Firestation DELETE Request by station number : {}", number);
 
         try {
@@ -77,8 +97,14 @@ public class FirestationController {
 
     }
 
+    /**
+     * Delete Firestation based on address in database.
+     *
+     * @param address Firestation address to search for
+     * @return ResponseEntity of String
+     */
     @DeleteMapping(value = "/firestation", params = {"address"})
-    public ResponseEntity<String> delete(@RequestParam(name = "address") final String address) throws Exception {
+    public ResponseEntity<String> delete(@RequestParam(name = "address") final String address) {
         Logger.debug("Firestation DELETE Request by address : {}", address);
         try {
             this.firestationService.delete(address);
@@ -93,6 +119,12 @@ public class FirestationController {
         }
     }
 
+    /**
+     * Get Firestation based on address from database.
+     *
+     * @param address Firestation address to search for
+     * @return ResponseEntity of Firestation
+     */
     @GetMapping(value = "/firestation", params = {"address"})
     public ResponseEntity<Firestation> get(@RequestParam(name = "address") final String address) {
         Logger.debug("Firestation GET Request by address : {}", address);

@@ -31,7 +31,7 @@ public interface PersonDAO {
                 final String email) throws IOException, IllegalDataOverrideException;
 
     /**
-     * Update specific Person from database.
+     * Update specific Person in database.
      *
      * @param firstName value to set for firstName attribute
      * @param lastName  value to set for lastName attribute
@@ -51,7 +51,7 @@ public interface PersonDAO {
                    final String email) throws IOException, NoSuchDataException;
 
     /**
-     * Delete specific Person from database.
+     * Delete specific Person in database.
      *
      * @param firstName Person to delete firstName attribute value
      * @param lastName  Person to delete lastName attribute value
@@ -84,7 +84,7 @@ public interface PersonDAO {
     List<Person> getFromAddress(final String address, boolean withMedicalRecord) throws IOException, NoSuchDataException, NoMedicalRecordException;
 
     /**
-     * Get Persons leaving in all addresses in the list from database.
+     * Get list of Person by multiple addresses from database.
      *
      * @param addresses         List of addresses of which to get Persons
      * @param withMedicalRecord whether to add corresponding MedicalRecord instance to Persons attributes

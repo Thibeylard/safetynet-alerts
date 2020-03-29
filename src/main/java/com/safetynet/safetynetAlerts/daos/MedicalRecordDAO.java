@@ -26,7 +26,7 @@ public interface MedicalRecordDAO {
                 final List<String> allergies) throws IOException, IllegalDataOverrideException;
 
     /**
-     * Update specific MedicalRecord from database.
+     * Update specific MedicalRecord in database.
      *
      * @param firstName   value to set for firstName attribute
      * @param lastName    value to set for lastName attribute
@@ -42,7 +42,7 @@ public interface MedicalRecordDAO {
                    final List<String> allergies) throws IOException, NoSuchDataException;
 
     /**
-     * Delete specific MedicalRecord from database.
+     * Delete specific MedicalRecord in database.
      *
      * @param firstName MedicalRecord to delete firstName attribute value
      * @param lastName  MedicalRecord to delete lastName attribute value
@@ -52,7 +52,7 @@ public interface MedicalRecordDAO {
                    final String lastName) throws IOException, NoSuchDataException;
 
     /**
-     * Get Firestation instance with specified address.
+     * Get MedicalRecord instance by whole name from database.
      *
      * @param firstName MedicalRecord to access firstName attribute value
      * @param lastName  MedicalRecord to access lastName attribute value

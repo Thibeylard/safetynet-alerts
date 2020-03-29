@@ -23,6 +23,16 @@ public class MedicalRecordController {
         this.medicalRecordService = medicalRecordService;
     }
 
+    /**
+     * Add MedicalRecord to database (identifier is firstName lastName couple).
+     *
+     * @param firstName   value to set to eponym attribute
+     * @param lastName    value to set to eponym attribute
+     * @param birthDate   value to set to eponym attribute
+     * @param medications value to set to eponym attribute
+     * @param allergies   value to set to eponym attribute
+     * @return ResponseEntity of String
+     */
     @PostMapping("/medicalRecord")
     public ResponseEntity<String> add(@RequestParam(name = "firstName") final String firstName,
                                       @RequestParam(name = "lastName") final String lastName,
@@ -49,6 +59,16 @@ public class MedicalRecordController {
         }
     }
 
+    /**
+     * Modify MedicalRecord birthDate, medications, and/or allergies in database.
+     *
+     * @param firstName   firstName to search for
+     * @param lastName    lastName to search for
+     * @param birthDate   birthDate new value (Nullable)
+     * @param medications medications new value (Nullable)
+     * @param allergies   allergies new value (Nullable)
+     * @return ResponseEntity of String
+     */
     @PutMapping("/medicalRecord")
     public ResponseEntity<String> update(@RequestParam(name = "firstName") final String firstName,
                                          @RequestParam(name = "lastName") final String lastName,
@@ -81,6 +101,13 @@ public class MedicalRecordController {
         }
     }
 
+    /**
+     * Delete MedicalRecord in database.
+     *
+     * @param firstName firstName to search for
+     * @param lastName  lastName to search for
+     * @return ResponseEntity of String
+     */
     @DeleteMapping("/medicalRecord")
     public ResponseEntity<String> delete(@RequestParam(name = "firstName") final String firstName,
                                          @RequestParam(name = "lastName") final String lastName) {
@@ -99,6 +126,13 @@ public class MedicalRecordController {
         }
     }
 
+    /**
+     * Get MedicalRecord from database.
+     *
+     * @param firstName firstName to search for
+     * @param lastName  lastName to search for
+     * @return ResponseEntity of MedicalRecord
+     */
     @GetMapping("/medicalRecord")
     public ResponseEntity<MedicalRecord> get(@RequestParam(name = "firstName") final String firstName,
                                              @RequestParam(name = "lastName") final String lastName) {

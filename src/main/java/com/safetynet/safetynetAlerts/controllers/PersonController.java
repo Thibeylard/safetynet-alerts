@@ -23,6 +23,18 @@ public class PersonController {
         this.personService = personService;
     }
 
+    /**
+     * Add Person to database (identifier is firstName lastName couple).
+     *
+     * @param firstName value to set to eponym attribute
+     * @param lastName  value to set to eponym attribute
+     * @param address   value to set to eponym attribute
+     * @param city      value to set to eponym attribute
+     * @param zip       value to set to eponym attribute
+     * @param phone     value to set to eponym attribute
+     * @param email     value to set to eponym attribute
+     * @return ResponseEntity of String
+     */
     @PostMapping("/person")
     public ResponseEntity<String> add(@RequestParam(name = "firstName") final String firstName,
                                       @RequestParam(name = "lastName") final String lastName,
@@ -54,6 +66,18 @@ public class PersonController {
         }
     }
 
+    /**
+     * Modify Person address, city, zip, phone, and/or email in database.
+     *
+     * @param firstName firstName to search for
+     * @param lastName  lastName to search for
+     * @param address   address new value (Nullable)
+     * @param city      city new value (Nullable)
+     * @param zip       zip new value (Nullable)
+     * @param phone     phone new value (Nullable)
+     * @param email     email new value (Nullable)
+     * @return ResponseEntity of String
+     */
     @PutMapping("/person")
     public ResponseEntity<String> update(@RequestParam(name = "firstName") final String firstName,
                                          @RequestParam(name = "lastName") final String lastName,
@@ -90,6 +114,13 @@ public class PersonController {
         }
     }
 
+    /**
+     * Delete Person in database.
+     *
+     * @param firstName firstName to search for
+     * @param lastName  lastName to search for
+     * @return ResponseEntity of String
+     */
     @DeleteMapping("/person")
     public ResponseEntity<String> delete(@RequestParam(name = "firstName") final String firstName,
                                          @RequestParam(name = "lastName") final String lastName) {
@@ -109,6 +140,13 @@ public class PersonController {
 
     }
 
+    /**
+     * Get Person from database.
+     *
+     * @param firstName firstName to search for
+     * @param lastName  lastName to search for
+     * @return ResponseEntity of Person
+     */
     @GetMapping("/person")
     public ResponseEntity<Person> get(@RequestParam(name = "firstName") final String firstName,
                                       @RequestParam(name = "lastName") final String lastName) {
