@@ -8,6 +8,9 @@ import com.safetynet.safetynetAlerts.models.Person;
 
 import java.util.List;
 
+/**
+ * DTO used by URLFireDTO and URLFloodDTO to represent Person with assistance related infos.
+ */
 @JsonPropertyOrder({"firstName", "lastName", "phone", "age", "medications", "allergies"})
 public class EndangeredPersonDTO {
 
@@ -24,6 +27,34 @@ public class EndangeredPersonDTO {
     @JsonProperty("allergies")
     private final List<String> allergies;
 
+    /**
+     * Constructor copying relevant attributes of Person object.
+     *
+     * @param person Person from which to copy attributes
+     * @throws NoMedicalRecordException if Person has no MedicalRecord (meaning age, medications and allergies cannot be found)
+     */
+    public EndangeredPersonDTO(Person person) throws NoMedicalRecordException {
+        MedicalRecord personMedicalRecord = person.getMedicalRecord().orElseThrow(() -> new NoMedicalRecordException(person.getFirstName(), person.getLastName()));
+        Integer age = person.getAge().get();
+
+        this.firstName = person.getFirstName();
+        this.lastName = person.getLastName();
+        this.phone = person.getPhone();
+        this.age = age.toString();
+        this.medications = personMedicalRecord.getMedications();
+        this.allergies = personMedicalRecord.getAllergies();
+    }
+
+    /**
+     * Constructor used by Jackson for Json serialization.
+     *
+     * @param firstName   attribute value
+     * @param lastName    attribute value
+     * @param phone       attribute value
+     * @param age         attribute value
+     * @param medications attribute value
+     * @param allergies   attribute value
+     */
     public EndangeredPersonDTO(final String firstName,
                                final String lastName,
                                final String phone,
@@ -36,16 +67,5 @@ public class EndangeredPersonDTO {
         this.age = age;
         this.medications = medications;
         this.allergies = allergies;
-    }
-
-    public EndangeredPersonDTO(Person person) throws NoMedicalRecordException {
-        MedicalRecord personMedicalRecord = person.getMedicalRecord().orElseThrow(() -> new NoMedicalRecordException(person.getFirstName(), person.getLastName()));
-
-        this.firstName = person.getFirstName();
-        this.lastName = person.getLastName();
-        this.phone = person.getPhone();
-        this.age = String.valueOf(person.getAge());
-        this.medications = personMedicalRecord.getMedications();
-        this.allergies = personMedicalRecord.getAllergies();
     }
 }
