@@ -28,13 +28,13 @@ public interface MedicalRecordService {
                 final List<String> allergies) throws IOException, IllegalDataOverrideException;
 
     /**
-     * Pass parameters from controllers to DAO to update specific Person from database.
+     * Pass parameters from controllers to DAO to update specific Person in database.
      *
      * @param firstName   value to set for firstName attribute
      * @param lastName    value to set for lastName attribute
-     * @param birthDate   optional value to set for birthDate attribute
-     * @param medications optional value to set for birthDate attribute
-     * @param allergies   optional value to set for birthDate attribute
+     * @param birthDate   value to set for birthDate attribute (Nullable)
+     * @param medications value to set for medications attribute (Nullable)
+     * @param allergies   value to set for allergies attribute (Nullable)
      * @return operation success
      */
     boolean update(final String firstName,
@@ -44,7 +44,7 @@ public interface MedicalRecordService {
                    final List<String> allergies) throws IOException, NoSuchDataException;
 
     /**
-     * Pass parameters from controllers to DAO to delete specific MedicalRecord from database.
+     * Pass parameters from controllers to DAO to delete specific MedicalRecord in database.
      *
      * @param firstName MedicalRecord to delete firstName attribute value
      * @param lastName  MedicalRecord to delete lastName attribute value

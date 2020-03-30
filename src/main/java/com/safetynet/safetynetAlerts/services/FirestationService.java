@@ -20,7 +20,7 @@ public interface FirestationService {
     boolean add(final String address, final int number) throws IOException, IllegalDataOverrideException;
 
     /**
-     * Pass parameters from controllers to DAO to update specific Firestation number instance from database.
+     * Pass parameters from controllers to DAO to update specific Firestation number instance in database.
      *
      * @param address value to set for address attribute
      * @param number  value to set for number attribute
@@ -29,7 +29,7 @@ public interface FirestationService {
     boolean update(final String address, final int number) throws IOException, NoSuchDataException;
 
     /**
-     * Pass parameters from controllers to DAO to delete Firestation mapping(s) by number from database.
+     * Pass parameters from controllers to DAO to delete Firestation mapping(s) by number in database.
      *
      * @param number Firestation(s) to delete number attribute value
      * @return operation success
@@ -37,7 +37,7 @@ public interface FirestationService {
     boolean delete(final int number) throws IOException, NoSuchDataException;
 
     /**
-     * Pass parameters from controllers to DAO to delete specified address Firestation mapping from database.
+     * Pass parameters from controllers to DAO to delete specified address Firestation mapping in database.
      *
      * @param address Firestation to delete address attribute value
      * @return operation success

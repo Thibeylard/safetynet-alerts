@@ -26,15 +26,15 @@ public interface PersonService {
     boolean add(String firstName, String lastName, String address, String city, String zip, String phone, String email) throws IOException, IllegalDataOverrideException;
 
     /**
-     * Pass parameters from controllers to DAO to update specific Person from database.
+     * Pass parameters from controllers to DAO to update specific Person in database.
      *
      * @param firstName value to set for firstName attribute
      * @param lastName  value to set for lastName attribute
-     * @param address   optional value to set for address attribute
-     * @param city      optional value to set for city attribute
-     * @param zip       optional value to set for zip attribute
-     * @param phone     optional value to set for phone attribute
-     * @param email     optional value to set for email attribute
+     * @param address   value to set for address attribute (Nullable)
+     * @param city      value to set for city attribute (Nullable)
+     * @param zip       value to set for zip attribute (Nullable)
+     * @param phone     value to set for phone attribute (Nullable)
+     * @param email     value to set for email attribute (Nullable)
      * @return operation success
      */
     boolean update(final String firstName,
@@ -46,7 +46,7 @@ public interface PersonService {
                    final String email) throws IOException, NoSuchDataException;
 
     /**
-     * Pass parameters from controllers to DAO to delete specific Person from database.
+     * Pass parameters from controllers to DAO to delete specific Person in database.
      *
      * @param firstName Person to delete firstName attribute value
      * @param lastName  Person to delete lastName attribute value
@@ -55,7 +55,7 @@ public interface PersonService {
     boolean delete(final String firstName, final String lastName) throws IOException, NoSuchDataException;
 
     /**
-     * Pass parameters from controllers to DAO to get specific Person from database.
+     * Pass parameters from controllers to DAO to get specific Person in database.
      *
      * @param firstName Person to get firstName attribute value
      * @param lastName  Person to get lastName attribute value

@@ -11,25 +11,36 @@ public class ClockServiceImpl implements ClockService {
         this.clock = Clock.systemUTC();
     }
 
+    /**
+     * @see ClockService
+     */
     public int getYear() {
         return clock.instant().atZone(clock.getZone()).get(ChronoField.YEAR);
     }
 
+    /**
+     * @see ClockService
+     */
     public int getMonth() {
         return clock.instant().atZone(clock.getZone()).get(ChronoField.MONTH_OF_YEAR);
     }
 
+    /**
+     * @see ClockService
+     */
     public int getDay() {
         return clock.instant().atZone(clock.getZone()).get(ChronoField.DAY_OF_MONTH);
     }
 
+    /**
+     * @see ClockService
+     */
     @Override
     public int getAgeFromBirthDate(final String birthDate) {
         int currentYear = getYear();
         int currentMonth = getMonth();
         int currentDay = getDay();
 
-        //TODO Check String format and throw Exception in case of wrong birthdate ?
         String[] dateBirthParts = birthDate.split("/");
         // datebirth format is dd/mm/yyyy
         int birthYear = Integer.parseInt(dateBirthParts[2]);
