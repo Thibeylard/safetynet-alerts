@@ -14,7 +14,7 @@ import static com.safetynet.safetynetAlerts.factories.UtilsFactory.getRandom;
 public class FirestationFactory {
 
     /**
-     * Generates a Firestation with randomly generated values.
+     * Creates a Firestation with randomly generated values.
      *
      * @return new Firestation
      */
@@ -23,7 +23,7 @@ public class FirestationFactory {
     }
 
     /**
-     * Generates a Firestation with randomly generated values for empty optional parameters.
+     * Creates a Firestation with randomly generated values for null parameters.
      *
      * @param address Firestation attribute value (Optional)
      * @param station Firestation attribute value (Optional)
@@ -43,7 +43,7 @@ public class FirestationFactory {
     }
 
     /**
-     * Generates a List of Firestation with randomly generated values for empty optional parameters.
+     * Creates a List of Firestation with randomly generated values for null parameters.
      *
      * @param count   number of Firestation to generate
      * @param station Firestation attribute value for all Firestations (Optional)

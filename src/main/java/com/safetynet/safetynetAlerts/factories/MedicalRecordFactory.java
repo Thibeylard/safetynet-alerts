@@ -24,7 +24,7 @@ public class MedicalRecordFactory {
     /**
      * Generate random birthDate with format : dd/mm/YYYY.
      *
-     * @param isChild if true, birth year is at least 2003.
+     * @param isChild if true, birth year is less than 18 years ago.
      * @return birthDate String
      */
     private static String generateBirthDate(boolean isChild) {
@@ -71,7 +71,7 @@ public class MedicalRecordFactory {
     }
 
     /**
-     * Generates a MedicalRecord with randomly generated values.
+     * Creates a MedicalRecord with randomly generated values.
      *
      * @param isChild birthDate will correspond to a less than 18 year old
      * @return new MedicalRecord
@@ -81,7 +81,7 @@ public class MedicalRecordFactory {
     }
 
     /**
-     * Generates a MedicalRecord with randomly generated values for empty optional parameters.
+     * Creates a MedicalRecord with randomly generated values for null parameters.
      *
      * @param firstName MedicalRecord attribute value (Nullable)
      * @param lastName  MedicalRecord attribute value (Nullable)
@@ -107,7 +107,7 @@ public class MedicalRecordFactory {
     }
 
     /**
-     * Generates a MedicalRecord with randomly generated values for empty optional parameters.
+     * Creates a MedicalRecord with randomly generated values for null parameters.
      *
      * @param firstName   MedicalRecord attribute value (Nullable)
      * @param lastName    MedicalRecord attribute value (Nullable)

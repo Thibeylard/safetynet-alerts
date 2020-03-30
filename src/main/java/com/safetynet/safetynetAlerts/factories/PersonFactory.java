@@ -24,17 +24,6 @@ public class PersonFactory {
     }
 
     /**
-     * Generates a phone number, format XXX-XXX-XXXX where X is a numeral.
-     *
-     * @return generated phone number String
-     */
-    private static String generatePhone() {
-        return generateString(NUMBERS, 3) + "-"
-                + generateString(NUMBERS, 3) + "-"
-                + generateString(NUMBERS, 4);
-    }
-
-    /**
      * Build a Person with its MedicalRecord and its age.
      *
      * @param person        Person instance base (no MedicalRecord neither age)
@@ -46,7 +35,18 @@ public class PersonFactory {
     }
 
     /**
-     * Generates a Person with randomly generated values.
+     * Creates a phone number, format XXX-XXX-XXXX where X is a numeral.
+     *
+     * @return generated phone number String
+     */
+    private static String generatePhone() {
+        return generateString(NUMBERS, 3) + "-"
+                + generateString(NUMBERS, 3) + "-"
+                + generateString(NUMBERS, 4);
+    }
+
+    /**
+     * Creates a Person with randomly generated values.
      *
      * @return new Person
      */
@@ -55,7 +55,7 @@ public class PersonFactory {
     }
 
     /**
-     * Generates a Person with randomly generated values for empty optional parameters.
+     * Creates a Person with randomly generated values for null parameters.
      *
      * @param firstName       Person attribute value (Nullable)
      * @param lastName        Person attribute value (Nullable)

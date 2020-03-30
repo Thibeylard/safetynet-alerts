@@ -1,5 +1,8 @@
 package com.safetynet.safetynetAlerts.exceptions;
 
+/**
+ * Exception thrown when user tries to access Person MedicalRecord that is not defined.
+ */
 public class NoMedicalRecordException extends Exception {
 
     private String personFirstName;

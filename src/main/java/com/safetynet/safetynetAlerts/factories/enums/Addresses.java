@@ -1,5 +1,8 @@
 package com.safetynet.safetynetAlerts.factories.enums;
 
+/**
+ * Enumeration of virtual Addresses used for tests.
+ */
 public enum Addresses {
     MECHANIC("4 Mechanic Street", Cities.OAKPARK),
     CIRCLE("564 Circle Street", Cities.OAKPARK),

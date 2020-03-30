@@ -1,5 +1,8 @@
 package com.safetynet.safetynetAlerts.exceptions;
 
+/**
+ * Exception thrown when user tries to create already existant data.
+ */
 public class IllegalDataOverrideException extends Exception {
 
     public IllegalDataOverrideException() {

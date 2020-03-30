@@ -1,5 +1,8 @@
 package com.safetynet.safetynetAlerts.factories.enums;
 
+/**
+ * Enumeration of virtual Cities used for tests.
+ */
 public enum Cities {
 
     OAKPARK("Oak Park", "48237"),
