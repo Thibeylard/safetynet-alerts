@@ -5,7 +5,10 @@ import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.factories.MedicalRecordFactory;
 import com.safetynet.safetynetAlerts.models.MedicalRecord;
 import com.safetynet.safetynetAlerts.services.MedicalRecordService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -49,8 +52,7 @@ class MedicalRecordControllerTest {
     class MedicalRecordAddMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("add_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_add_Then_statusIsCreated() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -75,8 +77,7 @@ class MedicalRecordControllerTest {
 
         //    ------------------------------------------------------------------------------ forbidden
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("add_Forbidden")
+        @DisplayName("Illegal override case")
         void Given_illegalDataOverrideException_When_add_Then_statusIsForbidden() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -101,8 +102,7 @@ class MedicalRecordControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("add_ServerError")
+        @DisplayName("IO error case")
         void Given_IOException_When_add_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -134,8 +134,7 @@ class MedicalRecordControllerTest {
     class MedicalRecordUpdateMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("update_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_update_Then_statusIsOK() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -163,8 +162,7 @@ class MedicalRecordControllerTest {
 
         //    ------------------------------------------------------------------------------ badRequest
         @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("update_NoParameterToUpdate_BadRequest")
+        @DisplayName("No parameter to update error case")
         void Given_missingParameterToUpdate_When_update_Then_statusIsBadRequest() {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -181,8 +179,7 @@ class MedicalRecordControllerTest {
 
         //    ------------------------------------------------------------------------------ notFound
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("update_notFound")
+        @DisplayName("Not found case")
         void Given_noSuchDataException_When_update_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -206,8 +203,7 @@ class MedicalRecordControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("updateServerError")
+        @DisplayName("IO error case")
         void Given_IOException_When_update_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -238,8 +234,7 @@ class MedicalRecordControllerTest {
     class MedicalRecordDeleteMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("delete_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_delete_Then_statusIsOK() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -258,8 +253,7 @@ class MedicalRecordControllerTest {
 
         //    ------------------------------------------------------------------------------ notFound
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("delete_notFound")
+        @DisplayName("Not found case")
         void Given_NoSuchDataException_When_delete_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -278,8 +272,7 @@ class MedicalRecordControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("delete_ServerError")
+        @DisplayName("IO error case")
         void Given_IOException_When_delete_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -303,12 +296,11 @@ class MedicalRecordControllerTest {
     @DisplayName("get()")
     class MedicalRecordGetMethodTests {
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("get_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_get_Then_statusIsOK() throws Exception {
-            MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(false);
-            params.add("firstName", "someFirstName");
-            params.add("lastName", "someLastName");
+            MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(null, null, "14/05/1985", null, null, false);
+            params.add("firstName", medicalRecord.getFirstName());
+            params.add("lastName", medicalRecord.getLastName());
             doReturn(medicalRecord).when(mockMedicalRecordService).get(
                     params.getFirst("firstName"),
                     params.getFirst("lastName"));
@@ -324,8 +316,7 @@ class MedicalRecordControllerTest {
 
         //    ------------------------------------------------------------------------------ notFound
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("get_notFound")
+        @DisplayName("Not found case")
         void Given_NoSuchDataException_When_get_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -344,8 +335,7 @@ class MedicalRecordControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("get_ServerError")
+        @DisplayName("IO error case")
         void Given_IOException_When_get_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");

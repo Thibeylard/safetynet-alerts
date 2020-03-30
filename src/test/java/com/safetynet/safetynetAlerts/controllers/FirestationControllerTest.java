@@ -5,7 +5,10 @@ import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.factories.FirestationFactory;
 import com.safetynet.safetynetAlerts.models.Firestation;
 import com.safetynet.safetynetAlerts.services.FirestationService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -50,8 +53,7 @@ class FirestationControllerTest {
     class FirestationAddMethodTests {
         // ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("add_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_add_Then_statusIsCreated() throws Exception {
             params.add("address", "someAddress");
             params.add("stationNumber", "2");
@@ -69,8 +71,7 @@ class FirestationControllerTest {
 
         //    ------------------------------------------------------------------------------ forbidden
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("add_Forbidden")
+        @DisplayName("Illegal override case")
         void Given_illegalDataOverrideException_When_add_Then_statusIsForbidden() throws Exception {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
@@ -89,8 +90,7 @@ class FirestationControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("add_ServerError")
+        @DisplayName("IO error case")
         void Given_IOException_When_add_Then_statusIsInternalServerError() throws Exception {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
@@ -115,8 +115,7 @@ class FirestationControllerTest {
     class FirestationUpdateMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("update_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_update_Then_statusIsOK() throws Exception {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
@@ -134,8 +133,7 @@ class FirestationControllerTest {
 
         //    ------------------------------------------------------------------------------ not found
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("update_NotFound")
+        @DisplayName("Not found case")
         void Given_noSuchDataException_When_update_Then_statusIsNotFound() throws Exception {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
@@ -154,9 +152,8 @@ class FirestationControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("update_ServerError")
-        void Given_validRequestButServiceNotWorking_When_update_Then_statusIsInternalServerError() throws Exception {
+        @DisplayName("IO error case")
+        void Given_IOExceptionThrown_When_update_Then_statusIsInternalServerError() throws Exception {
             params.add("stationNumber", "2");
             params.add("address", "someAddress");
             doThrow(new IOException())
@@ -180,8 +177,7 @@ class FirestationControllerTest {
     class FirestationDeleteMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("deleteByName_Success")
+        @DisplayName("By number : Success case")
         void Given_validRequest_When_deleteByNumber_Then_statusIsOK() throws Exception {
             params.add("stationNumber", "2");
             doReturn(true).when(mockFirestationService)
@@ -197,8 +193,7 @@ class FirestationControllerTest {
         }
 
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("deleteByAddress_Success")
+        @DisplayName("By address : Success case")
         void Given_validRequest_When_deleteByAddress_Then_statusIsOK() throws Exception {
             params.add("address", "someAddress");
             doReturn(true).when(mockFirestationService)
@@ -215,8 +210,7 @@ class FirestationControllerTest {
 
         //    ------------------------------------------------------------------------------ not found
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("deleteByNumber_NotFound")
+        @DisplayName("By number : Not found case")
         void Given_noSuchDataException_When_deleteByNumber_Then_statusIsNotFound() throws Exception {
             params.add("stationNumber", "2");
             doThrow(new NoSuchDataException())
@@ -233,8 +227,7 @@ class FirestationControllerTest {
         }
 
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("deleteByAddress_NotFound")
+        @DisplayName("By address : Not found case")
         void Given_noSuchDataException_When_deleteByAddress_Then_statusIsNotFound() throws Exception {
             params.add("address", "someAddress");
             doThrow(new NoSuchDataException())
@@ -252,8 +245,7 @@ class FirestationControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("deleteByNumber_ServerError")
+        @DisplayName("By number : IO error case")
         void Given_IOException_When_deleteByNumber_Then_statusIsInternalServerError() throws Exception {
             params.add("stationNumber", "2");
             doThrow(new IOException())
@@ -270,8 +262,7 @@ class FirestationControllerTest {
         }
 
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("deleteByAddress_ServerError")
+        @DisplayName("By address : IO error case")
         void Given_IOException_When_deleteByAddress_Then_statusIsInternalServerError() throws Exception {
             params.add("address", "someAddress");
             doThrow(new IOException())
@@ -295,8 +286,7 @@ class FirestationControllerTest {
     class FirestationGetMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("get_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_get_Then_statusIsOk() throws Exception {
             Firestation response = FirestationFactory.createFirestation();
             params.add("address", "someAddress");
@@ -314,8 +304,7 @@ class FirestationControllerTest {
 
         //    ------------------------------------------------------------------------------ not found
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("get_NotFound")
+        @DisplayName("Not found case")
         void Given_NoSuchDataException_When_get_Then_statusIsNotFound() throws Exception {
             params.add("address", "someAddress");
             doThrow(new NoSuchDataException())
@@ -333,8 +322,7 @@ class FirestationControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("get_ServerError")
+        @DisplayName("IO error case")
         void Given_IOException_When_get_Then_statusIsInternalServerError() throws Exception {
             params.add("address", "someAddress");
             doThrow(new IOException())

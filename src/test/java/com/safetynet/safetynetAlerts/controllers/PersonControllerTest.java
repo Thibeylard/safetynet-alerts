@@ -5,7 +5,10 @@ import com.safetynet.safetynetAlerts.exceptions.NoSuchDataException;
 import com.safetynet.safetynetAlerts.factories.PersonFactory;
 import com.safetynet.safetynetAlerts.models.Person;
 import com.safetynet.safetynetAlerts.services.PersonService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -48,8 +51,7 @@ class PersonControllerTest {
     class PersonAddMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("add_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_add_Then_statusIsCreated() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -78,8 +80,7 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ forbidden
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("add_IllegalDataOverride")
+        @DisplayName("Illegal override case")
         void Given_illegalDataOverrideException_When_add_Then_statusIsForbidden() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -108,8 +109,7 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("add_IOException")
+        @DisplayName("IO error case")
         void Given_IOException_When_add_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -144,8 +144,7 @@ class PersonControllerTest {
     class PersonUpdateMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("update_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_update_Then_statusIsOK() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -173,8 +172,7 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ not found
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("update_NoSuchDataException")
+        @DisplayName("Not found case")
         void Given_noSuchDataException_When_update_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -203,8 +201,7 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("update_IOException")
+        @DisplayName("IO error case")
         void Given_validRequestButServiceNotWorking_When_update_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -239,8 +236,7 @@ class PersonControllerTest {
     class PersonDeleteMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("delete_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_delete_Then_statusIsOK() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -259,8 +255,7 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ badRequest
         @Test
-        @Tag("BadRequestStatus")
-        @DisplayName("update_NoParameterToUpdate")
+        @DisplayName("No parameter to update error case")
         void Given_missingParameterToUpdate_When_update_Then_statusIsBadRequest() {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -277,8 +272,7 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("delete_NoSuchDataException")
+        @DisplayName("Not found case")
         void Given_noSuchDataException_When_delete_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -297,8 +291,7 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("delete_ServerError")
+        @DisplayName("IO error case")
         void Given_IOException_When_delete_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -323,8 +316,7 @@ class PersonControllerTest {
     class PersonGetMethodTests {
         //    ------------------------------------------------------------------------------ success
         @Test
-        @Tag("SuccessStatus")
-        @DisplayName("get_Success")
+        @DisplayName("Success case")
         void Given_validRequest_When_get_Then_statusIsOK() throws Exception {
             Person person = PersonFactory.createPerson();
             params.add("firstName", "someFirstName");
@@ -345,8 +337,7 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ErrorStatus")
-        @DisplayName("get_NoSuchDataException")
+        @DisplayName("Not found case")
         void Given_noSuchDataException_When_get_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -365,8 +356,7 @@ class PersonControllerTest {
 
         //    ------------------------------------------------------------------------------ server error
         @Test
-        @Tag("ServerErrorStatus")
-        @DisplayName("get_ServerError")
+        @DisplayName("IO error case")
         void Given_IOException_When_get_Then_statusIsInternalServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");

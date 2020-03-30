@@ -45,6 +45,7 @@ class FirestationDAOJsonFileTest {
     @DisplayName("add()")
     class addTestMethods {
         @Test
+        @DisplayName("Success case")
         void Given_validParameters_When_add_Then_returnTrue() throws Exception {
             doReturn(true).when(mockJsonFileDatabase).addFirestation(
                     anyString(),
@@ -55,6 +56,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("Illegal override case")
         void Given_IllegalDataOverrideException_When_add_Then_throwsIllegalDataOverrideException() throws Exception {
             doThrow(new IllegalDataOverrideException()).when(mockJsonFileDatabase).addFirestation(
                     anyString(),
@@ -65,6 +67,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOException_When_add_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase).addFirestation(
                     anyString(),
@@ -81,6 +84,7 @@ class FirestationDAOJsonFileTest {
     @DisplayName("update()")
     class updateTestMethods {
         @Test
+        @DisplayName("Success case")
         void Given_validParameters_When_update_Then_returnTrue() throws Exception {
             doReturn(true).when(mockJsonFileDatabase).updateFirestation(
                     anyString(),
@@ -91,6 +95,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("Not found case")
         void Given_NoSuchDataException_When_update_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase).updateFirestation(
                     anyString(),
@@ -101,6 +106,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOException_When_update_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase).updateFirestation(
                     anyString(),
@@ -117,6 +123,7 @@ class FirestationDAOJsonFileTest {
     @DisplayName("delete()")
     class deleteTestMethods {
         @Test
+        @DisplayName("Success case by address")
         void Given_validParameters_When_deleteByAddress_Then_returnTrue() throws Exception {
             doReturn(true).when(mockJsonFileDatabase)
                     .deleteFirestation(anyString());
@@ -125,6 +132,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("Not found case by address")
         void Given_NoSuchDataException_When_deleteByAddress_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
                     .deleteFirestation(anyString());
@@ -133,6 +141,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("IO error caseby address")
         void Given_IOException_When_deleteByAddress_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase)
                     .deleteFirestation(anyString());
@@ -141,6 +150,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("Success case by address")
         void Given_validParameters_When_deleteByNumber_Then_returnTrue() throws Exception {
             doReturn(true).when(mockJsonFileDatabase)
                     .deleteFirestation(anyInt());
@@ -149,6 +159,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("Not found case by number")
         void Given_NoSuchDataException_When_deleteByNumber_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
                     .deleteFirestation(anyInt());
@@ -157,6 +168,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("IO error case by number")
         void Given_IOException_When_deleteByNumber_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase)
                     .deleteFirestation(anyInt());
@@ -175,6 +187,7 @@ class FirestationDAOJsonFileTest {
         @DisplayName("getFirestation() ")
         class getFirestationTestMethods {
             @Test
+            @DisplayName("Success case")
             void Given_validParameters_When_getFirestation_Then_returnFirestation() throws IOException, NoSuchDataException {
                 Firestation firestation = FirestationFactory.createFirestation();
 
@@ -188,6 +201,7 @@ class FirestationDAOJsonFileTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_NoSuchDataException_When_getFirestation_Then_throwsNoSuchDataException() throws NoSuchDataException {
                 doThrow(new NoSuchDataException())
                         .when(mockJsonFileDatabase)
@@ -196,12 +210,14 @@ class FirestationDAOJsonFileTest {
                 assertThrows(NoSuchDataException.class,
                         () -> firestationDAO.getFirestation(Addresses.FIFTHROAD.getName()));
             }
+
         }
 
         @Nested
         @DisplayName("getFirestations() ")
         class getFirestationsTestMethods {
             @Test
+            @DisplayName("Success case")
             void Given_validParameters_When_getFirestations_Then_returnFirestation() throws IOException, NoSuchDataException {
                 List<Firestation> firestations = FirestationFactory.createFirestations(2, null);
 
@@ -215,13 +231,14 @@ class FirestationDAOJsonFileTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_NoSuchDataException_When_getFirestations_Then_throwsNoSuchDataException() throws NoSuchDataException {
                 doThrow(new NoSuchDataException())
                         .when(mockJsonFileDatabase)
-                        .getFirestation(anyString());
+                        .getFirestations(anyInt());
 
                 assertThrows(NoSuchDataException.class,
-                        () -> firestationDAO.getFirestation(Addresses.FIFTHROAD.getName()));
+                        () -> firestationDAO.getFirestations(2));
             }
 
         }

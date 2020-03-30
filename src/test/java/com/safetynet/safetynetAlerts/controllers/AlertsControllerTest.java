@@ -45,6 +45,7 @@ class AlertsControllerTest {
     @DisplayName("getURLFirestationDTO()")
     class AlertsControllerGetURLFirestationDTOTests {
         @Test
+        @DisplayName("Success case")
         void Given_validRequest_When_getURLFirestationDTO_Then_statusIsOK() throws Exception {
             params.add("stationNumber", "2");
 
@@ -58,6 +59,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_validRequestButNoData_When_getURLFirestationDTO_Then_returnNullAndStatusIsNoContent() throws Exception {
             params.add("stationNumber", "2");
 
@@ -71,6 +73,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("NoMedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLFirestationDTO_Then_statusIsNotFound() throws Exception {
             params.add("stationNumber", "2");
 
@@ -85,6 +88,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLFirestationDTO_Then_statusIsServerError() throws Exception {
             params.add("stationNumber", "2");
 
@@ -105,6 +109,7 @@ class AlertsControllerTest {
     @DisplayName("getURLChildAlertDTO()")
     class AlertsControllerGetURLChildAlertDTOTests {
         @Test
+        @DisplayName("Success case")
         void Given_validRequest_When_getURLChildAlertDTO_Then_statusIsOK() throws Exception {
             params.add("address", "someAddress");
 
@@ -118,6 +123,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_validRequestButNoData_When_getURLChildAlertDTO_Then_returnNullAndStatusIsNoContent() throws Exception {
             params.add("address", "someAddress");
 
@@ -131,6 +137,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("NoMedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLChildAlertDTO_Then_statusIsNotFound() throws Exception {
             params.add("address", "someAddress");
 
@@ -145,6 +152,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLChildAlertDTO_Then_statusIsServerError() throws Exception {
             params.add("address", "someAddress");
 
@@ -164,6 +172,7 @@ class AlertsControllerTest {
     @DisplayName("getURLPhoneAlertDTO()")
     class AlertsControllerGetURLPhoneAlertDTOTests {
         @Test
+        @DisplayName("Success case")
         void Given_validRequest_When_getURLPhoneAlertDTO_Then_statusIsOK() throws Exception {
             params.add("firestation", "2");
 
@@ -177,6 +186,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_validRequestButNoData_When_getURLPhoneAlertDTO_Then_returnNullAndStatusIsNoContent() throws Exception {
             params.add("firestation", "2");
 
@@ -191,6 +201,7 @@ class AlertsControllerTest {
 
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLPhoneAlertDTO_Then_statusIsServerError() throws Exception {
             params.add("firestation", "2");
 
@@ -209,6 +220,7 @@ class AlertsControllerTest {
     @DisplayName("getURLFireDTO()")
     class AlertsControllerGetURLFireDTOTests {
         @Test
+        @DisplayName("Success case")
         void Given_validRequest_When_getURLFireDTO_Then_statusIsOK() throws Exception {
             params.add("address", "someAddress");
 
@@ -222,6 +234,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_validRequestButNoData_When_getURLFireDTO_Then_returnNullAndStatusIsNoContent() throws Exception {
             params.add("address", "someAddress");
 
@@ -235,6 +248,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("NoMedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLFireDTO_Then_statusIsNotFound() throws Exception {
             params.add("address", "someAddress"); // mistyped parameter
 
@@ -249,6 +263,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLFireDTO_Then_statusIsServerError() throws Exception {
             params.add("address", "someAddress"); // mistyped parameter
 
@@ -268,6 +283,7 @@ class AlertsControllerTest {
     @DisplayName("getURLFloodDTO()")
     class AlertsControllerGetURLFloodDTOTests {
         @Test
+        @DisplayName("Success case")
         void Given_validRequest_When_getURLFloodDTO_Then_statusIsOK() throws Exception {
             params.add("stations", "2");
             params.add("stations", "5");
@@ -282,6 +298,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_validRequestButNoData_When_getURLFloodDTO_Then_returnNullAndStatusIsNoContent() throws Exception {
             params.add("stations", "2");
             params.add("stations", "5");
@@ -296,6 +313,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("NoMedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLFloodDTO_Then_statusIsNotFound() throws Exception {
             params.add("stations", "2");
             params.add("stations", "5");
@@ -311,6 +329,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLFloodDTO_Then_statusIsServerError() throws Exception {
             params.add("stations", "2");
             params.add("stations", "5");
@@ -331,6 +350,7 @@ class AlertsControllerTest {
     @DisplayName("getURLPersonInfoDTO()")
     class AlertsControllerGetURLPersonInfoDTOTests {
         @Test
+        @DisplayName("Success case")
         void Given_validRequest_When_getURLPersonInfoDTO_Then_statusIsOK() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -352,6 +372,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_validRequestButNoData_When_getURLPersonInfoDTO_Then_returnNullAndStatusIsNoContent() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -367,6 +388,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("NoMedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLPersonInfoDTO_Then_statusIsNotFound() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -382,6 +404,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLPersonInfoDTO_Then_statusIsServerError() throws Exception {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
@@ -402,6 +425,7 @@ class AlertsControllerTest {
     @DisplayName("getURLCommunityEmailDTO()")
     class AlertsControllerGetURLCommunityEmailDTOTests {
         @Test
+        @DisplayName("Success case")
         void Given_validRequest_When_getURLCommunityEmailDTO_Then_statusIsOK() throws Exception {
             params.add("city", "someCity");
 
@@ -415,6 +439,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_validRequestButNoData_When_getURLCommunityEmailDTO_Then_returnNullAndStatusIsNoContent() throws Exception {
             params.add("city", "someCity");
 
@@ -428,6 +453,7 @@ class AlertsControllerTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLCommunityEmailDTO_Then_statusIsServerError() throws Exception {
             params.add("city", "someCity");
 
