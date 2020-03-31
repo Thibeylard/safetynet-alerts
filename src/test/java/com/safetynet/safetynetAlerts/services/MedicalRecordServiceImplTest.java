@@ -40,7 +40,9 @@ class MedicalRecordServiceImplTest {
     @Nested
     @DisplayName("add()")
     class addTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_validParameters_When_add_Then_returnTrue() throws Exception {
             doReturn(true).when(mockMedicalRecordDAO).add(
                     anyString(),
@@ -57,6 +59,7 @@ class MedicalRecordServiceImplTest {
         }
 
         @Test
+        @DisplayName("Illegal override case")
         void Given_IllegalDataOverrideException_When_add_Then_throwsIllegalDataOverrideException() throws Exception {
             doThrow(new IllegalDataOverrideException()).when(mockMedicalRecordDAO).add(
                     anyString(),
@@ -73,6 +76,7 @@ class MedicalRecordServiceImplTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOException_When_add_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockMedicalRecordDAO).add(
                     anyString(),
@@ -94,7 +98,9 @@ class MedicalRecordServiceImplTest {
     @Nested
     @DisplayName("update()")
     class updateTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_validParameters_When_update_Then_returnTrue() throws Exception {
             doReturn(true).when(mockMedicalRecordDAO)
                     .update(
@@ -112,6 +118,7 @@ class MedicalRecordServiceImplTest {
         }
 
         @Test
+        @DisplayName("Not found case")
         void Given_NoSuchDataException_When_update_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockMedicalRecordDAO)
                     .update(
@@ -129,6 +136,7 @@ class MedicalRecordServiceImplTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOException_When_update_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockMedicalRecordDAO).update(
                     anyString(),
@@ -150,7 +158,9 @@ class MedicalRecordServiceImplTest {
     @Nested
     @DisplayName("delete()")
     class deleteTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_validParameters_When_delete_Then_returnTrue() throws Exception {
             doReturn(true).when(mockMedicalRecordDAO)
                     .delete(anyString(),
@@ -161,6 +171,7 @@ class MedicalRecordServiceImplTest {
         }
 
         @Test
+        @DisplayName("Not found case")
         void Given_NoSuchDataException_When_delete_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockMedicalRecordDAO)
                     .delete(anyString(),
@@ -170,6 +181,7 @@ class MedicalRecordServiceImplTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOException_When_delete_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockMedicalRecordDAO)
                     .delete(anyString(),

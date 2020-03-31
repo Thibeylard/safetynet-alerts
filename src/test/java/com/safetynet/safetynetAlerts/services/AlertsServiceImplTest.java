@@ -55,6 +55,7 @@ class AlertsServiceImplTest {
     class getURLFirestationDTOTestMethods {
 
         @Test
+        @DisplayName("Success case")
         void Given_stationNumber1_When_getURLFirestationDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             //Three different addresses under Station 1
             List<Firestation> stations = FirestationFactory.createFirestations(3, 1);
@@ -88,6 +89,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_NoSuchDataExceptionThrown_When_getURLFirestationDTO_Then_returnNull() throws IOException, NoSuchDataException, NoMedicalRecordException {
             doThrow(new NoSuchDataException()).when(mockFirestationDAO).getFirestations(1);
 
@@ -105,6 +107,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No MedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLFirestationDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             //Four different addresses under Station 1
             List<Firestation> stations = FirestationFactory.createFirestations(4, 1);
@@ -116,6 +119,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLFirestationDTO_Then_throwIOException() throws IOException, NoSuchDataException {
             doThrow(new IOException()).when(mockFirestationDAO).getFirestations(1);
 
@@ -128,7 +132,9 @@ class AlertsServiceImplTest {
     @Nested
     @DisplayName("getURLChildAlertDTO()")
     class getURLChildAlertDTOTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_anyAddress_When_getURLChildAlertDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             List<Person> children = PersonFactory.createChildren(2, null, Addresses.APPLEGATE);
             List<Person> familyMembers = PersonFactory.createAdults(3, null, Addresses.APPLEGATE);
@@ -157,6 +163,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_NoSuchDataExceptionThrown_When_getURLChildAlertDTO_Then_returnNull() throws IOException, NoSuchDataException, NoMedicalRecordException {
             doThrow(new NoSuchDataException()).when(mockPersonDAO).getFromAddress(Addresses.APPLEGATE.getName(), true);
 
@@ -165,6 +172,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No Child case")
         void Given_noChildAtAddress_When_getURLChildAlertDTO_Then_emptyObject() throws IOException, NoSuchDataException, NoMedicalRecordException {
             List<Person> familyMembers = PersonFactory.createAdults(3, null, Addresses.APPLEGATE);
 
@@ -182,6 +190,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No MedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLChildAlertDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             doThrow(new NoMedicalRecordException("John", "Smith")).when(mockPersonDAO).getFromAddress(Addresses.APPLEGATE.getName(), true);
 
@@ -189,6 +198,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLChildAlertDTO_Then_throwIOException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             doThrow(new IOException()).when(mockPersonDAO).getFromAddress(Addresses.APPLEGATE.getName(), true);
 
@@ -203,6 +213,7 @@ class AlertsServiceImplTest {
     class getURLPhoneAlertDTOTestMethods {
 
         @Test
+        @DisplayName("Success case")
         void Given_stationNumber1_When_getURLPhoneAlertDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             //Three different addresses under Station 1
             List<Firestation> stations = FirestationFactory.createFirestations(3, 1);
@@ -233,6 +244,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_NoSuchDataExceptionThrown_When_getURLPhoneAlertDTO_Then_returnNull() throws IOException, NoSuchDataException, NoMedicalRecordException {
             doThrow(new NoSuchDataException()).when(mockFirestationDAO).getFirestations(1);
 
@@ -248,8 +260,8 @@ class AlertsServiceImplTest {
                     .isNull();
         }
 
-
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLPhoneAlertDTO_Then_throwIOException() throws IOException, NoSuchDataException {
             doThrow(new IOException()).when(mockFirestationDAO).getFirestations(1);
 
@@ -264,6 +276,7 @@ class AlertsServiceImplTest {
     class getURLFireDTOTestMethods {
 
         @Test
+        @DisplayName("Success case")
         void Given_address_When_getURLFireDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             Firestation firestation = FirestationFactory.createFirestation();
             List<Person> persons = new ArrayList<>();
@@ -287,6 +300,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_NoSuchDataExceptionThrown_When_getURLFireDTO_Then_returnNull() throws IOException, NoSuchDataException, NoMedicalRecordException {
             doThrow(new NoSuchDataException()).when(mockFirestationDAO).getFirestation(anyString());
 
@@ -303,6 +317,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No MedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLFireDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             Firestation station = FirestationFactory.createFirestation();
 
@@ -313,6 +328,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLFireDTO_Then_throwIOException() throws IOException, NoSuchDataException {
             doThrow(new IOException()).when(mockFirestationDAO).getFirestation(anyString());
 
@@ -326,7 +342,9 @@ class AlertsServiceImplTest {
     @Nested
     @DisplayName("getURLFloodDTO()")
     class getURLFloodDTOTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_stationNumberList_When_getURLFloodDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
 
             List<Firestation> firestations1 = FirestationFactory.createFirestations(1, 1);
@@ -373,6 +391,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_NoSuchDataExceptionThrown_When_getURLFloodDTO_Then_returnNull() throws IOException, NoSuchDataException, NoMedicalRecordException {
             doThrow(new NoSuchDataException()).when(mockFirestationDAO).getFirestations(anyInt());
 
@@ -392,6 +411,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No MedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLFloodDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             List<Firestation> firestations1 = FirestationFactory.createFirestations(1, 1);
             List<Firestation> firestations2 = FirestationFactory.createFirestations(1, 2);
@@ -405,6 +425,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLFloodDTO_Then_throwIOException() throws IOException, NoSuchDataException {
             doThrow(new IOException()).when(mockFirestationDAO).getFirestations(anyInt());
 
@@ -417,7 +438,9 @@ class AlertsServiceImplTest {
     @Nested
     @DisplayName("getURLPersonInfoDTO()")
     class getURLPersonInfoTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_personFirstNameAndLastName_When_getURLPersonInfoDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             Person target = PersonFactory.createPerson(
                     "John",
@@ -443,6 +466,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_NoSuchDataExceptionThrown_When_getURLPersonInfoDTO_Then_returnNull() throws IOException, NoSuchDataException, NoMedicalRecordException {
             Person target = PersonFactory.createPerson(
                     "John",
@@ -460,6 +484,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No MedicalRecord error case")
         void Given_NoMedicalRecordExceptionThrown_When_getURLPersonInfoDTO_Then_throwNoMedicalRecordException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             Person target = PersonFactory.createPerson(
                     "John",
@@ -473,6 +498,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLPersonInfoDTO_Then_throwIOException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             Person target = PersonFactory.createPerson(
                     "John",
@@ -494,7 +520,9 @@ class AlertsServiceImplTest {
     @Nested
     @DisplayName("getURLCommunityEmailDTO()")
     class getURLCommunityEmailDTOTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_personFirstNameAndLastName_When_getURLPersonInfoDTO_Then_returnCorrespondingDTO() throws IOException, NoSuchDataException, NoMedicalRecordException {
             String city = Addresses.GOLFCOURT.getCity().getName();
             List<Person> citizens = new ArrayList<>(PersonFactory.createAdults(10, null, Addresses.GOLFCOURT));
@@ -511,6 +539,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("No content case")
         void Given_NoSuchDataExceptionThrown_When_getURLPersonInfoDTO_Then_returnNull() throws IOException, NoSuchDataException, NoMedicalRecordException {
             String city = Addresses.GOLFCOURT.getCity().getName();
 
@@ -521,6 +550,7 @@ class AlertsServiceImplTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOExceptionThrown_When_getURLPersonInfoDTO_Then_throwIOException() throws IOException, NoSuchDataException, NoMedicalRecordException {
             String city = Addresses.GOLFCOURT.getCity().getName();
             doThrow(new IOException()).when(mockPersonDAO).getCommunity(city, false);
