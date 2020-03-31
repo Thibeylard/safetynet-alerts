@@ -40,6 +40,7 @@ public class MedicalRecordControllerIT {
     private static File data;
     private static JsonFactory factory;
     private static JsonFileDatabaseDTO jsonFileDTO;
+    private static List<MedicalRecord> medicalRecordsOrig;
 
     // URLS
     private final static String medicalRecordIDURL = "/medicalRecord?firstName={firstName}&lastName={lastName}";
@@ -53,6 +54,7 @@ public class MedicalRecordControllerIT {
         factory = new JsonFactory().setCodec(new ObjectMapper());
         JsonParser parser = factory.createParser(MedicalRecordControllerIT.data);
         jsonFileDTO = parser.readValueAs(JsonFileDatabaseDTO.class);
+        medicalRecordsOrig = jsonFileDTO.getMedicalRecords();
     }
 
 
@@ -63,7 +65,7 @@ public class MedicalRecordControllerIT {
             generator.writeStartObject();
             generator.writeObjectField("persons", jsonFileDTO.getPersons());
             generator.writeObjectField("firestations", jsonFileDTO.getFirestations());
-            generator.writeObjectField("medicalrecords", jsonFileDTO.getMedicalRecords());
+            generator.writeObjectField("medicalrecords", medicalRecordsOrig);
             generator.writeEndObject();
             generator.close();
 

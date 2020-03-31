@@ -24,6 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,6 +37,8 @@ public class FirestationControllerIT {
     private static File data;
     private static JsonFactory factory;
     private static JsonFileDatabaseDTO jsonFileDTO;
+    private static List<Firestation> firestationsOrig;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -49,6 +52,7 @@ public class FirestationControllerIT {
         factory = new JsonFactory().setCodec(new ObjectMapper());
         JsonParser parser = factory.createParser(FirestationControllerIT.data);
         jsonFileDTO = parser.readValueAs(JsonFileDatabaseDTO.class);
+        firestationsOrig = jsonFileDTO.getFirestations();
     }
 
 
@@ -58,7 +62,7 @@ public class FirestationControllerIT {
             JsonGenerator generator = factory.createGenerator(data, JsonEncoding.UTF8);
             generator.writeStartObject();
             generator.writeObjectField("persons", jsonFileDTO.getPersons());
-            generator.writeObjectField("firestations", jsonFileDTO.getFirestations());
+            generator.writeObjectField("firestations", firestationsOrig);
             generator.writeObjectField("medicalrecords", jsonFileDTO.getMedicalRecords());
             generator.writeEndObject();
             generator.close();
@@ -148,7 +152,7 @@ public class FirestationControllerIT {
     @DisplayName("UPDATE successful")
     void Given_dataAddedToDatabase_When_UPDATEFirestation_Then_retrievedDataIsAccordinglyUpdated() {
         // Two firestations with same address but different station number
-        Firestation existing = FirestationFactory.createFirestation(Addresses.GOLFCOURT.getName(), null);
+        Firestation existing = FirestationFactory.createFirestation(Addresses.GOLFCOURT.getName(), 3);
         Firestation updated = FirestationFactory.createFirestation(existing.getAddress(), existing.getStation() + 2);
 
         // Preparation request

@@ -24,6 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,6 +42,8 @@ public class PersonControllerIT {
     private static File data;
     private static JsonFactory factory;
     private static JsonFileDatabaseDTO jsonFileDTO;
+    private static List<Person> personsOrig;
+
     private final static String addressURL = "&address={address}";
     private final static String cityURL = "&city={city}";
     private final static String zipURL = "&zip={zip}";
@@ -53,6 +56,7 @@ public class PersonControllerIT {
         factory = new JsonFactory().setCodec(new ObjectMapper());
         JsonParser parser = factory.createParser(PersonControllerIT.data);
         jsonFileDTO = parser.readValueAs(JsonFileDatabaseDTO.class);
+        personsOrig = jsonFileDTO.getPersons();
     }
 
 
@@ -61,7 +65,7 @@ public class PersonControllerIT {
         try {
             JsonGenerator generator = factory.createGenerator(new File("src/test/resources/data.json"), JsonEncoding.UTF8);
             generator.writeStartObject();
-            generator.writeObjectField("persons", jsonFileDTO.getPersons());
+            generator.writeObjectField("persons", personsOrig);
             generator.writeObjectField("firestations", jsonFileDTO.getFirestations());
             generator.writeObjectField("medicalrecords", jsonFileDTO.getMedicalRecords());
             generator.writeEndObject();
