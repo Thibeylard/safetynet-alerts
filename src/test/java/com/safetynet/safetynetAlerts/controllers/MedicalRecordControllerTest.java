@@ -139,7 +139,7 @@ class MedicalRecordControllerTest {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("birthDate", "someBirthDate");
-            // Works even with not all parameters
+            // Works even without every parameters
 
             MultiValueMap<String, String> optParams = new LinkedMultiValueMap<String, String>();
             optParams.add("birthDate", params.getFirst("birthDate"));

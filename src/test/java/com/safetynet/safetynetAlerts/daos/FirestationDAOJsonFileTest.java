@@ -123,7 +123,7 @@ class FirestationDAOJsonFileTest {
     @DisplayName("delete()")
     class deleteTestMethods {
         @Test
-        @DisplayName("Success case by address")
+        @DisplayName("By address : Success case")
         void Given_validParameters_When_deleteByAddress_Then_returnTrue() throws Exception {
             doReturn(true).when(mockJsonFileDatabase)
                     .deleteFirestation(anyString());
@@ -132,7 +132,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
-        @DisplayName("Not found case by address")
+        @DisplayName("By address : Not found case")
         void Given_NoSuchDataException_When_deleteByAddress_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
                     .deleteFirestation(anyString());
@@ -141,7 +141,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
-        @DisplayName("IO error caseby address")
+        @DisplayName("By address : IO error case")
         void Given_IOException_When_deleteByAddress_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase)
                     .deleteFirestation(anyString());
@@ -150,7 +150,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
-        @DisplayName("Success case by address")
+        @DisplayName("By number : Success case")
         void Given_validParameters_When_deleteByNumber_Then_returnTrue() throws Exception {
             doReturn(true).when(mockJsonFileDatabase)
                     .deleteFirestation(anyInt());
@@ -159,7 +159,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
-        @DisplayName("Not found case by number")
+        @DisplayName("By number : Not found case")
         void Given_NoSuchDataException_When_deleteByNumber_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
                     .deleteFirestation(anyInt());
@@ -168,7 +168,7 @@ class FirestationDAOJsonFileTest {
         }
 
         @Test
-        @DisplayName("IO error case by number")
+        @DisplayName("By number : IO error case")
         void Given_IOException_When_deleteByNumber_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase)
                     .deleteFirestation(anyInt());

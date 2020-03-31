@@ -46,7 +46,9 @@ class PersonDAOJsonFileTest {
     @Nested
     @DisplayName("add()")
     class addTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_validParameters_When_add_Then_returnTrue() throws Exception {
             doReturn(true)
                     .when(mockJsonFileDatabase).addPerson(
@@ -68,6 +70,7 @@ class PersonDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("Illegal override case")
         void Given_IllegalDataOverrideException_When_add_Then_throwsIllegalDataOverrideException() throws Exception {
             doThrow(new IllegalDataOverrideException())
                     .when(mockJsonFileDatabase).addPerson(
@@ -89,6 +92,7 @@ class PersonDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOException_When_add_Then_throwsIOException() throws Exception {
             doThrow(new IOException())
                     .when(mockJsonFileDatabase).addPerson(
@@ -115,7 +119,9 @@ class PersonDAOJsonFileTest {
     @Nested
     @DisplayName("update()")
     class updateTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_validParameters_When_update_Then_returnTrue() throws Exception {
             doReturn(true).when(mockJsonFileDatabase)
                     .updatePerson(
@@ -138,6 +144,7 @@ class PersonDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("Not found case")
         void Given_NoSuchDataException_When_update_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
                     .updatePerson(
@@ -161,6 +168,7 @@ class PersonDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOException_When_update_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase)
                     .updatePerson(
@@ -188,7 +196,9 @@ class PersonDAOJsonFileTest {
     @Nested
     @DisplayName("delete()")
     class deleteTestMethods {
+
         @Test
+        @DisplayName("Success case")
         void Given_validParameters_When_delete_Then_returnTrue() throws Exception {
             doReturn(true).when(mockJsonFileDatabase)
                     .deletePerson(anyString(), anyString());
@@ -196,6 +206,7 @@ class PersonDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("Not found case")
         void Given_NoSuchDataException_When_delete_Then_throwsNoSuchDataException() throws Exception {
             doThrow(new NoSuchDataException()).when(mockJsonFileDatabase)
                     .deletePerson(
@@ -206,6 +217,7 @@ class PersonDAOJsonFileTest {
         }
 
         @Test
+        @DisplayName("IO error case")
         void Given_IOException_When_delete_Then_throwsIOException() throws Exception {
             doThrow(new IOException()).when(mockJsonFileDatabase)
                     .deletePerson(
@@ -222,10 +234,12 @@ class PersonDAOJsonFileTest {
     @Nested
     @DisplayName("get...() ")
     class getTestMethods {
+
         @Nested
         @DisplayName("getFromName() ")
         class getFromNameTestMethods {
             @Test
+            @DisplayName("Success case")
             void Given_validParameters_When_getFromName_Then_returnPerson() throws IOException, NoSuchDataException, NoMedicalRecordException {
                 // Case with MedicalRecord not asked
                 Person person = PersonFactory.createPerson();
@@ -252,6 +266,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
+            @DisplayName("No MedicalRecord error case")
             void Given_NoMedicalRecordException_When_getFromName_Then_throwsNoMedicalRecordException() throws NoSuchDataException, NoMedicalRecordException {
                 Person person = PersonFactory.createPerson();
 
@@ -264,6 +279,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_NoSuchDataException_When_getFromName_Then_throwsNoSuchDataException() throws NoSuchDataException, NoMedicalRecordException {
                 Person person = PersonFactory.createPerson();
 
@@ -280,7 +296,9 @@ class PersonDAOJsonFileTest {
         @Nested
         @DisplayName("getFromAddress(String) ")
         class getFromAddressTestMethods {
+
             @Test
+            @DisplayName("Success case")
             void Given_validParameters_When_getFromAddress_Then_returnPersonList() throws IOException, NoSuchDataException, NoMedicalRecordException {
                 // Case with MedicalRecord not asked
                 List<Person> persons = PersonFactory.createPersons(3, null, Addresses.THOMASROAD);
@@ -306,6 +324,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
+            @DisplayName("No MedicalRecord error case")
             void Given_NoMedicalRecordException_When_getFromAddress_Then_throwsNoMedicalRecordException() throws NoSuchDataException, NoMedicalRecordException {
                 Person person = PersonFactory.createPerson();
 
@@ -318,6 +337,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_NoSuchDataException_When_getFromAddress_Then_throwsNoSuchDataException() throws NoSuchDataException, NoMedicalRecordException {
                 doThrow(new NoSuchDataException())
                         .when(mockJsonFileDatabase)
@@ -332,7 +352,9 @@ class PersonDAOJsonFileTest {
         @Nested
         @DisplayName("getCommunity() ")
         class getCommunityTestMethods {
+
             @Test
+            @DisplayName("Success case")
             void Given_validParameters_When_getCommunity_Then_returnPersonList() throws IOException, NoSuchDataException, NoMedicalRecordException {
                 // Case with MedicalRecord not asked
                 List<Person> persons = PersonFactory.createPersons(3, null, Addresses.MARCONI);
@@ -358,6 +380,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
+            @DisplayName("No MedicalRecord error case")
             void Given_NoMedicalRecordException_When_getCommunity_Then_throwsNoMedicalRecordException() throws NoSuchDataException, NoMedicalRecordException {
                 Person person = PersonFactory.createPerson();
 
@@ -370,6 +393,7 @@ class PersonDAOJsonFileTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_NoSuchDataException_When_getCommunity_Then_throwsNoSuchDataException() throws NoSuchDataException, NoMedicalRecordException {
                 doThrow(new NoSuchDataException())
                         .when(mockJsonFileDatabase)

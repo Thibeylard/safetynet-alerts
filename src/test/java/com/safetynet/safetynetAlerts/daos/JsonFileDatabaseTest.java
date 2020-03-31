@@ -88,6 +88,7 @@ class JsonFileDatabaseTest {
         @DisplayName("add()")
         class addTestMethods {
             @Test
+            @DisplayName("Success case - True")
             void Given_firestationParameters_When_addFirestation_Then_returnTrue() throws Exception {
                 Firestation newFirestation = FirestationFactory.createFirestation();
                 assertThat(jsonFileDatabase.addFirestation(newFirestation.getAddress(), newFirestation.getStation()))
@@ -95,6 +96,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Success case - Addition")
             void Given_firestationParameters_When_addFirestation_Then_createNewFirestation() throws Exception {
                 Firestation newFirestation = FirestationFactory.createFirestation();
 
@@ -107,6 +109,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Illegal override case")
             void Given_identicalExistantData_When_addFirestation_Then_throwsIllegalDataOverrideException() throws Exception {
                 Firestation newFirestation = FirestationFactory.createFirestation();
                 firestations.add(newFirestation); // firestation is already present in data
@@ -116,6 +119,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("IO error case")
             void Given_IOExceptionOnWrite_When_addFirestation_Then_throwsIOException() throws Exception {
                 Firestation newFirestation = FirestationFactory.createFirestation();
 
@@ -133,6 +137,7 @@ class JsonFileDatabaseTest {
         @DisplayName("update()")
         class updateTestMethods {
             @Test
+            @DisplayName("Success case - True")
             void Given_firestationParameters_When_updateFirestation_Then_returnTrue() throws Exception {
                 Firestation firestationToUpdate = FirestationFactory.createFirestation();
 
@@ -143,6 +148,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Success case - Update")
             void Given_firestationParameters_When_updateFirestation_Then_firestationUpdated() throws Exception {
                 Firestation firestationToUpdate = FirestationFactory.createFirestation();
                 Firestation updatedFirestation = new Firestation(firestationToUpdate.getAddress(), firestationToUpdate.getStation() + 1);
@@ -158,6 +164,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_dataToUpdateNotPresent_When_updateFirestation_Then_throwsNoSuchDataException() throws Exception {
                 Firestation firestationToUpdate = FirestationFactory.createFirestation();
 
@@ -166,6 +173,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("IO error case")
             void Given_IOExceptionOnWrite_When_updateFirestation_Then_throwsIOException() throws Exception {
                 Firestation firestationToUpdate = FirestationFactory.createFirestation();
 
@@ -186,6 +194,7 @@ class JsonFileDatabaseTest {
         class deleteTestMethods {
 
             @Test
+            @DisplayName("By address : Success case - True")
             void Given_firestationParameters_When_deleteFirestationByAddress_Then_returnTrue() throws Exception {
                 Firestation firestationToDelete = FirestationFactory.createFirestation();
                 firestations.add(firestationToDelete);
@@ -194,6 +203,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("By number : Success case - True")
             void Given_firestationParameters_When_deleteFirestationByNumber_Then_returnTrue() throws Exception {
                 Firestation firestationToDelete = FirestationFactory.createFirestation();
                 firestations.add(firestationToDelete);
@@ -202,24 +212,26 @@ class JsonFileDatabaseTest {
             }
 
             @Test
-            void Given_firestationParameters_When_deleteFirestationByAddress_Then_allFirestationsDeleted() throws Exception {
-                Firestation firestationToDelete1 = FirestationFactory
-                        .createFirestation();
-                Firestation firestationToDelete2 = FirestationFactory
-                        .createFirestation(firestationToDelete1.getAddress(), null);
+            @DisplayName("By address : Success case - Delete")
+            void Given_firestationParameters_When_deleteFirestationByAddress_Then_firestationDeleted() throws Exception {
+                Firestation firestationToDelete = FirestationFactory
+                        .createFirestation(Addresses.MARCONI.getName(), null);
+                Firestation firestationSaved = FirestationFactory
+                        .createFirestation(Addresses.CIRCLE.getName(), null);
 
-                firestations.add(firestationToDelete1);
-                firestations.add(firestationToDelete2);
+                firestations.add(firestationToDelete);
+                firestations.add(firestationSaved);
 
-                jsonFileDatabase.deleteFirestation(firestationToDelete1.getAddress());
+                jsonFileDatabase.deleteFirestation(firestationToDelete.getAddress());
 
                 assertThat(firestations)
                         .isNotNull()
-                        .doesNotContain(firestationToDelete1)
-                        .doesNotContain(firestationToDelete2);
+                        .doesNotContain(firestationToDelete)
+                        .contains(firestationSaved);
             }
 
             @Test
+            @DisplayName("By number : Success case - Delete")
             void Given_firestationParameters_When_deleteFirestationByNumber_Then_noMoreFirestationWithNumber() throws Exception {
                 Firestation firestationToDelete = FirestationFactory.createFirestation(null, 4);
                 Firestation firestationToKeep = FirestationFactory.createFirestation(null, 3);
@@ -236,6 +248,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Not found cases")
             void Given_dataToDeleteNotPresent_When_deleteFirestation_Then_throwsNoSuchDataException() throws Exception {
                 Firestation firestationToDelete = FirestationFactory.createFirestation();
 
@@ -246,6 +259,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("IO error cases")
             void Given_IOExceptionOnWrite_When_deleteFirestation_Then_throwsIOException() throws Exception {
                 Firestation firestationToDelete = FirestationFactory.createFirestation();
 
@@ -270,6 +284,7 @@ class JsonFileDatabaseTest {
         class getTestMethods {
 
             @Test
+            @DisplayName("getFirestation() : Success case")
             void Given_matchingAddress_When_getFirestation_Then_returnFirestation() throws Exception {
                 Firestation firestation = FirestationFactory.createFirestation();
                 Firestation firestation2 = FirestationFactory.createFirestation();
@@ -282,6 +297,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("getFirestation() : Not found case")
             void Given_notMatchingAddress_When_getFirestation_Then_throwNoSuchDataException() throws Exception {
                 Firestation firestation = FirestationFactory.createFirestation();
                 Firestation firestation2 = FirestationFactory.createFirestation();
@@ -292,6 +308,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("getFirestations() : Success case")
             void Given_matchingStationNumber_When_getFirestations_Then_returnFirestationList() throws Exception {
                 Firestation firestation = FirestationFactory.createFirestation(null, 2);
                 Firestation firestation2 = FirestationFactory.createFirestation(null, 2);
@@ -306,6 +323,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("getFirestations() : Not found case")
             void Given_notMatchingStationNumber_When_getFirestations_Then_throwNoSuchDataException() throws Exception {
                 Firestation firestation = FirestationFactory.createFirestation(null, 2);
                 Firestation firestation2 = FirestationFactory.createFirestation(null, 2);
@@ -328,7 +346,9 @@ class JsonFileDatabaseTest {
         @Nested
         @DisplayName("add()")
         class addTestMethods {
+
             @Test
+            @DisplayName("Success case - True")
             void Given_medicalRecordParameters_When_addMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(false);
 
@@ -342,6 +362,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Success case - Addition")
             void Given_medicalRecordParameters_When_addMedicalRecord_Then_createNewMedicalRecord() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         false);
@@ -360,6 +381,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Illegal override case")
             void Given_identicalExistantData_When_addMedicalRecord_Then_throwsIllegalDataOverrideException() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         false);
@@ -377,6 +399,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("IO error case")
             void Given_IOExceptionOnWrite_When_addMedicalRecord_Then_throwsIOException() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         false);
@@ -400,7 +423,9 @@ class JsonFileDatabaseTest {
         @Nested
         @DisplayName("update()")
         class updateTestMethods {
+
             @Test
+            @DisplayName("Success case - True")
             void Given_medicalRecordParameters_When_updateMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord newMedicalRecord = MedicalRecordFactory.createMedicalRecord(
                         false);
@@ -417,6 +442,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Success case - Update")
             void Given_medicalRecordParameters_When_updateMedicalRecord_Then_updateOriginalMedicalRecord() throws Exception {
                 MedicalRecord originalMedicalRecord = MedicalRecordFactory.createMedicalRecord(false);
 
@@ -445,6 +471,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_dataToUpdateNotPresent_When_updateMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
                 MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.createMedicalRecord(false);
 
@@ -458,6 +485,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("IO error case")
             void Given_IOExceptionOnWrite_When_updateMedicalRecord_Then_throwsIOException() throws Exception {
                 MedicalRecord medicalRecordToUpdate = MedicalRecordFactory.createMedicalRecord(
                         false);
@@ -487,6 +515,7 @@ class JsonFileDatabaseTest {
         class deleteTestMethods {
 
             @Test
+            @DisplayName("Success case - True")
             void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_returnTrue() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(false);
 
@@ -496,6 +525,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Success case - Deletion")
             void Given_medicalRecordParameters_When_deleteMedicalRecord_Then_medicalRecordIsDeleted() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(false);
 
@@ -509,6 +539,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_dataToDeleteNotPresent_When_deleteMedicalRecord_Then_throwsNoSuchDataException() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(false);
 
@@ -519,6 +550,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("IO error case")
             void Given_IOExceptionOnWrite_When_deleteMedicalRecord_Then_throwsIOException() throws Exception {
                 MedicalRecord medicalRecordToDelete = MedicalRecordFactory.createMedicalRecord(false);
 
@@ -542,6 +574,7 @@ class JsonFileDatabaseTest {
         class getTestMethods {
 
             @Test
+            @DisplayName("Success case")
             void Given_matchingName_When_getMedicalRecord_Then_returnMedicalRecord() throws Exception {
                 MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(false);
                 MedicalRecord medicalRecord2 = MedicalRecordFactory.createMedicalRecord(false);
@@ -559,6 +592,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_notMatchingName_When_getMedicalRecord_Then_throwNoSuchDataException() throws Exception {
                 MedicalRecord medicalRecord = MedicalRecordFactory.createMedicalRecord(false);
                 MedicalRecord medicalRecord2 = MedicalRecordFactory.createMedicalRecord(false);
@@ -581,7 +615,9 @@ class JsonFileDatabaseTest {
         @Nested
         @DisplayName("add()")
         class addTestMethods {
+
             @Test
+            @DisplayName("Success case - True")
             void Given_personParameters_When_addPerson_Then_returnTrue() throws Exception {
                 Person newPerson = PersonFactory.createPerson();
 
@@ -598,6 +634,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Success case - Addition")
             void Given_personParameters_When_addPerson_Then_createNewPerson() throws Exception {
                 Person newPerson = PersonFactory.createPerson();
 
@@ -618,6 +655,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Illegal override case")
             void Given_identicalExistantData_When_addPerson_Then_throwsIllegalDataOverrideException() throws Exception {
                 Person newPerson = PersonFactory.createPerson();
 
@@ -635,6 +673,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("IO error case")
             void Given_IOExceptionOnWrite_When_addPerson_Then_throwsIOException() throws Exception {
                 Person newPerson = PersonFactory.createPerson();
 
@@ -659,7 +698,9 @@ class JsonFileDatabaseTest {
         @Nested
         @DisplayName("update()")
         class updateTestMethods {
+
             @Test
+            @DisplayName("Success case - True")
             void Given_personParameters_When_updatePerson_Then_returnTrue() throws Exception {
                 Person originalPerson = PersonFactory.createPerson(
                         null,
@@ -687,6 +728,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Success case - Update")
             void Given_personParameters_When_updatePerson_Then_updateOriginalPerson() throws Exception {
                 Person originalPerson = PersonFactory.createPerson(
                         null,
@@ -721,6 +763,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_dataToUpdateNotPresent_When_updatePerson_Then_throwsNoSuchDataException() throws Exception {
                 Person originalPerson = PersonFactory.createPerson(
                         null,
@@ -740,6 +783,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("IO error case")
             void Given_IOExceptionOnWrite_When_updatePerson_Then_throwsIOException() throws Exception {
                 Person originalPerson = PersonFactory.createPerson(
                         null,
@@ -772,6 +816,7 @@ class JsonFileDatabaseTest {
         class deleteTestMethods {
 
             @Test
+            @DisplayName("Success case - True")
             void Given_personParameters_When_deletePerson_Then_returnTrue() throws Exception {
                 Person personToDelete = PersonFactory.createPerson();
 
@@ -781,6 +826,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Success case - Deletion")
             void Given_personParameters_When_deletePerson_Then_personIsDeleted() throws Exception {
                 Person personToDelete = PersonFactory.createPerson();
 
@@ -794,6 +840,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("Not found case")
             void Given_dataToDeleteNotPresent_When_deletePerson_Then_throwsNoSuchDataException() throws Exception {
                 Person personToDelete = PersonFactory.createPerson();
 
@@ -810,6 +857,7 @@ class JsonFileDatabaseTest {
             }
 
             @Test
+            @DisplayName("IO error case")
             void Given_IOExceptionOnWrite_When_deletePerson_Then_throwsIOException() throws Exception {
                 Person personToDelete = PersonFactory.createPerson();
 
@@ -832,181 +880,209 @@ class JsonFileDatabaseTest {
         @DisplayName("get()")
         class getTestMethods {
 
-            @Test
-            void Given_matchingName_When_getPerson_Then_returnPerson() throws Exception {
-                Person person = PersonFactory.createPerson();
-                Person person2 = PersonFactory.createPerson();
-                Person person3 = PersonFactory.createPerson();
+            @Nested
+            @DisplayName("getPerson()")
+            class getPersonTestMethods {
 
-                persons.addAll(List.of(person, person2, person3));
+                @Test
+                @DisplayName("Success case")
+                void Given_matchingName_When_getPerson_Then_returnPerson() throws Exception {
+                    Person person = PersonFactory.createPerson();
+                    Person person2 = PersonFactory.createPerson();
+                    Person person3 = PersonFactory.createPerson();
 
-                assertThat(jsonFileDatabase.getPerson(person.getFirstName(), person.getLastName(), false))
-                        .isNotNull()
-                        .isEqualToComparingFieldByField(person);
+                    persons.addAll(List.of(person, person2, person3));
 
-                assertThat(jsonFileDatabase.getPerson(person3.getFirstName(), person3.getLastName(), false))
-                        .isNotNull()
-                        .isEqualToComparingFieldByField(person3);
+                    assertThat(jsonFileDatabase.getPerson(person.getFirstName(), person.getLastName(), false))
+                            .isNotNull()
+                            .isEqualToComparingFieldByField(person);
+
+                    assertThat(jsonFileDatabase.getPerson(person3.getFirstName(), person3.getLastName(), false))
+                            .isNotNull()
+                            .isEqualToComparingFieldByField(person3);
+                }
+
+                @Test
+                @DisplayName("Not found case")
+                void Given_notMatchingName_When_getPerson_Then_throwNoSuchDataException() throws Exception {
+                    Person person = PersonFactory.createPerson();
+                    Person person2 = PersonFactory.createPerson();
+                    Person person3 = PersonFactory.createPerson();
+
+                    persons.addAll(List.of(person, person3));
+
+                    assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPerson(person2.getFirstName(), person2.getLastName(), false));
+                }
+
+                @Test
+                @DisplayName("With MedicalRecord : Success case")
+                void Given_matchingNameWithMedicalRecord_When_getPerson_Then_returnPerson() throws Exception {
+                    Person person = PersonFactory.createAdults(1, null, null).get(0);
+                    Person person2 = PersonFactory.createPerson();
+                    Person person3 = PersonFactory.createPerson();
+
+                    persons.addAll(List.of(person, person3));
+                    medicalRecords.add(person.getMedicalRecord()
+                            .orElseThrow(() -> new NoMedicalRecordException(person.getFirstName(), person.getLastName())));
+
+                    assertThat(jsonFileDatabase.getPerson(person.getFirstName(), person.getLastName(), true))
+                            .isNotNull()
+                            .isEqualToComparingFieldByField(person);
+                }
+
+                @Test
+                @DisplayName("With MedicalRecord : No MedicalRecord error case")
+                void Given_matchingNameButNoMedicalRecord_When_getPerson_Then_throwNoMedicalRecordException() throws Exception {
+                    Person person = PersonFactory.createPerson();
+                    Person person2 = PersonFactory.createPerson();
+                    Person person3 = PersonFactory.createPerson();
+
+                    persons.addAll(List.of(person, person3));
+
+                    assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPerson(person2.getFirstName(), person2.getLastName(), true));
+
+                }
             }
 
-            @Test
-            void Given_notMatchingName_When_getPerson_Then_throwNoSuchDataException() throws Exception {
-                Person person = PersonFactory.createPerson();
-                Person person2 = PersonFactory.createPerson();
-                Person person3 = PersonFactory.createPerson();
 
-                persons.addAll(List.of(person, person3));
+            @Nested
+            @DisplayName("getPersons(address)")
+            class getPersonsByAddressTestMethods {
+                @Test
+                @DisplayName("Success case")
+                void Given_matchingAddress_When_getPersons_Then_returnPersonList() throws Exception {
+                    List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE);
+                    List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
 
-                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPerson(person2.getFirstName(), person2.getLastName(), false));
+                    persons.addAll(persons1);
+                    persons.addAll(persons2);
+
+                    assertThat(jsonFileDatabase.getPersonFromAddress(Addresses.APPLEGATE.getName(), false))
+                            .isNotNull()
+                            .usingRecursiveFieldByFieldElementComparator()
+                            .containsAll(persons1);
+                }
+
+                @Test
+                @DisplayName("Not found case")
+                void Given_notMatchingAddress_When_getPersons_Then_throwNoSuchDataException() throws Exception {
+                    List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
+                    List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE);
+
+                    persons.addAll(persons2);
+                    persons.addAll(persons3);
+
+                    assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPersonFromAddress(Addresses.MARCONI.getName(), false));
+
+                }
+
+                @Test
+                @DisplayName("With MedicalRecord : Success case")
+                void Given_matchingAddressWithMedicalRecord_When_getPersons_Then_returnPersonList() throws Exception {
+                    List<Person> persons1 = PersonFactory.createAdults(2, null, Addresses.APPLEGATE);
+                    List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
+                    List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE);
+
+                    persons.addAll(persons1);
+                    persons.addAll(persons2);
+                    persons.addAll(persons3);
+
+                    medicalRecords.add(persons1.get(0).getMedicalRecord()
+                            .orElseThrow(() -> new NoMedicalRecordException(persons1.get(0).getFirstName(), persons1.get(0).getLastName())));
+                    medicalRecords.add(persons1.get(1).getMedicalRecord()
+                            .orElseThrow(() -> new NoMedicalRecordException(persons1.get(1).getFirstName(), persons1.get(1).getLastName())));
+
+                    assertThat(jsonFileDatabase.getPersonFromAddress(Addresses.APPLEGATE.getName(), true))
+                            .isNotNull()
+                            .usingRecursiveFieldByFieldElementComparator()
+                            .containsAll(persons1);
+                }
+
+                @Test
+                @DisplayName("With MedicalRecord : No MedicalRecord error case")
+                void Given_matchingAddressButNoMedicalRecord_When_getPersons_Then_throwNoMedicalRecordException() throws Exception {
+                    List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE);
+                    List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
+                    List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE);
+
+                    persons.addAll(persons1);
+                    persons.addAll(persons2);
+                    persons.addAll(persons3);
+
+                    assertThrows(NoMedicalRecordException.class, () -> jsonFileDatabase.getPersonFromAddress(Addresses.APPLEGATE.getName(), true));
+                }
             }
 
-            @Test
-            void Given_matchingNameWithMedicalRecord_When_getPerson_Then_returnPerson() throws Exception {
-                Person person = PersonFactory.createAdults(1, null, null).get(0);
-                Person person2 = PersonFactory.createPerson();
-                Person person3 = PersonFactory.createPerson();
 
-                persons.addAll(List.of(person, person3));
-                medicalRecords.add(person.getMedicalRecord()
-                        .orElseThrow(() -> new NoMedicalRecordException(person.getFirstName(), person.getLastName())));
+            @Nested
+            @DisplayName("getPersons(city)")
+            class getPersonsByCityTestMethods {
+                @Test
+                @DisplayName("Success case")
+                void Given_matchingCity_When_getPersons_Then_returnPersonList() throws Exception {
+                    List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE); // OakPark City
+                    List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE); // OakPark City
 
-                assertThat(jsonFileDatabase.getPerson(person.getFirstName(), person.getLastName(), true))
-                        .isNotNull()
-                        .isEqualToComparingFieldByField(person);
+                    persons.addAll(persons1);
+                    persons.addAll(persons2);
+
+                    assertThat(jsonFileDatabase.getPersonFromCity(Addresses.APPLEGATE.getCity().getName(), false))
+                            .isNotNull()
+                            .usingRecursiveFieldByFieldElementComparator()
+                            .containsAll(persons);
+                }
+
+                @Test
+                @DisplayName("Not found case")
+                void Given_notMatchingCity_When_getPersons_Then_throwNoSuchDataException() throws Exception {
+                    List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE); // OakPark City
+                    List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE); // Waltham City
+
+                    persons.addAll(persons2);
+                    persons.addAll(persons3);
+
+                    assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPersonFromCity(Addresses.MARCONI.getCity().getName(), false));
+
+                }
+
+                @Test
+                @DisplayName("With MedicalRecord : Success case")
+                void Given_matchingCityWithMedicalRecord_When_getPersons_Then_returnPersonList() throws Exception {
+                    List<Person> persons1 = PersonFactory.createAdults(2, null, Addresses.APPLEGATE); // OakPark City
+                    List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.HERITAGE); // Waltham City
+                    List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE); // Waltham City
+
+                    persons.addAll(persons1);
+                    persons.addAll(persons2);
+                    persons.addAll(persons3);
+
+                    medicalRecords.add(persons1.get(0).getMedicalRecord()
+                            .orElseThrow(() -> new NoMedicalRecordException(persons1.get(0).getFirstName(), persons1.get(0).getLastName())));
+                    medicalRecords.add(persons1.get(1).getMedicalRecord()
+                            .orElseThrow(() -> new NoMedicalRecordException(persons1.get(1).getFirstName(), persons1.get(1).getLastName())));
+
+                    assertThat(jsonFileDatabase.getPersonFromCity(Addresses.APPLEGATE.getCity().getName(), true))
+                            .isNotNull()
+                            .usingRecursiveFieldByFieldElementComparator()
+                            .containsAll(persons1);
+                }
+
+                @Test
+                @DisplayName("With MedicalRecord : No MedicalRecord error case")
+                void Given_matchingCityButNoMedicalRecord_When_getPersons_Then_throwNoMedicalRecordException() throws Exception {
+                    List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE); // OakPark City
+                    List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.HERITAGE); // Waltham City
+                    List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE); // Waltham City
+
+                    persons.addAll(persons1);
+                    persons.addAll(persons2);
+                    persons.addAll(persons3);
+
+                    assertThrows(NoMedicalRecordException.class, () -> jsonFileDatabase.getPersonFromCity(Addresses.APPLEGATE.getCity().getName(), true));
+
+                }
             }
 
-            @Test
-            void Given_matchingNameButNoMedicalRecord_When_getPerson_Then_throwNoMedicalRecordException() throws Exception {
-                Person person = PersonFactory.createPerson();
-                Person person2 = PersonFactory.createPerson();
-                Person person3 = PersonFactory.createPerson();
-
-                persons.addAll(List.of(person, person3));
-
-                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPerson(person2.getFirstName(), person2.getLastName(), true));
-
-            }
-
-            @Test
-            void Given_matchingAddress_When_getPersons_Then_returnPersonList() throws Exception {
-                List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE);
-                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
-
-                persons.addAll(persons1);
-                persons.addAll(persons2);
-
-                assertThat(jsonFileDatabase.getPersonFromAddress(Addresses.APPLEGATE.getName(), false))
-                        .isNotNull()
-                        .usingRecursiveFieldByFieldElementComparator()
-                        .containsAll(persons1);
-            }
-
-            @Test
-            void Given_notMatchingAddress_When_getPersons_Then_throwNoSuchDataException() throws Exception {
-                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
-                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE);
-
-                persons.addAll(persons2);
-                persons.addAll(persons3);
-
-                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPersonFromAddress(Addresses.MARCONI.getName(), false));
-
-            }
-
-            @Test
-            void Given_matchingAddressWithMedicalRecord_When_getPersons_Then_returnPersonList() throws Exception {
-                List<Person> persons1 = PersonFactory.createAdults(2, null, Addresses.APPLEGATE);
-                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
-                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE);
-
-                persons.addAll(persons1);
-                persons.addAll(persons2);
-                persons.addAll(persons3);
-
-                medicalRecords.add(persons1.get(0).getMedicalRecord()
-                        .orElseThrow(() -> new NoMedicalRecordException(persons1.get(0).getFirstName(), persons1.get(0).getLastName())));
-                medicalRecords.add(persons1.get(1).getMedicalRecord()
-                        .orElseThrow(() -> new NoMedicalRecordException(persons1.get(1).getFirstName(), persons1.get(1).getLastName())));
-
-                assertThat(jsonFileDatabase.getPersonFromAddress(Addresses.APPLEGATE.getName(), true))
-                        .isNotNull()
-                        .usingRecursiveFieldByFieldElementComparator()
-                        .containsAll(persons1);
-            }
-
-            @Test
-            void Given_matchingAddressButNoMedicalRecord_When_getPersons_Then_throwNoMedicalRecordException() throws Exception {
-                List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE);
-                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE);
-                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE);
-
-                persons.addAll(persons1);
-                persons.addAll(persons2);
-                persons.addAll(persons3);
-
-                assertThrows(NoMedicalRecordException.class, () -> jsonFileDatabase.getPersonFromAddress(Addresses.APPLEGATE.getName(), true));
-            }
-
-            @Test
-            void Given_matchingCity_When_getPersons_Then_returnPersonList() throws Exception {
-                List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE); // OakPark City
-                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE); // OakPark City
-
-                persons.addAll(persons1);
-                persons.addAll(persons2);
-
-                assertThat(jsonFileDatabase.getPersonFromCity(Addresses.APPLEGATE.getCity().getName(), false))
-                        .isNotNull()
-                        .usingRecursiveFieldByFieldElementComparator()
-                        .containsAll(persons);
-            }
-
-            @Test
-            void Given_notMatchingCity_When_getPersons_Then_throwNoSuchDataException() throws Exception {
-                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.CIRCLE); // OakPark City
-                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE); // Waltham City
-
-                persons.addAll(persons2);
-                persons.addAll(persons3);
-
-                assertThrows(NoSuchDataException.class, () -> jsonFileDatabase.getPersonFromCity(Addresses.MARCONI.getCity().getName(), false));
-
-            }
-
-            @Test
-            void Given_matchingCityWithMedicalRecord_When_getPersons_Then_returnPersonList() throws Exception {
-                List<Person> persons1 = PersonFactory.createAdults(2, null, Addresses.APPLEGATE); // OakPark City
-                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.HERITAGE); // Waltham City
-                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE); // Waltham City
-
-                persons.addAll(persons1);
-                persons.addAll(persons2);
-                persons.addAll(persons3);
-
-                medicalRecords.add(persons1.get(0).getMedicalRecord()
-                        .orElseThrow(() -> new NoMedicalRecordException(persons1.get(0).getFirstName(), persons1.get(0).getLastName())));
-                medicalRecords.add(persons1.get(1).getMedicalRecord()
-                        .orElseThrow(() -> new NoMedicalRecordException(persons1.get(1).getFirstName(), persons1.get(1).getLastName())));
-
-                assertThat(jsonFileDatabase.getPersonFromCity(Addresses.APPLEGATE.getCity().getName(), true))
-                        .isNotNull()
-                        .usingRecursiveFieldByFieldElementComparator()
-                        .containsAll(persons1);
-            }
-
-            @Test
-            void Given_matchingCityButNoMedicalRecord_When_getPersons_Then_throwNoMedicalRecordException() throws Exception {
-                List<Person> persons1 = PersonFactory.createPersons(2, null, Addresses.APPLEGATE); // OakPark City
-                List<Person> persons2 = PersonFactory.createPersons(3, null, Addresses.HERITAGE); // Waltham City
-                List<Person> persons3 = PersonFactory.createPersons(1, null, Addresses.ELMDRIVE); // Waltham City
-
-                persons.addAll(persons1);
-                persons.addAll(persons2);
-                persons.addAll(persons3);
-
-                assertThrows(NoMedicalRecordException.class, () -> jsonFileDatabase.getPersonFromCity(Addresses.APPLEGATE.getCity().getName(), true));
-
-            }
         }
     }
 }

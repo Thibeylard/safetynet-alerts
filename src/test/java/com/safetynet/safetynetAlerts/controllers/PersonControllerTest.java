@@ -149,7 +149,7 @@ class PersonControllerTest {
             params.add("firstName", "someFirstName");
             params.add("lastName", "someLastName");
             params.add("phone", "somePhone");
-            // Works even with not all parameters
+            // Works even without every parameters
 
             doReturn(true).when(mockPersonService)
                     .update(
